@@ -19,7 +19,7 @@ export default function Button({ isPrimary, onClick, label }: Props) {
         "group",
         {
           "from-pink-800": isPrimary,
-          "to-pink-700": isPrimary,
+          "to-pink-600": isPrimary,
         },
         {
           "from-cyan-950": !isPrimary,
