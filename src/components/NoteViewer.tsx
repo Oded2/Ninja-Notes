@@ -9,7 +9,7 @@ export default function NoteViewer() {
   const removeNote = useNoteStore((state) => state.removeNote);
 
   return (
-    <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-8">
       <AnimatePresence mode="popLayout">
         {notes.length > 0 ? (
           notes.map((note) => (
@@ -22,7 +22,7 @@ export default function NoteViewer() {
               className="bg-slate-200/60 shadow-lg rounded-xl p-5 flex flex-col gap-2"
             >
               <h2 className="font-bold text-xl">{note.title || "Untitled"}</h2>
-              <p className="whitespace-pre-wrap line-clamp-10">
+              <p className="whitespace-pre-wrap">
                 {note.content || "No content"}
               </p>
               <div className="flex gap-2 mt-auto items-baseline *:hover:underline *:cursor-pointer">
