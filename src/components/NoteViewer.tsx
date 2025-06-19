@@ -18,13 +18,13 @@ export default function NoteViewer() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.3 }}
-            className="bg-slate-800 rounded-xl p-5 shadow"
+            className="bg-slate-800 rounded-xl p-5 shadow flex flex-col gap-2"
           >
-            <h2 className="font-bold text-xl mb-2">{n.title}</h2>
+            <h2 className="font-bold text-xl">{n.title}</h2>
             <p className="whitespace-pre-wrap">{n.content}</p>
             <button
               onClick={() => removeNote(n.id)}
-              className="mt-4 text-red-400 hover:underline text-sm cursor-pointer"
+              className="mt-auto me-auto text-red-400 hover:underline text-sm cursor-pointer"
             >
               Delete
             </button>
