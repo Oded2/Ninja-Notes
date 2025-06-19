@@ -24,7 +24,9 @@ export default function NoteViewer() {
               className="bg-slate-900/55 shadow-lg rounded-xl p-5 flex flex-col gap-2"
             >
               <h2 className="font-bold text-xl">{note.title || "Untitled"}</h2>
-              <p className="whitespace-pre-wrap">{note.content}</p>
+              <p className="whitespace-pre-wrap">
+                {note.content || "No content"}
+              </p>
               <div className="flex gap-2 mt-auto items-baseline *:hover:underline *:cursor-pointer">
                 <button onClick={() => setEditNote(note)}>Edit</button>
                 <button
