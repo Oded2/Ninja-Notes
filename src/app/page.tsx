@@ -2,7 +2,7 @@ import ClientHome from "@/components/ClientHome";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ninja Polls",
+  title: "Ninja Notes",
   description: "Browser only secure notes",
 };
 
