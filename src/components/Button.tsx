@@ -3,23 +3,24 @@ import clsx from "clsx";
 type Props = {
   isPrimary?: boolean;
   onClick?: () => void;
+  href?: string;
   label?: string;
   type?: "button" | "submit";
 };
 
-export default function Button({ isPrimary, onClick, label, type }: Props) {
+export default function Button({
+  isPrimary,
+  onClick,
+  href,
+  label,
+  type,
+}: Props) {
   return (
     <button
       type={type}
       onClick={onClick}
       className={clsx(
-        "p-1",
-        "rounded-xl",
-        "cursor-pointer",
-        "active:translate-y-0.5",
-        "group",
-        "text-white",
-        "shadow",
+        "group cursor-pointer rounded-xl p-1 text-white shadow active:translate-y-0.5",
         {
           "bg-red-500": isPrimary,
         },
