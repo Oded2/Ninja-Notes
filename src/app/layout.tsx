@@ -20,8 +20,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen flex flex-col bg-slate-50">
-          <div className="container mx-auto py-10 flex flex-col grow px-5 sm:px-0">
+        <div className="flex min-h-screen flex-col bg-slate-50">
+          <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
             {children}
           </div>
         </div>

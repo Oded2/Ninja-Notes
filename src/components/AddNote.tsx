@@ -43,10 +43,10 @@ export default function AddNote({ label }: Props) {
         e.preventDefault();
         handleSubmit();
       }}
-      className="max-w-xl w-full flex flex-col gap-4 mx-auto"
+      className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
       <InputContainer>
-        <label className="italic font-medium" htmlFor={`title-${id}`}>
+        <label className="font-medium italic" htmlFor={`title-${id}`}>
           Title
         </label>
         <input
@@ -61,7 +61,7 @@ export default function AddNote({ label }: Props) {
         <span className="text-xs">{`${title.length.toLocaleString()}/${max.title.toLocaleString()}`}</span>
       </InputContainer>
       <InputContainer>
-        <label className="italic font-medium" htmlFor={id}>
+        <label className="font-medium italic" htmlFor={id}>
           {label}
         </label>
         <textarea
@@ -70,12 +70,12 @@ export default function AddNote({ label }: Props) {
           id={id}
           dir="auto"
           placeholder="What's on your mind?"
-          className="resize-none outline-none w-full"
+          className="w-full resize-none outline-none"
           rows={8}
           required
           maxLength={max.content}
         ></textarea>
-        <div className="my-1 flex justify-end text-xs grow gap-2">
+        <div className="my-1 flex grow justify-end gap-2 text-xs">
           {editNote && (
             <button
               type="button"

@@ -20,22 +20,22 @@ export default function ClientHome() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex mt-10 mx-auto gap-5">
+      <div className="mx-auto mt-10 flex gap-5">
         <Image
           src="/logo.png"
           alt="Logo"
           width={1024}
           height={1024}
-          className="max-h-full size-24 rounded-2xl"
+          className="size-24 max-h-full rounded-2xl"
         />
-        <div className="flex flex-col gap-2 text-center my-auto">
-          <h1 className="font-bold text-6xl text-slate-950">
+        <div className="my-auto flex flex-col gap-2 text-center">
+          <h1 className="text-6xl font-bold text-slate-950">
             <span className="text-red-500">Ninja</span> Notes
           </h1>
           <p className="text-slate-950/80">Browser only secure notes</p>
         </div>
       </div>
-      <div className="flex justify-center gap-4 border-b-2 pb-10 mt-5 border-slate-200/50">
+      <div className="mt-5 flex justify-center gap-4 border-b-2 border-slate-200/50 pb-10">
         <Button
           onClick={() => setViewNotes(false)}
           label="Add Note"

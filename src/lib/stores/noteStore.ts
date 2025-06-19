@@ -42,7 +42,7 @@ export const useNoteStore = create<NoteStore>((set) => ({
   editNote: (id, title, content) =>
     set((state) => {
       const notes = state.notes.map((note) =>
-        note.id === id ? { id, title, content } : note
+        note.id === id ? { id, title, content } : note,
       );
       updateLocalStorage(notes);
       return { notes };

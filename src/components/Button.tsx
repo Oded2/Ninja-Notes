@@ -25,10 +25,10 @@ export default function Button({ isPrimary, onClick, label, type }: Props) {
         },
         {
           "bg-teal-600": !isPrimary,
-        }
+        },
       )}
     >
-      <div className="group-hover:bg-slate-50/10 active:bg-slate-100/15 transition-colors py-2 px-5 rounded-xl font-semibold">
+      <div className="rounded-xl px-5 py-2 font-semibold transition-colors group-hover:bg-slate-50/10 active:bg-slate-100/15">
         {label}
       </div>
     </button>
