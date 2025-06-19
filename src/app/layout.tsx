@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen flex flex-col bg-gradient-to-bl from-slate-800 to-slate-900 text-slate-50">
+        <div className="min-h-screen flex flex-col bg-gradient-to-bl from-sky-950 to-cyan-950 text-slate-50">
           <div className="container mx-auto py-10 flex flex-col grow">
             {children}
           </div>

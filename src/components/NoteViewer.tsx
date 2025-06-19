@@ -21,7 +21,7 @@ export default function NoteViewer() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="bg-slate-800 rounded-xl p-5 shadow flex flex-col gap-2"
+              className="bg-slate-900 shadow-lg rounded-xl p-5 flex flex-col gap-2"
             >
               <h2 className="font-bold text-xl">{note.title}</h2>
               <p className="whitespace-pre-wrap">{note.content}</p>
