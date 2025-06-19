@@ -22,7 +22,7 @@ export default function AddNote({ label }: Props) {
         e.preventDefault();
         setTitle("");
         setContent("");
-        add(title, content);
+        add(title.trim(), content.trim());
       }}
       className="max-w-xl w-full flex flex-col gap-4 mx-auto"
     >
