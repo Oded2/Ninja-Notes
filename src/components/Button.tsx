@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 
 type Props = {
   isPrimary?: boolean;

@@ -1,4 +1,5 @@
 "use client";
+
 import "./globals.css";
 import { useEffect } from "react";
 import { Note, useNoteStore } from "@/lib/stores/noteStore";
@@ -14,7 +15,7 @@ export default function RootLayout({
       const notes = JSON.parse(localStorageNotes) as Note[];
       notes.forEach((note) => add(note.title, note.content));
     }
-  }, []);
+  }, [add]);
 
   return (
     <html lang="en">

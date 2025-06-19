@@ -1,6 +1,6 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Button from "./Button";
-import { useNoteStore } from "@/lib/stores/noteStore";
+import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
 
 type Props = {
   label?: string;
@@ -15,14 +15,32 @@ export default function AddNote({ label }: Props) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const add = useNoteStore((state) => state.addNote);
+  const edit = useNoteStore((state) => state.editNote);
+  const editNote = useEditNoteStore((state) => state.note);
+  const reset = useEditNoteStore((state) => state.reset);
+  const handleSubmit = () => {
+    setTitle("");
+    setContent("");
+    const titeTrim = title?.trim();
+    const contentTrim = content?.trim();
+    if (editNote) {
+      edit(editNote.id, titeTrim, contentTrim);
+      reset();
+    } else add(titeTrim, contentTrim);
+  };
+
+  useEffect(() => {
+    if (editNote) {
+      setTitle(editNote.title ?? "");
+      setContent(editNote.content ?? "");
+    }
+  }, [editNote]);
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        setTitle("");
-        setContent("");
-        add(title.trim(), content.trim());
+        handleSubmit();
       }}
       className="max-w-xl w-full flex flex-col gap-4 mx-auto"
     >
@@ -57,8 +75,8 @@ export default function AddNote({ label }: Props) {
         ></textarea>
         <div className="my-1 flex justify-end"></div>
       </div>
-      <div className="ms-auto gap-2 flex">
-        <Button type="submit" label="Add" isPrimary></Button>
+      <div className="ms-auto">
+        <Button type="submit" label={editNote ? "Edit" : "Add"} isPrimary />
       </div>
     </form>
   );
