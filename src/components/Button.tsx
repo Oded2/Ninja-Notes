@@ -24,7 +24,7 @@ export default function Button({ isPrimary, onClick, label, type }: Props) {
           "to-pink-600": isPrimary,
         },
         {
-          "from-cyan-950": !isPrimary,
+          "from-cyan-900": !isPrimary,
           "to-teal-900": !isPrimary,
         }
       )}
