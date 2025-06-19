@@ -12,7 +12,7 @@ export default function ClientHome() {
   const editNote = useEditNoteStore((state) => state.note);
 
   useEffect(() => {
-    if (editNote) setViewNotes(false);
+    setViewNotes(!editNote);
   }, [editNote]);
 
   return (

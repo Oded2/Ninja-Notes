@@ -74,7 +74,18 @@ export default function AddNote({ label }: Props) {
           required
           maxLength={max.content}
         ></textarea>
-        <div className="my-1 flex justify-end text-xs grow">{`${content.length.toLocaleString()}/${max.content.toLocaleString()}`}</div>
+        <div className="my-1 flex justify-end text-xs grow gap-2">
+          {editNote && (
+            <button
+              type="button"
+              onClick={reset}
+              className="cursor-pointer hover:underline"
+            >
+              Cancel edit
+            </button>
+          )}
+          <span>{`${content.length.toLocaleString()}/${max.content.toLocaleString()}`}</span>
+        </div>
       </InputContainer>
       <div className="ms-auto">
         <Button type="submit" label={editNote ? "Edit" : "Add"} isPrimary />
