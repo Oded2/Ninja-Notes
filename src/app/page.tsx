@@ -2,6 +2,7 @@
 
 import AddNote from "@/components/AddNote";
 import Button from "@/components/Button";
+import NoteViewer from "@/components/NoteViewer";
 import { useState } from "react";
 
 export default function Home() {
@@ -18,17 +19,10 @@ export default function Home() {
           onClick={() => setViewNotes(false)}
           label="Add Note"
           isPrimary
-        ></Button>
-        <Button onClick={() => setViewNotes(true)} label="View Notes"></Button>
+        />
+        <Button onClick={() => setViewNotes(true)} label="View Notes" />
       </div>
-      {viewNotes ? (
-        <div>You're viewing notes</div>
-      ) : (
-        <AddNote
-          label="Create new note"
-          placeholder="What's on your mind?"
-        ></AddNote>
-      )}
+      {viewNotes ? <NoteViewer /> : <AddNote label="Create new note" />}
     </div>
   );
 }

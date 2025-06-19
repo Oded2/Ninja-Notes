@@ -1,14 +1,17 @@
 import clsx from "clsx";
+import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
 
 type Props = {
   isPrimary?: boolean;
   onClick?: () => void;
   label?: string;
+  type?: "button" | "submit";
 };
 
-export default function Button({ isPrimary, onClick, label }: Props) {
+export default function Button({ isPrimary, onClick, label, type }: Props) {
   return (
     <button
+      type={type}
       onClick={onClick}
       className={clsx(
         "bg-gradient-to-r",
