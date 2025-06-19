@@ -21,10 +21,10 @@ export default function NoteViewer() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="bg-slate-900/55 shadow-lg rounded-xl p-5 flex flex-col gap-2"
+              className="bg-slate-200/60 shadow-lg rounded-xl p-5 flex flex-col gap-2"
             >
               <h2 className="font-bold text-xl">{note.title || "Untitled"}</h2>
-              <p className="whitespace-pre-wrap">
+              <p className="whitespace-pre-wrap line-clamp-10">
                 {note.content || "No content"}
               </p>
               <div className="flex gap-2 mt-auto items-baseline *:hover:underline *:cursor-pointer">

@@ -6,6 +6,7 @@ import NoteViewer from "@/components/NoteViewer";
 import { useEditNoteStore } from "@/lib/stores/noteStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -17,11 +18,22 @@ export default function ClientHome() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="bg-gradient-to-r from-amber-500 to-amber-200  bg-clip-text flex mx-auto flex-col gap-2 text-center mt-10">
-        <h1 className="font-bold text-6xl text-transparent">Ninja Notes</h1>
-        <p>Browser only secure notes</p>
+      <div className="flex mt-10 mx-auto gap-5">
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          width={1024}
+          height={1024}
+          className="max-h-full size-24 rounded-2xl"
+        />
+        <div className="flex flex-col gap-2 text-center my-auto">
+          <h1 className="font-bold text-6xl text-slate-950">
+            <span className="text-red-500">Ninja</span> Notes
+          </h1>
+          <p className="text-slate-950/80">Browser only secure notes</p>
+        </div>
       </div>
-      <div className="flex justify-center gap-4 border-b-2 pb-10 mt-5 border-orange-100/80">
+      <div className="flex justify-center gap-4 border-b-2 pb-10 mt-5 border-slate-200/50">
         <Button
           onClick={() => setViewNotes(false)}
           label="Add Note"

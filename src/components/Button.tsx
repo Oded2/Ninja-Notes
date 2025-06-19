@@ -13,23 +13,22 @@ export default function Button({ isPrimary, onClick, label, type }: Props) {
       type={type}
       onClick={onClick}
       className={clsx(
-        "bg-gradient-to-r",
         "p-1",
         "rounded-xl",
         "cursor-pointer",
         "active:translate-y-0.5",
         "group",
+        "text-white",
+        "shadow",
         {
-          "from-pink-800": isPrimary,
-          "to-pink-600": isPrimary,
+          "bg-red-500": isPrimary,
         },
         {
-          "from-cyan-900": !isPrimary,
-          "to-teal-900": !isPrimary,
+          "bg-teal-600": !isPrimary,
         }
       )}
     >
-      <div className="group-hover:bg-slate-50/5 active:bg-slate-100/10 transition-colors py-2 px-5 rounded-xl font-semibold">
+      <div className="group-hover:bg-slate-50/10 active:bg-slate-100/15 transition-colors py-2 px-5 rounded-xl font-semibold">
         {label}
       </div>
     </button>
