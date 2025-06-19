@@ -58,6 +58,7 @@ export default function AddNote({ label }: Props) {
           className="grow outline-none"
           maxLength={max.title}
         />
+        <span className="text-xs">{`${title.length.toLocaleString()}/${max.title.toLocaleString()}`}</span>
       </InputContainer>
       <InputContainer>
         <label className="italic font-medium" htmlFor={id}>
