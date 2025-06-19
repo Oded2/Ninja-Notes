@@ -43,10 +43,11 @@ export default function ClientHome() {
         />
         <Button onClick={() => setViewNotes(true)} label="View Notes" />
       </div>
-      <AnimatePresence mode="wait">
+      <AnimatePresence initial={false} mode="wait">
         {viewNotes ? (
           <motion.div
             key="noteViewer"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
@@ -56,6 +57,7 @@ export default function ClientHome() {
         ) : (
           <motion.div
             key="addNote"
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
