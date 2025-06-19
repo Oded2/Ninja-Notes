@@ -2,7 +2,6 @@
 
 import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { div } from "framer-motion/client";
 
 export default function NoteViewer() {
   const notes = useNoteStore((state) => state.notes);

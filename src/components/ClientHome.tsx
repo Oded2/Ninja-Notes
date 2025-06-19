@@ -5,15 +5,17 @@ import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
 import { useEditNoteStore } from "@/lib/stores/noteStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
+  const first = useRef(false);
   const editNote = useEditNoteStore((state) => state.note);
 
   useEffect(() => {
-    setViewNotes(!editNote);
+    if (first.current) setViewNotes(!editNote);
+    else first.current = true;
   }, [editNote]);
 
   return (
@@ -45,7 +47,6 @@ export default function ClientHome() {
         {viewNotes ? (
           <motion.div
             key="noteViewer"
-            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
@@ -55,7 +56,6 @@ export default function ClientHome() {
         ) : (
           <motion.div
             key="addNote"
-            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
