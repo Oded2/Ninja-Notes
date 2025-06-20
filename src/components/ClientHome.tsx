@@ -5,18 +5,27 @@ import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
 import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers, notesCollection } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";
 import { noteTypeGaurd } from "@/lib/typegaurds";
 import { Note } from "@/lib/types";
+import { useUserStore } from "@/lib/stores/userStore";
+import Link from "next/link";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
   const editNote = useEditStore((state) => state.note);
   const [notes, setNotes] = useState<Note[]>([]);
+  const user = useUserStore((state) => state.user);
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Prevent the email from disappearing when signing out
+    if (user) setEmail(user.email);
+  }, [user]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(notesCollection, (snapshot) => {
@@ -50,7 +59,20 @@ export default function ClientHome() {
           <h1 className="text-6xl font-bold text-slate-950">
             <span className="text-red-500">Ninja</span> Notes
           </h1>
-          <p className="text-slate-950/80">Browser only secure notes</p>
+          <div className="mx-auto flex gap-1 text-slate-950/80">
+            <span>{email}</span>
+            <span className="after:content-['|']" />
+            <Link href="/account" className="hover:underline">
+              Account
+            </Link>
+            <span className="after:content-['|']" />
+            <button
+              onClick={authHandlers.signout}
+              className="cursor-pointer hover:underline"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
       <div className="mt-5 flex justify-center gap-4 border-b-2 border-slate-200/50 pb-10">
@@ -60,15 +82,6 @@ export default function ClientHome() {
           isPrimary
         />
         <Button onClick={() => setViewNotes(true)} label="View Notes" />
-      </div>
-      <div className="flex justify-between text-sm">
-        <div>Sorting options</div>
-        <button
-          onClick={authHandlers.signout}
-          className="cursor-pointer underline"
-        >
-          Sign Out
-        </button>
       </div>
       <AnimatePresence initial={false} mode="wait">
         {viewNotes ? (
