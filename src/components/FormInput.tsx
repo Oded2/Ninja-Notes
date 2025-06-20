@@ -5,8 +5,6 @@ type Props = {
   label: string;
   val: string;
   setVal: (newVal: string) => void;
-  minLength?: number;
-  maxLength?: number;
   required?: boolean;
   children?: React.ReactNode;
 };
@@ -16,8 +14,6 @@ export default function FormInput({
   label,
   val,
   setVal,
-  minLength,
-  maxLength,
   required,
   children: icon,
 }: Props) {
@@ -33,8 +29,8 @@ export default function FormInput({
         onChange={(e) => setVal(e.target.value)}
         className="grow text-sm outline-none"
         placeholder={label}
-        minLength={minLength}
-        maxLength={maxLength}
+        minLength={type === "password" ? 8 : undefined}
+        maxLength={type === "password" ? 4096 : undefined}
         required={required}
       />
     </div>

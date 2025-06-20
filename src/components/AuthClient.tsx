@@ -71,8 +71,6 @@ export default function AuthClient() {
           label="Password"
           val={password}
           setVal={setPassword}
-          minLength={8}
-          maxLength={4096}
           required
         >
           <KeyIcon className="size-6" />
@@ -83,8 +81,6 @@ export default function AuthClient() {
             label="Confirm password"
             val={confirmPassword}
             setVal={setConfirmPassword}
-            minLength={8}
-            maxLength={4096}
             required
           >
             <ShieldCheckIcon className="size-6"></ShieldCheckIcon>
