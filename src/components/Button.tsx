@@ -5,15 +5,23 @@ type Props = {
   onClick?: () => void;
   label?: string;
   type?: "button" | "submit";
+  disabled?: boolean;
 };
 
-export default function Button({ isPrimary, onClick, label, type }: Props) {
+export default function Button({
+  isPrimary,
+  onClick,
+  label,
+  type,
+  disabled,
+}: Props) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={clsx(
-        "group cursor-pointer rounded-xl p-1 text-white shadow active:translate-y-0.5",
+        "group cursor-pointer rounded-xl p-1 text-white shadow active:translate-y-0.5 disabled:cursor-default",
         {
           "bg-red-500": isPrimary,
         },
