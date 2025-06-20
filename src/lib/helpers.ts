@@ -2,6 +2,9 @@ import { firebaseAuthErrorTypeGaurd } from "./typegaurds";
 
 export const handleError = (err: unknown) => {
   if (firebaseAuthErrorTypeGaurd(err)) {
-    alert(err.message);
+    const errorCodeMap: Record<string, string> = {
+      "auth/invalid-credential": "Invalid credentials",
+    };
+    alert(errorCodeMap[err.code] ?? err.message);
   }
 };
