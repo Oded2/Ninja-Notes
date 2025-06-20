@@ -20,7 +20,7 @@ export default function ClientHome() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="mx-auto mt-10 flex gap-5">
+      <div className="mx-auto flex gap-5">
         <Image
           src="/logo.png"
           alt="Logo"

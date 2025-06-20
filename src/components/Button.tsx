@@ -3,18 +3,11 @@ import clsx from "clsx";
 type Props = {
   isPrimary?: boolean;
   onClick?: () => void;
-  href?: string;
   label?: string;
   type?: "button" | "submit";
 };
 
-export default function Button({
-  isPrimary,
-  onClick,
-  href,
-  label,
-  type,
-}: Props) {
+export default function Button({ isPrimary, onClick, label, type }: Props) {
   return (
     <button
       type={type}
@@ -29,7 +22,7 @@ export default function Button({
         },
       )}
     >
-      <div className="rounded-xl px-5 py-2 font-semibold transition-colors group-hover:bg-slate-50/10 active:bg-slate-100/15">
+      <div className="rounded-xl px-5 py-2 text-sm font-semibold transition-colors group-hover:bg-slate-50/10 active:bg-slate-100/15">
         {label}
       </div>
     </button>
