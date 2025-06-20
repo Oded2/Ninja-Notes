@@ -5,7 +5,7 @@ import { Note } from "@/lib/types";
 import clsx from "clsx";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   notes: Note[];
