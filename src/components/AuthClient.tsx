@@ -25,6 +25,10 @@ export default function AuthClient() {
   const { signup, signin } = authHandlers;
 
   const handleSubmit = () => {
+    if (password !== confirmPassword) {
+      alert("Passwords must match");
+      return;
+    }
     setInProgress(true);
     const func = isSignUp ? signup : signin;
     func(email, password).catch((err) => {

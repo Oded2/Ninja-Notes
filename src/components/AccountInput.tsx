@@ -30,6 +30,8 @@ export default function AccountInput({
         className="rounded px-4 py-2 text-sm ring ring-slate-950/70 transition-shadow outline-none focus:ring-2"
         placeholder={placeholder}
         required
+        minLength={type === "password" ? 8 : undefined}
+        maxLength={type === "password" ? 4096 : undefined}
       />
     </>
   );

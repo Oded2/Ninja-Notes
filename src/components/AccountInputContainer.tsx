@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 
 type Props = {
-  handleSubmit: () => void;
+  handleSubmit: () => Promise<void>;
   submitText: string;
   children: React.ReactNode;
 };
@@ -12,12 +12,15 @@ export default function AccountInputContainer({
   submitText,
   children,
 }: Props) {
+  const [inProgress, setInProgress] = useState(false);
+
   return (
     <form
       className="flex w-full max-w-sm flex-col gap-2"
       onSubmit={(e) => {
         e.preventDefault();
-        handleSubmit();
+        setInProgress(true);
+        handleSubmit().then(() => setInProgress(false));
       }}
     >
       <div className="flex flex-col gap-1">{children}</div>
@@ -29,6 +32,7 @@ export default function AccountInputContainer({
           rounded={false}
           isPrimary
           small
+          disabled={inProgress}
         />
       </div>
     </form>
