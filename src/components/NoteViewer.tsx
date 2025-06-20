@@ -35,9 +35,19 @@ export default function NoteViewer({ notes }: Props) {
                   },
                 )}
               >
-                <h2 className="text-xl font-bold">
-                  {note.title || "Untitled"}
-                </h2>
+                <div className="flex flex-col">
+                  <h2 className="text-xl font-bold">
+                    {note.title || "Untitled"}
+                  </h2>
+                  <span className="text-sm text-slate-950/80">
+                    {note.createdAt.toDate().toLocaleString(undefined, {
+                      minute: "numeric",
+                      hour: "numeric",
+                      day: "numeric",
+                      month: "numeric",
+                    })}
+                  </span>
+                </div>
                 <p
                   className={clsx("whitespace-pre-wrap", {
                     "line-clamp-10": !isExpanded,
