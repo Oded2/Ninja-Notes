@@ -16,7 +16,7 @@ export default function AccountInputContainer({
 
   return (
     <form
-      className="flex w-full max-w-sm flex-col gap-2"
+      className="mx-auto flex w-full max-w-sm flex-col gap-2"
       onSubmit={(e) => {
         e.preventDefault();
         setInProgress(true);

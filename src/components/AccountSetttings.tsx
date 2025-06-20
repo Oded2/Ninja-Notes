@@ -6,6 +6,8 @@ import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
 import { updateEmail, updatePassword } from "firebase/auth";
 import { handleError } from "@/lib/helpers";
+import { deleteDoc, getDocs, query, where } from "firebase/firestore";
+import { notesCollection } from "@/lib/firebase";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -25,9 +27,21 @@ export default function AccountSettings() {
     if (!user) return;
     await updatePassword(user, newPassword).catch(handleError);
   };
+  const handleAccountDelete = async () => {
+    if (!confirm("Are you sure you want to delete your account?")) return;
+    const q = query(notesCollection, where("userId", "==", user?.uid));
+    const promises = await getDocs(q).then((snapshot) =>
+      snapshot.docs.map((doc) => deleteDoc(doc.ref)),
+    );
+    Promise.all(promises)
+      .then(() => user?.delete().catch(handleError))
+      .catch(() => {
+        alert("An unknown error has occured");
+      });
+  };
 
   return (
-    <>
+    <div className="flex w-full flex-col gap-2">
       <AccountInputContainer
         handleSubmit={handleEmailChange}
         submitText="Update Email"
@@ -57,6 +71,12 @@ export default function AccountSettings() {
           type="password"
         />
       </AccountInputContainer>
-    </>
+      <button
+        onClick={handleAccountDelete}
+        className="mx-auto cursor-pointer text-sm text-red-400 hover:underline"
+      >
+        Delete Account
+      </button>
+    </div>
   );
 }

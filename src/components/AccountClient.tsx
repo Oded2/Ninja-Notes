@@ -19,8 +19,8 @@ export default function AccountClient() {
         width={1024}
         className="my-auto size-96 rounded-2xl"
       />
-      <div className="flex grow flex-col items-center gap-2 p-5">
-        <h2 className="mb-4 text-3xl font-bold text-slate-950/90">
+      <div className="grow p-5">
+        <h2 className="mb-4 text-center text-3xl font-bold text-slate-950/90">
           Account Settings
         </h2>
         {verified ? (
@@ -35,6 +35,12 @@ export default function AccountClient() {
       >
         <ChevronLeftIcon className="size-8" />
       </Link>
+      <button
+        onClick={() => setVerified((state) => !state)}
+        className="absolute top-2 right-2 opacity-90 transition-opacity hover:opacity-70"
+      >
+        toggle
+      </button>
     </div>
   );
 }
