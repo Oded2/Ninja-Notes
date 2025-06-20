@@ -1,12 +1,18 @@
 "use client";
 
-import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
+import { db } from "@/lib/firebase";
+import { Note, useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
 import clsx from "clsx";
+import { collection, onSnapshot } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function NoteViewer() {
-  const notes = useNoteStore((state) => state.notes);
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, "notes"), () => {});
+  }, []);
   const setEditNote = useEditNoteStore((state) => state.update);
   const removeNote = useNoteStore((state) => state.removeNote);
   const [expandedNotes, setExpandedNotes] = useState<string[]>([]);

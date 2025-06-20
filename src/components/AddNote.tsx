@@ -1,7 +1,10 @@
 import { useEffect, useId, useState } from "react";
 import Button from "./Button";
-import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
+import { useEditNoteStore } from "@/lib/stores/noteStore";
 import InputContainer from "./InputContainer";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useUserStore } from "@/lib/stores/userStore";
 
 type Props = {
   label?: string;
@@ -16,19 +19,23 @@ export default function AddNote({ label }: Props) {
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const add = useNoteStore((state) => state.addNote);
-  const edit = useNoteStore((state) => state.editNote);
+  const user = useUserStore((state) => state.user);
   const editNote = useEditNoteStore((state) => state.note);
   const reset = useEditNoteStore((state) => state.reset);
   const handleSubmit = () => {
-    setTitle("");
-    setContent("");
+    if (!user) return;
     const titeTrim = title?.trim();
     const contentTrim = content?.trim();
-    if (editNote) {
-      edit(editNote.id, titeTrim, contentTrim);
-      reset();
-    } else add(titeTrim, contentTrim);
+    if (editNote) "";
+    else
+      addDoc(collection(db, "notes"), {
+        title: titeTrim,
+        content: contentTrim,
+        userId: user.uid,
+        createdAt: serverTimestamp(),
+      });
+    setTitle("");
+    setContent("");
   };
 
   useEffect(() => {
