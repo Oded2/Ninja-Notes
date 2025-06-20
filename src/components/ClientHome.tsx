@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
 import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers, notesCollection } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";
