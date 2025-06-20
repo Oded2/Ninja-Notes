@@ -21,7 +21,7 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "group cursor-pointer rounded-xl p-1 text-white shadow active:translate-y-0.5 disabled:cursor-default",
+        "group cursor-pointer rounded-xl p-1 text-white shadow disabled:cursor-default",
         {
           "bg-red-500": isPrimary,
         },
