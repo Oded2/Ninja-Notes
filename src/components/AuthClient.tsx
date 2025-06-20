@@ -2,6 +2,7 @@
 
 import FormInput from "@/components/FormInput";
 import FormInputContainer from "@/components/FormInputContainer";
+import { authHandlers } from "@/lib/firebase";
 import {
   EnvelopeIcon,
   KeyIcon,
@@ -11,13 +12,18 @@ import Image from "next/image";
 import { useState } from "react";
 
 export default function AuthClient() {
-  const [isSignIn, setIsSignIn] = useState(true);
+  const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const { signup, login } = authHandlers;
 
   const handleSubmit = () => {
-    console.log("Submitted!");
+    if (isSignUp) {
+      signup(email, password);
+    } else {
+      login(email, password);
+    }
   };
 
   return (
@@ -28,11 +34,12 @@ export default function AuthClient() {
         width={1024}
         height={1024}
         className="size-48 max-h-full rounded-2xl"
+        priority
       />
 
       <FormInputContainer
-        title={isSignIn ? "Create an account" : "Sign in to your account"}
-        submitText={isSignIn ? "Create Account" : "Sign In"}
+        title={isSignUp ? "Create an account" : "Sign in to your account"}
+        submitText={isSignUp ? "Create Account" : "Sign In"}
         handleSubmit={handleSubmit}
       >
         <FormInput
@@ -55,7 +62,7 @@ export default function AuthClient() {
         >
           <KeyIcon className="size-6" />
         </FormInput>
-        {isSignIn && (
+        {isSignUp && (
           <FormInput
             type="password"
             label="Confirm password"
@@ -69,13 +76,13 @@ export default function AuthClient() {
           </FormInput>
         )}
         <div>
-          {isSignIn ? "Already have an account?" : "Don't have an account yet?"}{" "}
+          {isSignUp ? "Already have an account?" : "Don't have an account yet?"}{" "}
           <button
             type="button"
-            onClick={() => setIsSignIn((state) => !state)}
+            onClick={() => setIsSignUp((state) => !state)}
             className="cursor-pointer underline"
           >
-            {isSignIn ? "Sign In" : "Create an account"}
+            {isSignUp ? "Sign In" : "Create an account"}
           </button>
         </div>
       </FormInputContainer>

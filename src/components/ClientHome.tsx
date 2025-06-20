@@ -7,6 +7,7 @@ import { useEditNoteStore } from "@/lib/stores/noteStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { authHandlers } from "@/lib/firebase";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -42,6 +43,15 @@ export default function ClientHome() {
           isPrimary
         />
         <Button onClick={() => setViewNotes(true)} label="View Notes" />
+      </div>
+      <div className="flex justify-between text-sm">
+        <div>Sorting options</div>
+        <button
+          onClick={authHandlers.signout}
+          className="cursor-pointer underline"
+        >
+          Sign Out
+        </button>
       </div>
       <AnimatePresence initial={false} mode="wait">
         {viewNotes ? (

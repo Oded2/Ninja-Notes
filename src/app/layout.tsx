@@ -1,15 +1,41 @@
 "use client";
 
 import "./globals.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Note, useNoteStore } from "@/lib/stores/noteStore";
+import { auth } from "@/lib/firebase";
+import { usePathname, useRouter } from "next/navigation";
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const add = useNoteStore((state) => state.addNote);
+  const pathname = usePathname();
+  const router = useRouter();
+  const routerRef = useRef(router);
+  const pathnameRef = useRef(pathname);
+
   useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
+
+  useEffect(() => {
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      console.log("Auth state change");
+      if (user && pathnameRef.current === "/auth") routerRef.current.push("/");
+      else if (!user && pathnameRef.current === "/")
+        routerRef.current.push("/auth");
+    });
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    console.log("Local storage");
     const localStorageNotes = localStorage.getItem("notes");
     if (localStorageNotes) {
       const notes = JSON.parse(localStorageNotes) as Note[];
