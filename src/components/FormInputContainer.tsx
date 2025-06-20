@@ -5,6 +5,7 @@ type Props = {
   title: string;
   submitText: string;
   handleSubmit: () => void;
+  disabled?: boolean;
   children: React.ReactNode;
 };
 
@@ -12,6 +13,7 @@ export default function FormInputContainer({
   title,
   submitText,
   handleSubmit,
+  disabled,
   children,
 }: Props) {
   return (
@@ -24,7 +26,7 @@ export default function FormInputContainer({
     >
       <h2 className="text-center text-xl font-semibold">{title}</h2>
       {children}
-      <Button type="submit" label={submitText} isPrimary />
+      <Button type="submit" label={submitText} isPrimary disabled={disabled} />
     </form>
   );
 }

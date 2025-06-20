@@ -32,8 +32,9 @@ const authHandlers = {
     );
     await sendEmailVerification(user);
   },
-  login: async (email: string, password: string) =>
-    await signInWithEmailAndPassword(auth, email, password),
+  signin: async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
+  },
   signout: async () => signOut(auth),
   forgotPassword: async (email: string) =>
     await sendPasswordResetEmail(auth, email),

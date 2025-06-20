@@ -7,11 +7,12 @@ type Props = {
   label?: string;
 };
 
+const max = {
+  title: 100,
+  content: 5000,
+};
+
 export default function AddNote({ label }: Props) {
-  const max = {
-    title: 100,
-    content: 5000,
-  };
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");

@@ -8,11 +8,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers } from "@/lib/firebase";
+// import { useUserStore } from "@/lib/stores/userStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
   const editNote = useEditNoteStore((state) => state.note);
+  // const user = useUserStore((state) => state.user);
+  // const loading = useUserStore((state) => state.loading);
 
   useEffect(() => {
     if (first.current) setViewNotes(!editNote);

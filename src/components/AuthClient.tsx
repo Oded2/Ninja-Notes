@@ -3,6 +3,7 @@
 import FormInput from "@/components/FormInput";
 import FormInputContainer from "@/components/FormInputContainer";
 import { authHandlers } from "@/lib/firebase";
+import { firebaseAuthErrorTypeGaurd } from "@/lib/typegaurds";
 import {
   EnvelopeIcon,
   KeyIcon,
@@ -11,19 +12,28 @@ import {
 import Image from "next/image";
 import { useState } from "react";
 
+const errorCodeMap: Record<string, string> = {
+  "auth/invalid-credential": "Invalid credentials",
+};
+
 export default function AuthClient() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { signup, login } = authHandlers;
+  const [inProgress, setInProgress] = useState(false);
+  const { signup, signin } = authHandlers;
 
   const handleSubmit = () => {
-    if (isSignUp) {
-      signup(email, password);
-    } else {
-      login(email, password);
-    }
+    setInProgress(true);
+    const func = isSignUp ? signup : signin;
+    func(email, password).catch((err) => {
+      setInProgress(false);
+      console.error("Auth error", err);
+      if (firebaseAuthErrorTypeGaurd(err)) {
+        alert(errorCodeMap[err.code] ?? "Unknown error");
+      }
+    });
   };
 
   return (
@@ -41,6 +51,7 @@ export default function AuthClient() {
         title={isSignUp ? "Create an account" : "Sign in to your account"}
         submitText={isSignUp ? "Create Account" : "Sign In"}
         handleSubmit={handleSubmit}
+        disabled={inProgress}
       >
         <FormInput
           type="email"
