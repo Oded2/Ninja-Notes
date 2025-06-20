@@ -35,12 +35,6 @@ export default function AccountClient() {
       >
         <ChevronLeftIcon className="size-8" />
       </Link>
-      <button
-        onClick={() => setVerified((state) => !state)}
-        className="absolute top-2 right-2 opacity-90 transition-opacity hover:opacity-70"
-      >
-        toggle
-      </button>
     </div>
   );
 }
