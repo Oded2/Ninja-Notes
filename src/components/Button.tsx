@@ -6,6 +6,8 @@ type Props = {
   label?: string;
   type?: "button" | "submit";
   disabled?: boolean;
+  rounded?: boolean;
+  fullWidth?: boolean;
 };
 
 export default function Button({
@@ -14,6 +16,8 @@ export default function Button({
   label,
   type,
   disabled,
+  rounded = true,
+  fullWidth,
 }: Props) {
   return (
     <button
@@ -21,12 +25,12 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        "group relative cursor-pointer overflow-hidden rounded-xl p-1 text-white shadow disabled:cursor-default",
+        "group relative cursor-pointer overflow-hidden p-1 text-white shadow disabled:cursor-default",
         {
           "bg-red-500": isPrimary,
-        },
-        {
           "bg-teal-600": !isPrimary,
+          "rounded-xl": rounded,
+          "w-full": fullWidth,
         },
       )}
     >

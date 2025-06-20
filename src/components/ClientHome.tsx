@@ -29,6 +29,7 @@ export default function ClientHome() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(notesCollection, (snapshot) => {
+      console.log("Subscribed");
       const snapshotNotes = snapshot.docs
         .map((doc) => ({
           ref: doc.ref,

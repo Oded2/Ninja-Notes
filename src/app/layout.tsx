@@ -41,7 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <div className="flex min-h-screen flex-col bg-slate-50">
-          <div className="container mx-auto flex grow flex-col px-5 pt-20 pb-10 sm:px-0">
+          <div className="container mx-auto flex grow flex-col px-5 py-20 sm:px-0">
             {children}
           </div>
         </div>
