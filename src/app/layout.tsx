@@ -2,7 +2,7 @@
 
 import "./globals.css";
 import { useEffect, useRef } from "react";
-// import { Note, useNoteStore } from "@/lib/stores/noteStore";
+// import { Note, useNoteStore } from "@/lib/stores/editStore";
 import { auth } from "@/lib/firebase";
 import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/stores/userStore";

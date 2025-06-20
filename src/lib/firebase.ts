@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { collection, getFirestore } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
@@ -22,6 +22,7 @@ const firebaseConfig = {
 // Initialize Firebase app only once (for Next.js HMR safety)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const notesCollection = collection(db, "notes");
 const auth = getAuth(app);
 const authHandlers = {
   signup: async (email: string, password: string) => {
@@ -39,4 +40,4 @@ const authHandlers = {
   forgotPassword: async (email: string) =>
     await sendPasswordResetEmail(auth, email),
 };
-export { app, db, auth, authHandlers };
+export { app, notesCollection, auth, authHandlers };

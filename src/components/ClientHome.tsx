@@ -3,17 +3,34 @@
 import AddNote from "@/components/AddNote";
 import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
-import { useEditNoteStore } from "@/lib/stores/noteStore";
+import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { authHandlers } from "@/lib/firebase";
+import { authHandlers, notesCollection } from "@/lib/firebase";
+import { onSnapshot } from "firebase/firestore";
+import { noteTypeGaurd } from "@/lib/typegaurds";
+import { Note } from "@/lib/types";
 // import { useUserStore } from "@/lib/stores/userStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
-  const editNote = useEditNoteStore((state) => state.note);
+  const editNote = useEditStore((state) => state.note);
+  const [notes, setNotes] = useState<Note[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(notesCollection, (snapshot) => {
+      const snapshotNotes = snapshot.docs
+        .map((doc) => ({
+          ref: doc.ref,
+          ...doc.data(),
+        }))
+        .filter((note) => noteTypeGaurd(note));
+      setNotes(snapshotNotes);
+    });
+    return unsubscribe;
+  }, []);
   // const user = useUserStore((state) => state.user);
   // const loading = useUserStore((state) => state.loading);
 
@@ -65,7 +82,7 @@ export default function ClientHome() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.1 }}
           >
-            <NoteViewer />
+            <NoteViewer notes={notes} />
           </motion.div>
         ) : (
           <motion.div

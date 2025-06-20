@@ -1,7 +1,10 @@
 import { useEffect, useId, useState } from "react";
 import Button from "./Button";
-import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
 import InputContainer from "./InputContainer";
+import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { useUserStore } from "@/lib/stores/userStore";
+import { notesCollection } from "@/lib/firebase";
+import { useEditStore } from "@/lib/stores/editStore";
 
 type Props = {
   label?: string;
@@ -16,19 +19,27 @@ export default function AddNote({ label }: Props) {
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const add = useNoteStore((state) => state.addNote);
-  const edit = useNoteStore((state) => state.editNote);
-  const editNote = useEditNoteStore((state) => state.note);
-  const reset = useEditNoteStore((state) => state.reset);
+  const user = useUserStore((state) => state.user);
+  const editNote = useEditStore((state) => state.note);
+  const reset = useEditStore((state) => state.reset);
   const handleSubmit = () => {
-    setTitle("");
-    setContent("");
+    if (!user) return;
     const titeTrim = title?.trim();
     const contentTrim = content?.trim();
-    if (editNote) {
-      edit(editNote.id, titeTrim, contentTrim);
-      reset();
-    } else add(titeTrim, contentTrim);
+    if (editNote)
+      updateDoc(editNote.ref, {
+        title: titeTrim,
+        content: contentTrim,
+      });
+    else
+      addDoc(notesCollection, {
+        title: titeTrim,
+        content: contentTrim,
+        userId: user.uid,
+        createdAt: serverTimestamp(),
+      });
+    setTitle("");
+    setContent("");
   };
 
   useEffect(() => {

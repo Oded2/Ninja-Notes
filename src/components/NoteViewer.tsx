@@ -1,14 +1,18 @@
 "use client";
 
-import { useEditNoteStore, useNoteStore } from "@/lib/stores/noteStore";
+import { useEditStore } from "@/lib/stores/editStore";
+import { Note } from "@/lib/types";
 import clsx from "clsx";
+import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
-export default function NoteViewer() {
-  const notes = useNoteStore((state) => state.notes);
-  const setEditNote = useEditNoteStore((state) => state.update);
-  const removeNote = useNoteStore((state) => state.removeNote);
+type Props = {
+  notes: Note[];
+};
+
+export default function NoteViewer({ notes }: Props) {
+  const setEditNote = useEditStore((state) => state.update);
   const [expandedNotes, setExpandedNotes] = useState<string[]>([]);
 
   return (
@@ -16,10 +20,10 @@ export default function NoteViewer() {
       <AnimatePresence mode="popLayout">
         {notes.length > 0 ? (
           notes.map((note) => {
-            const isExpanded = expandedNotes.includes(note.id);
+            const isExpanded = expandedNotes.includes(note.ref.id);
             return (
               <motion.div
-                key={note.id}
+                key={note.ref.id}
                 layout
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -53,7 +57,9 @@ export default function NoteViewer() {
                     <button
                       onClick={() =>
                         setExpandedNotes(
-                          expandedNotes.filter((noteId) => noteId !== note.id),
+                          expandedNotes.filter(
+                            (noteId) => noteId !== note.ref.id,
+                          ),
                         )
                       }
                     >
@@ -62,7 +68,7 @@ export default function NoteViewer() {
                   ) : (
                     <button
                       onClick={() =>
-                        setExpandedNotes([...expandedNotes, note.id])
+                        setExpandedNotes([...expandedNotes, note.ref.id])
                       }
                     >
                       Expand
@@ -70,7 +76,7 @@ export default function NoteViewer() {
                   )}
                   <button onClick={() => setEditNote(note)}>Edit</button>
                   <button
-                    onClick={() => removeNote(note.id)}
+                    onClick={() => deleteDoc(note.ref)}
                     className="text-red-400"
                   >
                     Delete
