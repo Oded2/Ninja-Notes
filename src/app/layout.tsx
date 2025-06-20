@@ -22,9 +22,13 @@ export default function RootLayout({
     const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log("Auth state change");
       setUser(user);
-      if (user && pathnameRef.current === "/auth") routerRef.current.push("/");
-      else if (!user && pathnameRef.current === "/")
+      if (user && pathnameRef.current === "/auth") {
+        // User is logged in and is trying to access the auth page
+        routerRef.current.push("/");
+      } else if (!user && pathnameRef.current !== "/auth") {
+        // User isn't logged in and is trying to access a page that's not auth
         routerRef.current.push("/auth");
+      }
     });
     return unsubscribe;
   }, [setUser]);
@@ -40,8 +44,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div className="flex min-h-screen flex-col bg-slate-50">
-          <div className="container mx-auto flex grow flex-col px-5 py-20 sm:px-0">
+        <div className="flex min-h-screen flex-col bg-gray-100">
+          <div className="container mx-auto flex grow flex-col px-5 py-20 text-slate-950 sm:px-0">
             {children}
           </div>
         </div>

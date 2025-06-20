@@ -1,4 +1,4 @@
-import ClientHome from "@/components/ClientHome";
+import HomeClient from "@/components/HomeClient";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <ClientHome />;
+  return <HomeClient />;
 }
