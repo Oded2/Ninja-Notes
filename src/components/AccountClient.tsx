@@ -12,13 +12,15 @@ export default function AccountClient() {
 
   return (
     <div className="relative mx-auto flex w-full max-w-5xl gap-10 rounded-2xl bg-white p-10 shadow-lg md:mt-20">
-      <Image
-        src="/logo.png"
-        alt="Logo"
-        height={1024}
-        width={1024}
-        className="my-auto size-96 rounded-2xl"
-      />
+      <div className="py-5">
+        <Image
+          src="/logo.png"
+          alt="Logo"
+          height={1024}
+          width={1024}
+          className="my-auto size-92 rounded-2xl"
+        />
+      </div>
       <div className="grow p-5">
         <h2 className="mb-4 text-center text-3xl font-bold text-slate-950/90">
           Account Settings
