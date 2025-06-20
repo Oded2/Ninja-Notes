@@ -27,7 +27,7 @@ export default function FormInput({
         id={id}
         value={val}
         onChange={(e) => setVal(e.target.value)}
-        className="grow text-sm outline-none"
+        className="grow text-sm font-medium text-slate-950/80 outline-none"
         placeholder={label}
         minLength={type === "password" ? 8 : undefined}
         maxLength={type === "password" ? 4096 : undefined}

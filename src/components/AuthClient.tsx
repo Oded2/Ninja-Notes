@@ -21,7 +21,7 @@ export default function AuthClient() {
   const { signup, signin } = authHandlers;
 
   const handleSubmit = () => {
-    if (password !== confirmPassword) {
+    if (isSignUp && password !== confirmPassword) {
       alert("Passwords must match");
       return;
     }
