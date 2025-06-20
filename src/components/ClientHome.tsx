@@ -11,7 +11,6 @@ import { authHandlers, notesCollection } from "@/lib/firebase";
 import { onSnapshot } from "firebase/firestore";
 import { noteTypeGaurd } from "@/lib/typegaurds";
 import { Note } from "@/lib/types";
-// import { useUserStore } from "@/lib/stores/userStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -31,8 +30,6 @@ export default function ClientHome() {
     });
     return unsubscribe;
   }, []);
-  // const user = useUserStore((state) => state.user);
-  // const loading = useUserStore((state) => state.loading);
 
   useEffect(() => {
     if (first.current) setViewNotes(!editNote);
