@@ -29,14 +29,7 @@ export default function NoteViewer({ notes }: Props) {
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
                 className={clsx(
-                  "bg-slate-200/60",
-                  "shadow-lg",
-                  "rounded-xl",
-                  "p-5",
-                  "flex",
-                  "flex-col",
-                  "gap-2",
-                  "col-auto",
+                  "flex flex-col gap-2 rounded-xl bg-slate-200/60 p-5 shadow-lg",
                   {
                     "col-span-full": isExpanded,
                   },

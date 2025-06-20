@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { Note } from "./types";
 
 export function firebaseAuthErrorTypeGaurd(
@@ -19,6 +20,7 @@ export function noteTypeGaurd(obj: unknown): obj is Note {
   return (
     note.ref instanceof Object &&
     "id" in note.ref && // basic check that it's a Firestore DocumentReference
+    note.createdAt instanceof Timestamp &&
     typeof note.userId === "string" &&
     (note.title === undefined || typeof note.title === "string") &&
     (note.content === undefined || typeof note.content === "string")
