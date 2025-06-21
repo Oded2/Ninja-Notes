@@ -3,7 +3,6 @@ import { collection, getFirestore } from "firebase/firestore";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
   sendPasswordResetEmail,
