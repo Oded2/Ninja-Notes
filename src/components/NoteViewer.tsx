@@ -42,7 +42,7 @@ export default function NoteViewer({
         } = note;
         const isOpen = !closedNotes.includes(id);
         return (
-          <AnimatePresence mode="popLayout">
+          <AnimatePresence key={note.ref.id} mode="popLayout">
             <motion.div
               layout
               animate={{ opacity: 1, scale: 1 }}
