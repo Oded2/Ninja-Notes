@@ -14,6 +14,8 @@ export default function AccountSettings() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [purgeCompleted, setPurgeCompleted] = useState(false);
+  const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
 
   const handleEmailChange = async () => {
     if (!user) return;
@@ -30,15 +32,31 @@ export default function AccountSettings() {
     await updatePassword(user, newPassword).catch(handleError);
     alert("Your password has been updated");
   };
-  const handleAccountDelete = async () => {
-    if (!confirm("Are you sure you want to delete your account?")) return;
+  const handleNotePurge = async (interactive: boolean) => {
+    if (
+      interactive &&
+      !confirm("Are you sure you want to delete all of your notes?")
+    )
+      return;
+    setPurgeCompleted(interactive);
     const q = query(notesCollection, where("userId", "==", user?.uid));
     const promises = await getDocs(q).then((snapshot) =>
       snapshot.docs.map((doc) => deleteDoc(doc.ref)),
     );
-    Promise.all(promises)
-      .then(() => user?.delete().catch(handleError))
-      .catch(handleError);
+    await Promise.all(promises).catch((e) => {
+      handleError(e);
+      setPurgeCompleted(false);
+    });
+    alert("Your notes have been successfully deleted");
+  };
+  const handleAccountDelete = async () => {
+    if (!confirm("Are you sure you want to delete your account?")) return;
+    setAccountDeleteCompleted(true);
+    await handleNotePurge(false);
+    await user?.delete().catch((e) => {
+      handleError(e);
+      setAccountDeleteCompleted(false);
+    });
   };
 
   return (
@@ -72,12 +90,14 @@ export default function AccountSettings() {
           type="password"
         />
       </AccountInputContainer>
-      <button
-        onClick={handleAccountDelete}
-        className="mx-auto cursor-pointer text-sm text-red-400 hover:underline"
-      >
-        Delete Account
-      </button>
+      <div className="divider mx-auto flex divide-x text-sm text-red-400 *:px-1.5 *:not-disabled:cursor-pointer *:not-disabled:hover:underline *:disabled:opacity-50">
+        <button disabled={purgeCompleted} onClick={() => handleNotePurge(true)}>
+          Purge Notes
+        </button>
+        <button disabled={accountDeleteCompleted} onClick={handleAccountDelete}>
+          Delete Account
+        </button>
+      </div>
     </div>
   );
 }
