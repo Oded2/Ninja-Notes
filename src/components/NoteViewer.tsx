@@ -5,6 +5,7 @@ import { Note } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
+import Collapse from "./Collapse";
 
 type Props = {
   notes: Note[];
@@ -57,12 +58,12 @@ export default function NoteViewer({ notes }: Props) {
                     })}
                   </span>
                 </div>
-                {isOpen && (
+                <Collapse open={isOpen}>
                   <p className="whitespace-pre-wrap">
                     {note.content || "No content"}
                   </p>
-                )}
-                <div className="mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
+                </Collapse>
+                <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (
                     <button
                       onClick={() =>
