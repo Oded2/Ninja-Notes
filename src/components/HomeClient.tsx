@@ -108,14 +108,13 @@ export default function ClientHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
-              className="flex flex-col gap-4"
             >
               <button
                 onClick={() => {
                   setNotes((state) => state.toReversed());
                   reverse.current = !reverse.current;
                 }}
-                className="cursor-pointer transition-opacity hover:opacity-70 active:opacity-60"
+                className="mb-4 cursor-pointer transition-opacity hover:opacity-70 active:opacity-60"
               >
                 <ArrowsUpDownIcon className="size-6" />
               </button>
