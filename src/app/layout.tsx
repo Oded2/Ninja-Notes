@@ -2,7 +2,6 @@
 
 import "./globals.css";
 import { useEffect, useRef } from "react";
-// import { Note, useNoteStore } from "@/lib/stores/editStore";
 import { auth } from "@/lib/firebase";
 import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/stores/userStore";
@@ -11,7 +10,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // const add = useNoteStore((state) => state.addNote);
   const pathname = usePathname();
   const router = useRouter();
   const routerRef = useRef(router);
