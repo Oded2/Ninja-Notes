@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers, notesCollection } from "@/lib/firebase";
-import { onSnapshot } from "firebase/firestore";
+import { onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { noteTypeGaurd } from "@/lib/typegaurds";
 import { Note } from "@/lib/types";
 import { useUserStore } from "@/lib/stores/userStore";
@@ -46,7 +46,13 @@ export default function ClientHome() {
   }, [user]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(notesCollection, (snapshot) => {
+    if (!user) return;
+    const q = query(
+      notesCollection,
+      where("userId", "==", user.uid),
+      orderBy("createdAt", "desc"),
+    );
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       console.log("Subscribed");
       const snapshotNotes = snapshot.docs
         .map((doc) => ({
@@ -57,7 +63,7 @@ export default function ClientHome() {
       setNotes(snapshotNotes);
     });
     return unsubscribe;
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     if (first.current) setViewNotes(!editNote);
