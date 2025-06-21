@@ -35,16 +35,13 @@ export default function NoteViewer({
   };
 
   return notes.length > 0 ? (
-    notes.map((note) => {
-      const {
-        ref: { id },
-      } = note;
-      const isOpen = !closedNotes.includes(id);
-      return (
-        <div
-          className="flex flex-col rounded-lg border border-slate-950/20"
-          key={id}
-        >
+    <div className="flex flex-col rounded-lg border border-slate-950/20">
+      {notes.map((note) => {
+        const {
+          ref: { id },
+        } = note;
+        const isOpen = !closedNotes.includes(id);
+        return (
           <AnimatePresence mode="popLayout">
             <motion.div
               layout
@@ -105,9 +102,9 @@ export default function NoteViewer({
               </div>
             </motion.div>{" "}
           </AnimatePresence>
-        </div>
-      );
-    })
+        );
+      })}
+    </div>
   ) : (
     <div>No notes</div>
   );
