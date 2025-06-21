@@ -13,7 +13,10 @@ import { noteTypeGaurd } from "@/lib/typegaurds";
 import { Note } from "@/lib/types";
 import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
-import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import {
+  ArrowsUpDownIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
 
 export default function ClientHome() {
@@ -24,6 +27,7 @@ export default function ClientHome() {
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
+  const reverse = useRef(false);
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -45,7 +49,7 @@ export default function ClientHome() {
           ...doc.data(),
         }))
         .filter((note) => noteTypeGaurd(note));
-      setNotes(snapshotNotes);
+      setNotes(reverse.current ? snapshotNotes.toReversed() : snapshotNotes);
     });
     return unsubscribe;
   }, [user]);
@@ -104,7 +108,18 @@ export default function ClientHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
+              className="flex flex-col gap-4"
             >
+              <button
+                onClick={() => {
+                  setNotes((state) => state.toReversed());
+                  reverse.current = !reverse.current;
+                }}
+                className="cursor-pointer transition-opacity hover:opacity-70 active:opacity-60"
+              >
+                <ArrowsUpDownIcon className="size-6" />
+              </button>
+
               <NoteViewer notes={notes} />
             </motion.div>
           ) : (
