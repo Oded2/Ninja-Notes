@@ -27,12 +27,13 @@ export default function AddNote({ label }: Props) {
     if (!user) return;
     const titeTrim = title?.trim();
     const contentTrim = content?.trim();
-    if (editNote)
+    if (editNote) {
       updateDoc(editNote.ref, {
         title: titeTrim,
         content: contentTrim,
       });
-    else
+      reset();
+    } else
       addDoc(notesCollection, {
         title: titeTrim,
         content: contentTrim,
