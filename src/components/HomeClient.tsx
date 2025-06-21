@@ -30,7 +30,7 @@ export default function ClientHome() {
   const [email, setEmail] = useState<string | null>(null);
   const reverse = useRef(false);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
-  // At least one of the notes are open
+  // At least one of the notes are closed
   const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
 
   useEffect(() => {
