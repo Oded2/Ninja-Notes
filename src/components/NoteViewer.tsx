@@ -2,7 +2,7 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { Note } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Collapse from "./Collapse";
 import { handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
