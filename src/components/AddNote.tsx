@@ -24,7 +24,6 @@ export default function AddNote({ label }: Props) {
   const reset = useEditStore((state) => state.reset);
   const handleSubmit = () => {
     if (!user) return;
-    if (!user) return;
     const titeTrim = title?.trim();
     const contentTrim = content?.trim();
     if (editNote) {
