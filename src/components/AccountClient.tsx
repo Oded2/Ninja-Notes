@@ -12,7 +12,7 @@ export default function AccountClient() {
 
   return (
     <div className="relative mx-auto flex w-full max-w-5xl gap-10 rounded-2xl bg-white p-10 shadow-lg md:mt-20">
-      <div className="py-5">
+      <div className="hidden py-5 sm:inline-block">
         <Image
           src="/logo.png"
           alt="Logo"

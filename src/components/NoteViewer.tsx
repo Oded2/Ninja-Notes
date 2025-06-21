@@ -2,7 +2,6 @@
 
 import { useEditStore } from "@/lib/stores/editStore";
 import { Note } from "@/lib/types";
-import clsx from "clsx";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
@@ -13,14 +12,28 @@ type Props = {
 
 export default function NoteViewer({ notes }: Props) {
   const setEditNote = useEditStore((state) => state.update);
-  const [expandedNotes, setExpandedNotes] = useState<string[]>([]);
+  const [closedNotes, setClosedNotes] = useState<string[]>([]);
+  const handleDelete = (note: Note) => {
+    if (
+      !confirm(
+        `This will delete your note from ${note.createdAt
+          .toDate()
+          .toLocaleString(undefined, {
+            day: "numeric",
+            month: "numeric",
+          })}. Are you sure you want to continue?`,
+      )
+    )
+      return;
+    deleteDoc(note.ref);
+  };
 
   return (
-    <div className="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-col gap-5 rounded-lg border border-slate-950/20 py-5">
       <AnimatePresence mode="popLayout">
         {notes.length > 0 ? (
           notes.map((note) => {
-            const isExpanded = expandedNotes.includes(note.ref.id);
+            const isOpen = !closedNotes.includes(note.ref.id);
             return (
               <motion.div
                 key={note.ref.id}
@@ -28,12 +41,7 @@ export default function NoteViewer({ notes }: Props) {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
-                className={clsx(
-                  "flex flex-col gap-2 rounded-xl bg-slate-200/60 p-5 shadow-lg",
-                  {
-                    "col-span-full": isExpanded,
-                  },
-                )}
+                className="flex flex-col gap-2 border-slate-950/20 px-5 not-last:border-b not-last:pb-5"
               >
                 <div className="flex flex-col">
                   <h2 className="text-xl font-bold">
@@ -49,38 +57,34 @@ export default function NoteViewer({ notes }: Props) {
                     })}
                   </span>
                 </div>
-                <p
-                  className={clsx("whitespace-pre-wrap", {
-                    "line-clamp-10": !isExpanded,
-                  })}
-                >
-                  {note.content || "No content"}
-                </p>
+                {isOpen && (
+                  <p className="whitespace-pre-wrap">
+                    {note.content || "No content"}
+                  </p>
+                )}
                 <div className="mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
-                  {isExpanded ? (
+                  {isOpen ? (
                     <button
                       onClick={() =>
-                        setExpandedNotes(
-                          expandedNotes.filter(
-                            (noteId) => noteId !== note.ref.id,
-                          ),
-                        )
+                        setClosedNotes((state) => [...state, note.ref.id])
                       }
                     >
-                      Minimize
+                      Close
                     </button>
                   ) : (
                     <button
                       onClick={() =>
-                        setExpandedNotes([...expandedNotes, note.ref.id])
+                        setClosedNotes((state) =>
+                          state.filter((noteId) => noteId !== note.ref.id),
+                        )
                       }
                     >
-                      Expand
+                      Open
                     </button>
                   )}
                   <button onClick={() => setEditNote(note)}>Edit</button>
                   <button
-                    onClick={() => deleteDoc(note.ref)}
+                    onClick={() => handleDelete(note)}
                     className="text-red-400"
                   >
                     Delete
