@@ -5,6 +5,12 @@ import { useEffect, useRef } from "react";
 import { auth } from "@/lib/firebase";
 import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/stores/userStore";
+import { Rubik } from "next/font/google";
+
+const geistSans = Rubik({
+  subsets: ["latin"],
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,7 +47,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className={geistSans.className}>
         <div className="flex min-h-screen flex-col bg-gray-50">
           <div className="container mx-auto flex grow flex-col px-5 py-20 text-slate-950 sm:px-0">
             {children}
