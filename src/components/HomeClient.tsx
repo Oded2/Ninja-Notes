@@ -5,7 +5,7 @@ import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
 import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers, notesCollection } from "@/lib/firebase";
 import { onSnapshot, orderBy, query, where } from "firebase/firestore";
@@ -15,6 +15,7 @@ import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
 import {
   ArrowsUpDownIcon,
+  ChevronDoubleUpIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
@@ -28,6 +29,9 @@ export default function ClientHome() {
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
   const reverse = useRef(false);
+  const [closedNotes, setClosedNotes] = useState<string[]>([]);
+  // At least one of the notes are open
+  const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -109,17 +113,37 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              <button
-                onClick={() => {
-                  setNotes((state) => state.toReversed());
-                  reverse.current = !reverse.current;
-                }}
-                className="mb-4 cursor-pointer transition-opacity hover:opacity-70 active:opacity-60"
-              >
-                <ArrowsUpDownIcon className="size-6" />
-              </button>
+              <div className="mb-4 flex gap-2 *:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
+                <button
+                  onClick={() => {
+                    setNotes((state) => state.toReversed());
+                    reverse.current = !reverse.current;
+                  }}
+                >
+                  <ArrowsUpDownIcon className="size-6" />
+                </button>
+                <motion.button
+                  initial={false}
+                  animate={{ rotate: notesOpen ? 180 : 0 }}
+                  transition={{
+                    type: "spring",
+                    duration: 0.5,
+                    ease: "easeInOut",
+                  }}
+                  onClick={() => {
+                    if (notesOpen) setClosedNotes([]);
+                    else setClosedNotes(notes.map((note) => note.ref.id));
+                  }}
+                >
+                  <ChevronDoubleUpIcon className="size-6" />
+                </motion.button>
+              </div>
 
-              <NoteViewer notes={notes} />
+              <NoteViewer
+                notes={notes}
+                closedNotes={closedNotes}
+                setClosedNotes={setClosedNotes}
+              />
             </motion.div>
           ) : (
             <motion.div

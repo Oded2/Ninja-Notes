@@ -24,6 +24,7 @@ export default function Collapse({ open, children }: Props) {
 
   return (
     <motion.div
+      initial={open}
       animate={{ height: open ? contentHeight : 0 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className="overflow-hidden"

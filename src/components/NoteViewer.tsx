@@ -1,20 +1,23 @@
-"use client";
-
 import { useEditStore } from "@/lib/stores/editStore";
 import { Note } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Collapse from "./Collapse";
 import { handleError } from "@/lib/helpers";
 
 type Props = {
   notes: Note[];
+  closedNotes: string[];
+  setClosedNotes: Dispatch<SetStateAction<string[]>>;
 };
 
-export default function NoteViewer({ notes }: Props) {
+export default function NoteViewer({
+  notes,
+  closedNotes,
+  setClosedNotes,
+}: Props) {
   const setEditNote = useEditStore((state) => state.update);
-  const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const handleDelete = (note: Note) => {
     if (
       !confirm(
