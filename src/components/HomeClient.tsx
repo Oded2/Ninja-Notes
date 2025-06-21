@@ -37,8 +37,8 @@ export default function ClientHome() {
       where("userId", "==", user.uid),
       orderBy("createdAt", "desc"),
     );
+    console.log("Subscribed");
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log("Subscribed");
       const snapshotNotes = snapshot.docs
         .map((doc) => ({
           ref: doc.ref,
