@@ -4,11 +4,7 @@ import { useState } from "react";
 import AccountInput from "./AccountInput";
 import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
-import {
-  sendEmailVerification,
-  updateEmail,
-  updatePassword,
-} from "firebase/auth";
+import { updateEmail, updatePassword } from "firebase/auth";
 import { handleError } from "@/lib/helpers";
 import { deleteDoc, getDocs, query, where } from "firebase/firestore";
 import { notesCollection } from "@/lib/firebase";
