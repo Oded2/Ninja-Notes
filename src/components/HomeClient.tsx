@@ -79,25 +79,27 @@ export default function ClientHome() {
             alt="Logo"
             width={1024}
             height={1024}
-            className="size-24 max-h-full rounded-2xl"
+            className="mx-auto hidden size-24 max-h-full rounded-2xl sm:inline-block"
           />
           <div className="my-auto flex flex-col gap-2 text-center">
             <h1 className="text-6xl font-bold text-slate-950">
               <span className="text-red-500">Ninja</span> Notes
             </h1>
-            <div className="mx-auto flex gap-1 text-slate-950/80">
-              <span>{email}</span>
-              <span className="after:content-['|']" />
-              <Link href="/account" className="hover:underline">
-                Account
-              </Link>
-              <span className="after:content-['|']" />
-              <button
-                onClick={authHandlers.signout}
-                className="cursor-pointer hover:underline"
-              >
-                Sign out
-              </button>
+            <div className="mx-auto flex flex-col divide-y text-slate-950/80 *:py-1 sm:flex-row sm:divide-x sm:divide-y-0 *:sm:px-1 *:sm:py-0">
+              <div>{email}</div>
+              <div>
+                <Link href="/account" className="hover:underline">
+                  Account
+                </Link>
+              </div>
+              <div>
+                <button
+                  onClick={authHandlers.signout}
+                  className="cursor-pointer hover:underline"
+                >
+                  Sign out
+                </button>
+              </div>
             </div>
           </div>
         </div>
