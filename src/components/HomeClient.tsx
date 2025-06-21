@@ -23,6 +23,7 @@ export default function ClientHome() {
   const editNote = useEditStore((state) => state.note);
   const [notes, setNotes] = useState<Note[]>([]);
   const user = useUserStore((state) => state.user);
+  const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
   const [inProgress, setInProgress] = useState(false);
 
@@ -126,7 +127,7 @@ export default function ClientHome() {
           )}
         </AnimatePresence>
       </div>
-      {!user?.emailVerified && (
+      {!loading && !user?.emailVerified && (
         <div className="fixed end-5 bottom-5 flex items-center">
           <ExclamationCircleIcon className="peer size-12 text-red-500" />
           <div className="pointer-events-none absolute end-full rounded-lg bg-gray-900 p-3 text-slate-50 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">

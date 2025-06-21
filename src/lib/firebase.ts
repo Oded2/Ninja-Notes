@@ -25,14 +25,8 @@ const db = getFirestore(app);
 const notesCollection = collection(db, "notes");
 const auth = getAuth(app);
 const authHandlers = {
-  signup: async (email: string, password: string) => {
-    const { user } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password,
-    );
-    await sendEmailVerification(user);
-  },
+  signup: async (email: string, password: string) =>
+    await createUserWithEmailAndPassword(auth, email, password),
   signin: async (email: string, password: string) => {
     await signInWithEmailAndPassword(auth, email, password);
   },
