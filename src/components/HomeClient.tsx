@@ -14,8 +14,7 @@ import { Note } from "@/lib/types";
 import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
-import { sendEmailVerification } from "firebase/auth";
-import { handleError } from "@/lib/helpers";
+import VerifyEmail from "./VerifyEmail";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -25,20 +24,6 @@ export default function ClientHome() {
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
-  const [inProgress, setInProgress] = useState(false);
-
-  const handleEmailVerification = () => {
-    if (!user) return;
-    setInProgress(true);
-    sendEmailVerification(user)
-      .then(() => {
-        setInProgress(false);
-        alert(
-          `An email has been sent to ${user.email}. If you do not see the email, please check your spam.`,
-        );
-      })
-      .catch(handleError);
-  };
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -136,21 +121,17 @@ export default function ClientHome() {
         </AnimatePresence>
       </div>
       {!loading && !user?.emailVerified && (
-        <div className="fixed end-5 bottom-5 flex items-center">
-          <ExclamationCircleIcon className="peer size-12 text-red-500" />
-          <div className="pointer-events-none absolute end-full rounded-lg bg-gray-900 p-3 text-slate-50 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
-            <span className="whitespace-nowrap">
-              Your email is unverified.{" "}
-              <button
-                onClick={handleEmailVerification}
-                disabled={inProgress}
-                className="cursor-pointer underline hover:opacity-70 active:opacity-60 disabled:opacity-50"
-              >
-                Send verification email
-              </button>
-            </span>
+        <>
+          <div className="fixed bottom-2 left-1/2 -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-slate-50 pointer-fine:hidden">
+            <VerifyEmail />
           </div>
-        </div>
+          <div className="fixed end-5 bottom-5 hidden items-center pointer-fine:flex">
+            <ExclamationCircleIcon className="peer size-12 text-red-500" />
+            <div className="pointer-events-none absolute end-full rounded-lg bg-gray-900 p-3 text-slate-50 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
+              <VerifyEmail />
+            </div>
+          </div>
+        </>
       )}
     </>
   );
