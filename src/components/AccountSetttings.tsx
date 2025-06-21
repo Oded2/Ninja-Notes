@@ -4,7 +4,11 @@ import { useState } from "react";
 import AccountInput from "./AccountInput";
 import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
-import { updateEmail, updatePassword } from "firebase/auth";
+import {
+  sendEmailVerification,
+  updateEmail,
+  updatePassword,
+} from "firebase/auth";
 import { handleError } from "@/lib/helpers";
 import { deleteDoc, getDocs, query, where } from "firebase/firestore";
 import { notesCollection } from "@/lib/firebase";
@@ -18,6 +22,8 @@ export default function AccountSettings() {
   const handleEmailChange = async () => {
     if (!user) return;
     await updateEmail(user, newEmail).catch(handleError);
+    alert(`Your email has been updated to ${newEmail}`);
+    setNewEmail("");
   };
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
@@ -26,6 +32,7 @@ export default function AccountSettings() {
     }
     if (!user) return;
     await updatePassword(user, newPassword).catch(handleError);
+    alert("Your password has been updated");
   };
   const handleAccountDelete = async () => {
     if (!confirm("Are you sure you want to delete your account?")) return;
@@ -35,9 +42,7 @@ export default function AccountSettings() {
     );
     Promise.all(promises)
       .then(() => user?.delete().catch(handleError))
-      .catch(() => {
-        alert("An unknown error has occured");
-      });
+      .catch(handleError);
   };
 
   return (
