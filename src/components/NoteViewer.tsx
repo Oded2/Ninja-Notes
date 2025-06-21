@@ -6,6 +6,7 @@ import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import Collapse from "./Collapse";
+import { handleError } from "@/lib/helpers";
 
 type Props = {
   notes: Note[];
@@ -26,7 +27,7 @@ export default function NoteViewer({ notes }: Props) {
       )
     )
       return;
-    deleteDoc(note.ref);
+    deleteDoc(note.ref).catch(handleError);
   };
 
   return (
@@ -34,10 +35,13 @@ export default function NoteViewer({ notes }: Props) {
       <AnimatePresence mode="popLayout">
         {notes.length > 0 ? (
           notes.map((note) => {
-            const isOpen = !closedNotes.includes(note.ref.id);
+            const {
+              ref: { id },
+            } = note;
+            const isOpen = !closedNotes.includes(id);
             return (
               <motion.div
-                key={note.ref.id}
+                key={id}
                 layout
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -66,9 +70,7 @@ export default function NoteViewer({ notes }: Props) {
                 <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (
                     <button
-                      onClick={() =>
-                        setClosedNotes((state) => [...state, note.ref.id])
-                      }
+                      onClick={() => setClosedNotes((state) => [...state, id])}
                     >
                       Close
                     </button>
@@ -76,7 +78,7 @@ export default function NoteViewer({ notes }: Props) {
                     <button
                       onClick={() =>
                         setClosedNotes((state) =>
-                          state.filter((noteId) => noteId !== note.ref.id),
+                          state.filter((noteId) => noteId !== id),
                         )
                       }
                     >

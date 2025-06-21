@@ -59,7 +59,7 @@ export default function AddNote({ label }: Props) {
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
       <InputContainer>
-        <label className="font-medium italic" htmlFor={`title-${id}`}>
+        <label className="font-medium" htmlFor={`title-${id}`}>
           Title
         </label>
         <input
@@ -67,14 +67,14 @@ export default function AddNote({ label }: Props) {
           onChange={(e) => setTitle(e.target.value)}
           type="text"
           id={`title-${id}`}
-          placeholder="Evidence that Batman is Bruce Wayne"
+          placeholder="Could Bruce Wayne be the Batman?"
           className="grow outline-none"
           maxLength={max.title}
         />
         <span className="text-xs">{`${title.length.toLocaleString()}/${max.title.toLocaleString()}`}</span>
       </InputContainer>
       <InputContainer>
-        <label className="font-medium italic" htmlFor={id}>
+        <label className="font-medium" htmlFor={id}>
           {label}
         </label>
         <textarea
