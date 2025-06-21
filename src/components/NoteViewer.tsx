@@ -44,7 +44,8 @@ export default function NoteViewer({ notes }: Props) {
                       minute: "numeric",
                       hour: "numeric",
                       day: "numeric",
-                      month: "numeric",
+                      month: "long",
+                      year: "numeric",
                     })}
                   </span>
                 </div>
