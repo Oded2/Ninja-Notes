@@ -100,7 +100,7 @@ export default function NoteViewer({
                   Delete
                 </button>
               </div>
-            </motion.div>{" "}
+            </motion.div>
           </AnimatePresence>
         );
       })}
