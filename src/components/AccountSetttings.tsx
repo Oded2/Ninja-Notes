@@ -44,8 +44,6 @@ export default function AccountSettings() {
     }
     if (!user) return;
     try {
-      // Update password
-      await updatePassword(user, newPassword);
       // Re‐encrypt your E2EE vault key under the new password
       // Load the existing userKey (CryptoKey) from IndexedDB
       const userKeyBase64 = await loadUserKey().then((key) => exportKey(key));
@@ -58,8 +56,10 @@ export default function AccountSettings() {
         userKeyBase64,
         newPasswordKey,
       );
-      // Write the updated encryptedUserKey + salt back to Firestore
+      // Update password
+      await updatePassword(user, newPassword);
       const userDocRef = doc(usersCollection, user.uid);
+      // Write the updated encrypted user key + salt back to Firestore
       await setDoc(
         userDocRef,
         {
