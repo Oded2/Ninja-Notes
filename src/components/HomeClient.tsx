@@ -42,6 +42,7 @@ export default function ClientHome() {
 
   useEffect(() => {
     if (!user) return;
+
     console.log("Subscribed");
     const userKeyPromise = loadUserKey();
     const q = query(

@@ -13,15 +13,18 @@ function importKey(base64: string): Promise<CryptoKey> {
 
 // Store base64-encoded raw key
 export function saveUserKey(base64Key: string) {
+  console.log("Saving user key");
   return set(keyName, base64Key);
 }
 
 export async function loadUserKey() {
+  console.log("Loading user key");
   const base64 = await get(keyName);
   if (typeof base64 !== "string") throw Error("Invalid user key");
-  return importKey(base64);
+  return await importKey(base64);
 }
 
 export function clearUserKey() {
+  console.log("Clearing user key");
   return del(keyName);
 }

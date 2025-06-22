@@ -7,6 +7,7 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from "firebase/auth";
+import { clearUserKey } from "./indexDB";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -29,7 +30,10 @@ const authHandlers = {
     createUserWithEmailAndPassword(auth, email, password),
   signin: (email: string, password: string) =>
     signInWithEmailAndPassword(auth, email, password),
-  signout: () => signOut(auth),
+  signout: async () => {
+    await signOut(auth);
+    await clearUserKey();
+  },
   forgotPassword: (email: string) => sendPasswordResetEmail(auth, email),
 };
 export { app, usersCollection, notesCollection, auth, authHandlers };

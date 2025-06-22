@@ -5,9 +5,22 @@ import AccountInput from "./AccountInput";
 import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
 import { updateEmail, updatePassword } from "firebase/auth";
-import { handleError } from "@/lib/helpers";
-import { deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import {
+  derivePasswordKey,
+  encryptWithKey,
+  exportKey,
+  handleError,
+} from "@/lib/helpers";
+import {
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { notesCollection, usersCollection } from "@/lib/firebase";
+import { loadUserKey, saveUserKey } from "@/lib/indexDB";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -29,8 +42,39 @@ export default function AccountSettings() {
       return;
     }
     if (!user) return;
-    await updatePassword(user, newPassword).catch(handleError);
-    alert("Your password has been updated");
+    try {
+      // Update password
+      await updatePassword(user, newPassword);
+      // Re‐encrypt your E2EE vault key under the new password
+      // Load the existing userKey (CryptoKey) from IndexedDB
+      const userKeyBase64 = await loadUserKey().then((key) => exportKey(key));
+      const userKeySaved = saveUserKey(userKeyBase64);
+      // Generate a new 16-byte salt
+      const newSalt = crypto.getRandomValues(new Uint8Array(16));
+      // Derive a new password key from the new password + new salt
+      const newPasswordKey = await derivePasswordKey(newPassword, newSalt);
+      // Encrypt the Base64 raw key under that new passwordKey
+      const newEncryptedUserKey = await encryptWithKey(
+        userKeyBase64,
+        newPasswordKey,
+      );
+      // Write the updated encryptedUserKey + salt back to Firestore
+      const userDocRef = doc(usersCollection, user.uid);
+      await setDoc(
+        userDocRef,
+        {
+          encryptedUserKey: newEncryptedUserKey,
+          salt: Array.from(newSalt),
+        },
+        { merge: true },
+      );
+      await userKeySaved;
+      alert("Your password has been updated");
+    } catch (err) {
+      handleError(err);
+      // If something went wrong with key storage, you may want to clear local key:
+      // await clearUserKey();
+    }
   };
   const handleNotePurge = async (interactive: boolean) => {
     if (
@@ -47,7 +91,7 @@ export default function AccountSettings() {
       handleError(e);
       setPurgeCompleted(false);
     });
-    if (!interactive) alert("Your notes have been successfully deleted");
+    if (interactive) alert("Your notes have been successfully deleted");
   };
   const handleAccountDelete = async () => {
     if (!confirm("Are you sure you want to delete your account?")) return;
