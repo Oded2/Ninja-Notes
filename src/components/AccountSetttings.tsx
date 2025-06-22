@@ -71,8 +71,6 @@ export default function AccountSettings() {
       alert("Your password has been updated");
     } catch (err) {
       handleError(err);
-      // If something went wrong with key storage, you may want to clear local key:
-      // await clearUserKey();
     }
   };
   const handleNotePurge = async (interactive: boolean) => {
