@@ -22,12 +22,7 @@ export default function NoteViewer({
   const handleDelete = (note: Note) => {
     if (
       !confirm(
-        `This will delete your note from ${note.createdAt
-          .toDate()
-          .toLocaleString(undefined, {
-            day: "numeric",
-            month: "numeric",
-          })}. Are you sure you want to continue?`,
+        `This will delete "${note.title || "Untitled"}". Are you sure you want to continue?`,
       )
     )
       return;
