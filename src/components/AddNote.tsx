@@ -5,6 +5,7 @@ import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
+import { handleError } from "@/lib/helpers";
 
 const max = {
   title: 100,
@@ -15,28 +16,37 @@ export default function AddNote() {
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [inProgress, setInProgress] = useState(false);
   const user = useUserStore((state) => state.user);
   const editNote = useEditStore((state) => state.note);
   const reset = useEditStore((state) => state.reset);
   const handleSubmit = () => {
     if (!user) return;
+    setInProgress(true);
     const titeTrim = title?.trim();
     const contentTrim = content?.trim();
-    if (editNote) {
-      updateDoc(editNote.ref, {
-        title: titeTrim,
-        content: contentTrim,
+    const func = async () => {
+      if (editNote) {
+        await updateDoc(editNote.ref, {
+          title: titeTrim,
+          content: contentTrim,
+        });
+        reset();
+      } else
+        await addDoc(notesCollection, {
+          title: titeTrim,
+          content: contentTrim,
+          userId: user.uid,
+          createdAt: serverTimestamp(),
+        });
+    };
+    func()
+      .catch(handleError)
+      .finally(() => {
+        setTitle("");
+        setContent("");
+        setInProgress(false);
       });
-      reset();
-    } else
-      addDoc(notesCollection, {
-        title: titeTrim,
-        content: contentTrim,
-        userId: user.uid,
-        createdAt: serverTimestamp(),
-      });
-    setTitle("");
-    setContent("");
   };
 
   useEffect(() => {
@@ -66,6 +76,7 @@ export default function AddNote() {
           placeholder="Could Bruce Wayne be the Batman?"
           className="grow outline-none"
           maxLength={max.title}
+          disabled={inProgress}
         />
         <span className="text-xs">{`${title.length.toLocaleString()}/${max.title.toLocaleString()}`}</span>
       </InputContainer>
@@ -83,6 +94,7 @@ export default function AddNote() {
           rows={8}
           required
           maxLength={max.content}
+          disabled={inProgress}
         ></textarea>
         <div className="my-1 flex grow justify-end gap-2 text-xs">
           {editNote && (
@@ -98,7 +110,12 @@ export default function AddNote() {
         </div>
       </InputContainer>
       <div className="ms-auto">
-        <Button type="submit" label={editNote ? "Edit" : "Add"} isPrimary />
+        <Button
+          type="submit"
+          disabled={inProgress}
+          label={editNote ? "Edit" : "Add"}
+          isPrimary
+        />
       </div>
     </form>
   );

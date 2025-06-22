@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { Note } from "./types";
 
-export function firebaseAuthErrorTypeGaurd(
+export function firebaseErrorTypeGaurd(
   error: unknown,
 ): error is { code: string; message: string } {
   return (
