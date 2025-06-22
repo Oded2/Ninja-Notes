@@ -26,10 +26,7 @@ export default function RootLayout({
     const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log("Auth state change");
       setUser(user);
-      if (user && pathnameRef.current === "/auth") {
-        // User is logged in and is trying to access the auth page
-        routerRef.current.push("/");
-      } else if (!user && pathnameRef.current !== "/auth") {
+      if (!user && pathnameRef.current !== "/auth") {
         // User isn't logged in and is trying to access a page that's not auth
         routerRef.current.push("/auth");
       }

@@ -21,6 +21,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function AuthClient() {
@@ -30,6 +31,7 @@ export default function AuthClient() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [inProgress, setInProgress] = useState(false);
   const { signup, signin } = authHandlers;
+  const router = useRouter();
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {
@@ -84,6 +86,7 @@ export default function AuthClient() {
         await saveUserKey(decryptedUserKeyBase64);
       } else alert("Invalid user data");
     }
+    router.push("/");
   };
 
   const handlePasswordReset = () => {
