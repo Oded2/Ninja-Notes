@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Ninja Notes",
-  description: "Browser only secure notes",
+  description: "End-to-End encrypted notes",
 };
 
 export default function Home() {
