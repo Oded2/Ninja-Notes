@@ -39,10 +39,12 @@ export default function NoteViewer({
       {notes.map((note) => {
         const {
           ref: { id },
+          title,
+          content,
         } = note;
         const isOpen = !closedNotes.includes(id);
         return (
-          <AnimatePresence key={note.ref.id} mode="popLayout">
+          <AnimatePresence key={id} mode="popLayout">
             <motion.div
               layout
               animate={{ opacity: 1, scale: 1 }}
@@ -52,9 +54,7 @@ export default function NoteViewer({
             >
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
-                  <h2 className="text-xl font-bold">
-                    {note.title || "Untitled"}
-                  </h2>
+                  <h2 className="text-xl font-bold">{title || "Untitled"}</h2>
                   <span className="text-sm text-slate-950/80">
                     {note.createdAt.toDate().toLocaleString(undefined, {
                       minute: "numeric",
@@ -66,13 +66,11 @@ export default function NoteViewer({
                   </span>
                 </div>
                 <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
-                  <CopyButton text={note.content ?? ""} />
+                  <CopyButton text={content} />
                 </div>
               </div>
               <Collapse open={isOpen}>
-                <p className="whitespace-pre-wrap">
-                  {note.content || "No content"}
-                </p>
+                <p className="whitespace-pre-wrap">{content}</p>
               </Collapse>
               <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                 {isOpen ? (

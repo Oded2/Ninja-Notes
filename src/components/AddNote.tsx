@@ -45,8 +45,8 @@ export default function AddNote({ label }: Props) {
 
   useEffect(() => {
     if (editNote) {
-      setTitle(editNote.title ?? "");
-      setContent(editNote.content ?? "");
+      setTitle(editNote.title);
+      setContent(editNote.content);
     }
   }, [editNote]);
 

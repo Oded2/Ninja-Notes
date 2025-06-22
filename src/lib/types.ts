@@ -4,6 +4,6 @@ export type Note = {
   ref: DocumentReference<DocumentData, DocumentData>;
   createdAt: Timestamp;
   userId: string;
-  title?: string;
-  content?: string;
+  title: string;
+  content: string;
 };
