@@ -5,7 +5,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail,
 } from "firebase/auth";
 import { clearUserKey } from "./indexDB";
 
@@ -34,6 +33,5 @@ const authHandlers = {
     await signOut(auth);
     await clearUserKey();
   },
-  forgotPassword: (email: string) => sendPasswordResetEmail(auth, email),
 };
 export { app, usersCollection, notesCollection, auth, authHandlers };

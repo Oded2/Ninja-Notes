@@ -29,7 +29,7 @@ export default function AuthClient() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [inProgress, setInProgress] = useState(false);
-  const { signup, signin, forgotPassword } = authHandlers;
+  const { signup, signin } = authHandlers;
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {
@@ -87,15 +87,9 @@ export default function AuthClient() {
   };
 
   const handlePasswordReset = () => {
-    if (email.length == 0) {
-      alert("Please enter your email");
-      return;
-    }
-    setInProgress(true);
-    forgotPassword(email)
-      .then(() => alert(`An email has been sent to ${email} with instructions`))
-      .catch(handleError)
-      .finally(() => setInProgress(false));
+    alert(
+      "Ninja Notes operates with zero-knowledge encryption. This means that only you can recover your account.",
+    );
   };
 
   return (
