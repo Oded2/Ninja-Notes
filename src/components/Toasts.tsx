@@ -24,7 +24,7 @@ type ToastProps = { toast: Toast };
 function ToastComponent({ toast }: ToastProps) {
   const { duration } = toast;
   const [durationLeft, setDurationLeft] = useState(duration ?? 0);
-  const remove = useToastStore((state) => state.removeToast);
+  const remove = useToastStore((state) => state.remove);
   const { id } = toast;
   useEffect(() => {
     console.log("Toast mount");
@@ -47,7 +47,7 @@ function ToastComponent({ toast }: ToastProps) {
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ type: "spring", duration: 0.3 }}
       className={clsx(
-        "relative flex flex-col rounded-xl px-5 py-3 text-white",
+        "relative flex flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm",
         {
           "bg-emerald-500": toast.type === "success",
           "bg-rose-500": toast.type === "error",

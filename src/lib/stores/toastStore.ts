@@ -3,18 +3,18 @@ import { Toast, ToastTypes } from "../types";
 
 type ToastStore = {
   toasts: Toast[];
-  addToast: (
+  add: (
     type: ToastTypes,
     title: string,
     content: string,
     duration?: number,
   ) => string;
-  removeToast: (id: string) => void;
+  remove: (id: string) => void;
 };
 
 export const useToastStore = create<ToastStore>((set) => ({
   toasts: [],
-  addToast: (type, title, content, duration) => {
+  add: (type, title, content, duration = 5000) => {
     const id = crypto.randomUUID();
     set((state) => ({
       toasts: [
@@ -30,7 +30,7 @@ export const useToastStore = create<ToastStore>((set) => ({
     }));
     return id;
   },
-  removeToast: (removeId) =>
+  remove: (removeId) =>
     set((state) => ({
       toasts: state.toasts.filter(({ id }) => id !== removeId),
     })),

@@ -6,6 +6,7 @@ import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
 import { encryptWithKey, handleError } from "@/lib/helpers";
+import { useToastStore } from "@/lib/stores/toastStore";
 
 type Props = {
   userKey: CryptoKey;
@@ -24,17 +25,26 @@ export default function AddNote({ userKey }: Props) {
   const user = useUserStore((state) => state.user);
   const editNote = useEditStore((state) => state.note);
   const reset = useEditStore((state) => state.reset);
+  const add = useToastStore((state) => state.add);
   const handleSubmit = async () => {
     if (!user) return;
     setInProgress(true);
     const titleTrim = title.trim();
     if (titleTrim.length > max.title) {
-      alert(`Title cannot exceed ${max.title.toLocaleString()} characters`);
+      add(
+        "error",
+        "Invalid title",
+        `Title cannot exceed ${max.title.toLocaleString()} characters`,
+      );
       return;
     }
     const contentTrim = content.trim();
     if (contentTrim.length > max.content) {
-      alert(`Content cannot exceed ${max.content.toLocaleString()} characters`);
+      add(
+        "error",
+        "Invalid content",
+        `Content cannot exceed ${max.content.toLocaleString()} characters`,
+      );
       return;
     }
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);

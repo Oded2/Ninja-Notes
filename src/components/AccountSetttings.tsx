@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { notesCollection, usersCollection } from "@/lib/firebase";
 import { loadUserKey } from "@/lib/indexDB";
+import { useToastStore } from "@/lib/stores/toastStore";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -30,16 +31,16 @@ export default function AccountSettings() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [purgeCompleted, setPurgeCompleted] = useState(false);
   const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
+  const add = useToastStore((state) => state.add);
 
   const handleEmailChange = async () => {
     if (!user) return;
     await updateEmail(user, newEmail).catch(handleError);
-    alert(`Your email has been updated to ${newEmail}`);
     setNewEmail("");
   };
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
-      alert("Passwords must match");
+      add("error", "Error", "Passwords must match");
       return;
     }
     if (!user) return;
@@ -70,7 +71,11 @@ export default function AccountSettings() {
         },
         { merge: true },
       );
-      alert("Your password has been updated");
+      add(
+        "success",
+        "Password updated",
+        "Your password has been successfully updated",
+      );
     } catch (err) {
       handleError(err);
     }
@@ -90,7 +95,12 @@ export default function AccountSettings() {
       handleError(e);
       setPurgeCompleted(false);
     });
-    if (interactive) alert("Your notes have been successfully deleted");
+    if (interactive)
+      add(
+        "success",
+        "Notes purged successfully",
+        "Your notes have been successfully deleted",
+      );
   };
   const handleAccountDelete = async () => {
     if (!confirm("Are you sure you want to delete your account?")) return;

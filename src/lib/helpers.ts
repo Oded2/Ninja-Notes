@@ -1,3 +1,4 @@
+import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGaurd } from "./typegaurds";
 
 export function generateUserKey() {
@@ -66,10 +67,10 @@ export function generateSalt() {
   return crypto.getRandomValues(new Uint8Array(16));
 }
 
-export const handleError = (err: unknown) => {
+export const getError = (err: unknown) => {
+  console.error(err);
   if (firebaseErrorTypeGaurd(err)) {
     const { code, message } = err;
-    console.error(`Firebase error:\nCode: ${code}\nMessage: ${message}`);
     const errorCodeMap: Record<string, string> = {
       "auth/invalid-credential": "Invalid credentials",
       "auth/invalid-email": "Invalid email address",
@@ -77,6 +78,24 @@ export const handleError = (err: unknown) => {
       "auth/wrong-password": "Wrong password",
       "permission-denied": "Permission denied",
     };
-    alert(errorCodeMap[code] ?? message);
+    return errorCodeMap[code] ?? message;
+  }
+  return null;
+};
+
+export const handleError = (err: unknown) => {
+  if (firebaseErrorTypeGaurd(err)) {
+    const { code, message } = err;
+    console.error(`Firebase error\nCode: ${code}\nMessage: ${message}`);
+    const errorCodeMap: Record<string, string> = {
+      "auth/invalid-credential": "Invalid credentials",
+      "auth/invalid-email": "Invalid email address",
+      "auth/user-not-found": "User not found",
+      "auth/wrong-password": "Wrong password",
+      "permission-denied": "Permission denied",
+    };
+    useToastStore
+      .getState()
+      .add("error", "Error", errorCodeMap[code] ?? message);
   } else console.error(err);
 };

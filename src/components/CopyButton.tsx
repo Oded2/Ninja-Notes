@@ -4,6 +4,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useToastStore } from "@/lib/stores/toastStore";
 
 type Props = {
   text: string;
@@ -11,12 +12,13 @@ type Props = {
 
 export default function CopyButton({ text }: Props) {
   const [disabled, setDisabled] = useState(false);
+  const add = useToastStore((state) => state.add);
 
   const handleCopy = () => {
     setDisabled(true);
     navigator.clipboard
       .writeText(text)
-      .catch(() => alert("An error has occurred"))
+      .catch(() => add("error", "Error", "An unknown error has occurred"))
       .then(() => {
         setTimeout(() => setDisabled(false), 2000);
       });

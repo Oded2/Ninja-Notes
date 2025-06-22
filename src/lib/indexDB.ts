@@ -22,6 +22,7 @@ export async function loadUserKey() {
   console.log("Loading user key");
   const base64 = await get(keyName);
   if (typeof base64 !== "string") {
+    // Keep alert
     alert("Your session key is missing or invalid. Please sign in again.");
     await authHandlers.signout();
     return null;

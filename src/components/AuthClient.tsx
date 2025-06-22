@@ -13,6 +13,7 @@ import {
   handleError,
 } from "@/lib/helpers";
 import { saveUserKey } from "@/lib/indexDB";
+import { useToastStore } from "@/lib/stores/toastStore";
 import { userDataTypeGaurd } from "@/lib/typegaurds";
 import {
   EnvelopeIcon,
@@ -32,10 +33,11 @@ export default function AuthClient() {
   const [inProgress, setInProgress] = useState(false);
   const { signup, signin } = authHandlers;
   const router = useRouter();
+  const add = useToastStore((state) => state.add);
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {
-      alert("Passwords must match");
+      add("error", "Error", "Passwords must match");
       return;
     }
     setInProgress(true);
@@ -84,12 +86,16 @@ export default function AuthClient() {
         );
         // Save to indexDB
         await saveUserKey(decryptedUserKeyBase64);
-      } else alert("Invalid user data");
+      } else {
+        // Keep alert
+        alert("Invalid user data");
+      }
     }
     router.push("/");
   };
 
   const handlePasswordReset = () => {
+    // Keep alert
     alert(
       "Ninja Notes operates with zero-knowledge encryption. This means that only you can recover your account.",
     );
