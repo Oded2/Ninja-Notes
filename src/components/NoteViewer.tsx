@@ -65,7 +65,7 @@ export default function NoteViewer({
                     })}
                   </span>
                 </div>
-                <div className="flex opacity-0 transition-opacity duration-75 group-hover:opacity-100 pointer-coarse:opacity-100">
+                <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
                   <CopyButton text={note.content ?? ""} />
                 </div>
               </div>
