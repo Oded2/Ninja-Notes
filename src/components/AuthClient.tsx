@@ -96,7 +96,7 @@ export default function AuthClient() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-8">
+    <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-8">
       <Image
         src="/logo.png"
         alt="Logo"
@@ -129,17 +129,23 @@ export default function AuthClient() {
           <KeyIcon />
         </FormInput>
         {isSignUp && (
-          <FormInput
-            type="password"
-            label="Confirm password"
-            val={confirmPassword}
-            setVal={setConfirmPassword}
-            required
-          >
-            <ShieldCheckIcon />
-          </FormInput>
+          <>
+            <FormInput
+              type="password"
+              label="Confirm password"
+              val={confirmPassword}
+              setVal={setConfirmPassword}
+              required
+            >
+              <ShieldCheckIcon />
+            </FormInput>
+            <span className="text-sm">
+              There&apos;s no way to recover your password. Please store it
+              safely to avoid losing access.
+            </span>
+          </>
         )}
-        <div className="flex justify-between gap-2 text-xs text-slate-950/80">
+        <div className="flex justify-between gap-2 text-sm text-slate-950/80">
           <span>
             {isSignUp
               ? "Already have an account?"

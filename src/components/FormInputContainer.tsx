@@ -25,7 +25,7 @@ export default function FormInputContainer({
         setInProgress(true);
         handleSubmit().then(() => setInProgress(false));
       }}
-      className="mx-auto flex w-full max-w-md flex-col gap-4"
+      className="flex w-full flex-col gap-4"
     >
       <h2 className="text-center text-xl font-semibold">{title}</h2>
       {children}
