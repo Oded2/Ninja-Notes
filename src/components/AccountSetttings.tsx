@@ -47,7 +47,7 @@ export default function AccountSettings() {
       handleError(e);
       setPurgeCompleted(false);
     });
-    alert("Your notes have been successfully deleted");
+    if (!interactive) alert("Your notes have been successfully deleted");
   };
   const handleAccountDelete = async () => {
     if (!confirm("Are you sure you want to delete your account?")) return;
