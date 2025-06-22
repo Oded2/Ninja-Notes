@@ -1,4 +1,5 @@
 import { get, set, del } from "idb-keyval";
+import { authHandlers } from "./firebase";
 
 const keyName = "userKey";
 
@@ -20,7 +21,11 @@ export function saveUserKey(base64Key: string) {
 export async function loadUserKey() {
   console.log("Loading user key");
   const base64 = await get(keyName);
-  if (typeof base64 !== "string") throw Error("Invalid user key");
+  if (typeof base64 !== "string") {
+    alert("Your session key is missing or invalid. Please sign in again.");
+    await authHandlers.signout();
+    return null;
+  }
   return await importKey(base64);
 }
 

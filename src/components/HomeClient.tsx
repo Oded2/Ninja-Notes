@@ -57,6 +57,7 @@ export default function ClientHome() {
 
     const unsubscribe = onSnapshot(q, async (snapshot) => {
       const userKey = await userKeyPromise;
+      if (!userKey) return;
       const encryptedNotes = snapshot.docs
         .map((doc) => ({
           ref: doc.ref,

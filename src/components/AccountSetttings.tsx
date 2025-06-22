@@ -46,7 +46,9 @@ export default function AccountSettings() {
     try {
       // Re‐encrypt your E2EE vault key under the new password
       // Load the existing userKey (CryptoKey) from IndexedDB
-      const userKeyBase64 = await loadUserKey().then((key) => exportKey(key));
+      const userKey = await loadUserKey();
+      if (!userKey) return;
+      const userKeyBase64 = await exportKey(userKey);
       // Generate a new 16-byte salt
       const newSalt = generateSalt();
       // Derive a new password key from the new password + new salt
