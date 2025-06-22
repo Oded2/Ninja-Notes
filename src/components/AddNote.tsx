@@ -28,7 +28,6 @@ export default function AddNote({ userKey }: Props) {
   const add = useToastStore((state) => state.add);
   const handleSubmit = async () => {
     if (!user) return;
-    setInProgress(true);
     const titleTrim = title.trim();
     if (titleTrim.length > max.title) {
       add(
@@ -39,14 +38,15 @@ export default function AddNote({ userKey }: Props) {
       return;
     }
     const contentTrim = content.trim();
-    if (contentTrim.length > max.content) {
+    if (!contentTrim || contentTrim.length > max.content) {
       add(
         "error",
         "Invalid content",
-        `Content cannot exceed ${max.content.toLocaleString()} characters`,
+        `Content cannot empty or exceed ${max.content.toLocaleString()} characters`,
       );
       return;
     }
+    setInProgress(true);
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
     const func = async () => {

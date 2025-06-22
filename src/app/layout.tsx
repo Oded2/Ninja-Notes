@@ -6,6 +6,7 @@ import { auth } from "@/lib/firebase";
 import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/stores/userStore";
 import { Rubik } from "next/font/google";
+import Toasts from "@/components/Toasts";
 
 const geistSans = Rubik({
   subsets: ["latin"],
@@ -50,6 +51,7 @@ export default function RootLayout({
             {children}
           </div>
         </div>
+        <Toasts />
       </body>
     </html>
   );
