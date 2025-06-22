@@ -46,7 +46,7 @@ export default function NoteViewer({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="group flex flex-col gap-2 border-slate-950/20 px-5 py-5 not-last:border-b"
+              className="group flex flex-col gap-2 border-slate-950/20 px-5 py-4 not-last:border-b"
             >
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
