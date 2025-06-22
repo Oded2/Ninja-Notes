@@ -5,7 +5,8 @@ import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { handleError } from "@/lib/helpers";
+import { encryptWithKey, handleError, importKey } from "@/lib/helpers";
+import { loadUserKey } from "@/lib/indexDB";
 
 const max = {
   title: 100,
@@ -20,22 +21,28 @@ export default function AddNote() {
   const user = useUserStore((state) => state.user);
   const editNote = useEditStore((state) => state.note);
   const reset = useEditStore((state) => state.reset);
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!user) return;
     setInProgress(true);
-    const titeTrim = title?.trim();
-    const contentTrim = content?.trim();
+    const userKeyBase64 = await loadUserKey();
+    if (!userKeyBase64) {
+      alert("No encryption key found, please sign in again");
+      return;
+    }
+    const userKey = await importKey(userKeyBase64);
+    const encryptedTitle = await encryptWithKey(title.trim(), userKey);
+    const encryptedContent = await encryptWithKey(content.trim(), userKey);
     const func = async () => {
       if (editNote) {
         await updateDoc(editNote.ref, {
-          title: titeTrim,
-          content: contentTrim,
+          title: encryptedTitle,
+          content: encryptedContent,
         });
         reset();
       } else
         await addDoc(notesCollection, {
-          title: titeTrim,
-          content: contentTrim,
+          title: encryptedTitle,
+          content: encryptedContent,
           userId: user.uid,
           createdAt: serverTimestamp(),
         });
@@ -45,8 +52,8 @@ export default function AddNote() {
       .finally(() => {
         setTitle("");
         setContent("");
-        setInProgress(false);
       });
+    setInProgress(false);
   };
 
   useEffect(() => {

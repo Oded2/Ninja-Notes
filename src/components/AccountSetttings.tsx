@@ -6,8 +6,8 @@ import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
 import { updateEmail, updatePassword } from "firebase/auth";
 import { handleError } from "@/lib/helpers";
-import { deleteDoc, getDocs, query, where } from "firebase/firestore";
-import { notesCollection } from "@/lib/firebase";
+import { deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { notesCollection, usersCollection } from "@/lib/firebase";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -53,6 +53,7 @@ export default function AccountSettings() {
     if (!confirm("Are you sure you want to delete your account?")) return;
     setAccountDeleteCompleted(true);
     await handleNotePurge(false);
+    await deleteDoc(doc(usersCollection, user?.uid)).catch(handleError);
     await user?.delete().catch((e) => {
       handleError(e);
       setAccountDeleteCompleted(false);

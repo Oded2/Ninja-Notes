@@ -21,6 +21,7 @@ const firebaseConfig = {
 // Initialize Firebase app only once (for Next.js HMR safety)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const usersCollection = collection(db, "users");
 const notesCollection = collection(db, "notes");
 const auth = getAuth(app);
 const authHandlers = {
@@ -31,4 +32,4 @@ const authHandlers = {
   signout: () => signOut(auth),
   forgotPassword: (email: string) => sendPasswordResetEmail(auth, email),
 };
-export { app, notesCollection, auth, authHandlers };
+export { app, usersCollection, notesCollection, auth, authHandlers };

@@ -2,13 +2,23 @@
 
 import FormInput from "@/components/FormInput";
 import FormInputContainer from "@/components/FormInputContainer";
-import { authHandlers } from "@/lib/firebase";
-import { handleError } from "@/lib/helpers";
+import { authHandlers, usersCollection } from "@/lib/firebase";
+import {
+  decryptWithKey,
+  derivePasswordKey,
+  encryptWithKey,
+  exportKey,
+  generateUserKey,
+  handleError,
+} from "@/lib/helpers";
+import { saveUserKey } from "@/lib/indexDB";
+import { UserData } from "@/lib/types";
 import {
   EnvelopeIcon,
   KeyIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/16/solid";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -27,10 +37,39 @@ export default function AuthClient() {
     }
     setInProgress(true);
     const func = isSignUp ? signup : signin;
-    await func(email, password).catch((err) => {
+    const { user } = await func(email, password).catch((err) => {
       setInProgress(false);
       handleError(err);
+      return { user: null };
     });
+    if (!user) return;
+    const userDocRef = doc(usersCollection, user.uid);
+    if (isSignUp) {
+      const userKeyRaw = await generateUserKey().then((key) => exportKey(key));
+      const userKeyBase64 = btoa(
+        String.fromCharCode(...new Uint8Array(userKeyRaw)),
+      );
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const passwordKey = await derivePasswordKey(password, salt);
+      const encryptedUserKey = await encryptWithKey(userKeyBase64, passwordKey);
+      await saveUserKey(userKeyBase64);
+      await setDoc(userDocRef, {
+        encryptedUserKey,
+        salt: Array.from(salt),
+      });
+    } else {
+      const userDoc = await getDoc(userDocRef);
+      const { encryptedUserKey, salt } = userDoc.data() as UserData;
+      const passwordKey = await derivePasswordKey(
+        password,
+        new Uint8Array(salt),
+      );
+      const decryptedUserKeyBase64 = await decryptWithKey(
+        encryptedUserKey,
+        passwordKey,
+      );
+      await saveUserKey(decryptedUserKeyBase64);
+    }
   };
 
   const handlePasswordReset = () => {

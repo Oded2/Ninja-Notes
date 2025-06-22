@@ -2,10 +2,11 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { Note } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Collapse from "./Collapse";
-import { handleError } from "@/lib/helpers";
+import { decryptWithKey, handleError, importKey } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
+import { loadUserKey } from "@/lib/indexDB";
 
 type Props = {
   notes: Note[];
@@ -18,6 +19,7 @@ export default function NoteViewer({
   closedNotes,
   setClosedNotes,
 }: Props) {
+  const [decryptedNotes, setDecryptedNotes] = useState<Note[]>([]);
   const setEditNote = useEditStore((state) => state.update);
   const handleDelete = (note: Note) => {
     if (
@@ -34,9 +36,23 @@ export default function NoteViewer({
     deleteDoc(note.ref).catch(handleError);
   };
 
-  return notes.length > 0 ? (
+  useEffect(() => {
+    async function decryptNotes(): Promise<Note[]> {
+      const userKeyBase64 = await loadUserKey();
+      const userKey = await importKey(userKeyBase64);
+      const promiseArr = notes.map(async (note) => ({
+        ...note,
+        title: await decryptWithKey(note.title, userKey),
+        content: await decryptWithKey(note.content, userKey),
+      }));
+      return await Promise.all(promiseArr);
+    }
+    decryptNotes().then((val) => setDecryptedNotes(val));
+  }, [notes]);
+
+  return decryptedNotes.length > 0 ? (
     <div className="flex flex-col rounded-lg border border-slate-950/20">
-      {notes.map((note) => {
+      {decryptedNotes.map((note) => {
         const {
           ref: { id },
           title,
