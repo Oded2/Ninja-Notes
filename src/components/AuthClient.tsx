@@ -117,7 +117,7 @@ export default function AuthClient() {
           setVal={setEmail}
           required
         >
-          <EnvelopeIcon className="size-6" />
+          <EnvelopeIcon />
         </FormInput>
         <FormInput
           type="password"
@@ -126,7 +126,7 @@ export default function AuthClient() {
           setVal={setPassword}
           required
         >
-          <KeyIcon className="size-6" />
+          <KeyIcon />
         </FormInput>
         {isSignUp && (
           <FormInput
@@ -136,7 +136,7 @@ export default function AuthClient() {
             setVal={setConfirmPassword}
             required
           >
-            <ShieldCheckIcon className="size-6"></ShieldCheckIcon>
+            <ShieldCheckIcon />
           </FormInput>
         )}
         <div className="flex justify-between gap-2 text-xs text-slate-950/80">

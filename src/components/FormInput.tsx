@@ -21,7 +21,9 @@ export default function FormInput({
 
   return (
     <div className="flex gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
-      <label htmlFor={id}>{icon}</label>
+      <label htmlFor={id} className="*:size-6">
+        {icon}
+      </label>
       <input
         type={type}
         id={id}
