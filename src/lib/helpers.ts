@@ -1,24 +1,20 @@
 import { firebaseErrorTypeGaurd } from "./typegaurds";
 
-export function generateUserKey(): Promise<CryptoKey> {
+export function generateUserKey() {
   return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
     "encrypt",
     "decrypt",
   ]);
 }
 
-export function exportKey(key: CryptoKey): Promise<ArrayBuffer> {
-  return crypto.subtle.exportKey("raw", key);
+export async function exportKey(key: CryptoKey) {
+  const rawKey = await crypto.subtle.exportKey("raw", key);
+  return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
 }
 
-export function importKey(
-  bufferOrBase64: Uint8Array | string,
-): Promise<CryptoKey> {
-  const finalBuffer =
-    typeof bufferOrBase64 === "string"
-      ? Uint8Array.from(atob(bufferOrBase64), (c) => c.charCodeAt(0))
-      : bufferOrBase64;
-  return crypto.subtle.importKey("raw", finalBuffer, "AES-GCM", true, [
+export function importKey(base64: string): Promise<CryptoKey> {
+  const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  return crypto.subtle.importKey("raw", buffer, "AES-GCM", true, [
     "encrypt",
     "decrypt",
   ]);

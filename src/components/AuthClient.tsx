@@ -12,7 +12,7 @@ import {
   handleError,
 } from "@/lib/helpers";
 import { saveUserKey } from "@/lib/indexDB";
-import { UserData } from "@/lib/types";
+import { userDataTypeGaurd } from "@/lib/typegaurds";
 import {
   EnvelopeIcon,
   KeyIcon,
@@ -45,30 +45,43 @@ export default function AuthClient() {
     if (!user) return;
     const userDocRef = doc(usersCollection, user.uid);
     if (isSignUp) {
-      const userKeyRaw = await generateUserKey().then((key) => exportKey(key));
-      const userKeyBase64 = btoa(
-        String.fromCharCode(...new Uint8Array(userKeyRaw)),
+      // Generate a key then export it
+      const userKeyBase64 = await generateUserKey().then((key) =>
+        exportKey(key),
       );
+      // Generate random salt
       const salt = crypto.getRandomValues(new Uint8Array(16));
+      // Generate a random key derived from the password
       const passwordKey = await derivePasswordKey(password, salt);
+      // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password
       const encryptedUserKey = await encryptWithKey(userKeyBase64, passwordKey);
+      // Save to indexDB
       await saveUserKey(userKeyBase64);
+      // Add to firebase
       await setDoc(userDocRef, {
         encryptedUserKey,
         salt: Array.from(salt),
-      });
+      }).catch(handleError);
     } else {
       const userDoc = await getDoc(userDocRef);
-      const { encryptedUserKey, salt } = userDoc.data() as UserData;
-      const passwordKey = await derivePasswordKey(
-        password,
-        new Uint8Array(salt),
-      );
-      const decryptedUserKeyBase64 = await decryptWithKey(
-        encryptedUserKey,
-        passwordKey,
-      );
-      await saveUserKey(decryptedUserKeyBase64);
+      const data = userDoc.data();
+      // Ensure that the data is valid
+      if (userDataTypeGaurd(data)) {
+        // Extract the encrypted key and the salt
+        const { encryptedUserKey, salt } = data;
+        // Get the password-derived key to decrypt the extracted encrypted key
+        const passwordKey = await derivePasswordKey(
+          password,
+          new Uint8Array(salt),
+        );
+        // Decrypt the encrypted key
+        const decryptedUserKeyBase64 = await decryptWithKey(
+          encryptedUserKey,
+          passwordKey,
+        );
+        // Save to indexDB
+        await saveUserKey(decryptedUserKeyBase64);
+      } else alert("Invalid user data");
     }
   };
 

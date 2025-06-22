@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { Note } from "./types";
+import { Note, UserData } from "./types";
 
 export function firebaseErrorTypeGaurd(
   error: unknown,
@@ -12,6 +12,24 @@ export function firebaseErrorTypeGaurd(
     "message" in error &&
     typeof error.message === "string"
   );
+}
+
+export function userDataTypeGaurd(obj: unknown): obj is UserData {
+  if (
+    typeof obj === "object" &&
+    obj !== null &&
+    "encryptedUserKey" in obj &&
+    "salt" in obj
+  ) {
+    const casted = obj as Record<string, unknown>;
+    return (
+      typeof casted.encryptedUserKey === "string" &&
+      Array.isArray(casted.salt) &&
+      casted.salt.every((item) => typeof item === "number")
+    );
+  }
+
+  return false;
 }
 
 export function noteTypeGaurd(obj: unknown): obj is Note {
