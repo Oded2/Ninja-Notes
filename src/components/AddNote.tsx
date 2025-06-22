@@ -6,16 +6,12 @@ import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
 
-type Props = {
-  label?: string;
-};
-
 const max = {
   title: 100,
   content: 5000,
 };
 
-export default function AddNote({ label }: Props) {
+export default function AddNote() {
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -75,7 +71,7 @@ export default function AddNote({ label }: Props) {
       </InputContainer>
       <InputContainer>
         <label className="font-medium" htmlFor={id}>
-          {label}
+          Create new note
         </label>
         <textarea
           value={content}

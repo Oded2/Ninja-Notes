@@ -152,7 +152,7 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              <AddNote label="Create new note" />
+              <AddNote />
             </motion.div>
           )}
         </AnimatePresence>
