@@ -21,7 +21,7 @@ import {
   where,
 } from "firebase/firestore";
 import { notesCollection, usersCollection } from "@/lib/firebase";
-import { loadUserKey, saveUserKey } from "@/lib/indexDB";
+import { loadUserKey } from "@/lib/indexDB";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
