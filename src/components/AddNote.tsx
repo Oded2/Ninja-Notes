@@ -27,8 +27,18 @@ export default function AddNote({ userKey }: Props) {
   const handleSubmit = async () => {
     if (!user) return;
     setInProgress(true);
-    const encryptedTitle = await encryptWithKey(title.trim(), userKey);
-    const encryptedContent = await encryptWithKey(content.trim(), userKey);
+    const titleTrim = title.trim();
+    if (titleTrim.length > max.title) {
+      alert(`Title cannot exceed ${max.title.toLocaleString()} characters`);
+      return;
+    }
+    const contentTrim = content.trim();
+    if (contentTrim.length > max.content) {
+      alert(`Content cannot exceed ${max.content.toLocaleString()} characters`);
+      return;
+    }
+    const encryptedTitle = await encryptWithKey(titleTrim, userKey);
+    const encryptedContent = await encryptWithKey(contentTrim, userKey);
     const func = async () => {
       if (editNote) {
         await updateDoc(editNote.ref, {
