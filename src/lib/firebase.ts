@@ -24,13 +24,11 @@ const db = getFirestore(app);
 const notesCollection = collection(db, "notes");
 const auth = getAuth(app);
 const authHandlers = {
-  signup: async (email: string, password: string) =>
-    await createUserWithEmailAndPassword(auth, email, password),
-  signin: async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
-  },
-  signout: async () => await signOut(auth),
-  forgotPassword: async (email: string) =>
-    await sendPasswordResetEmail(auth, email),
+  signup: (email: string, password: string) =>
+    createUserWithEmailAndPassword(auth, email, password),
+  signin: (email: string, password: string) =>
+    signInWithEmailAndPassword(auth, email, password),
+  signout: () => signOut(auth),
+  forgotPassword: (email: string) => sendPasswordResetEmail(auth, email),
 };
 export { app, notesCollection, auth, authHandlers };
