@@ -5,7 +5,7 @@ import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, handleError, importKey } from "@/lib/helpers";
+import { encryptWithKey, handleError } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 
 const max = {
@@ -24,12 +24,7 @@ export default function AddNote() {
   const handleSubmit = async () => {
     if (!user) return;
     setInProgress(true);
-    const userKeyBase64 = await loadUserKey();
-    if (!userKeyBase64) {
-      alert("No encryption key found, please sign in again");
-      return;
-    }
-    const userKey = await importKey(userKeyBase64);
+    const userKey = await loadUserKey();
     const encryptedTitle = await encryptWithKey(title.trim(), userKey);
     const encryptedContent = await encryptWithKey(content.trim(), userKey);
     const func = async () => {

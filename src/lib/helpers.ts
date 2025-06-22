@@ -12,14 +12,6 @@ export async function exportKey(key: CryptoKey) {
   return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
 }
 
-export function importKey(base64: string): Promise<CryptoKey> {
-  const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  return crypto.subtle.importKey("raw", buffer, "AES-GCM", true, [
-    "encrypt",
-    "decrypt",
-  ]);
-}
-
 export async function derivePasswordKey(
   password: string,
   salt: Uint8Array,

@@ -19,6 +19,8 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
+import { decryptWithKey } from "@/lib/helpers";
+import { loadUserKey } from "@/lib/indexDB";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -40,20 +42,31 @@ export default function ClientHome() {
 
   useEffect(() => {
     if (!user) return;
+    console.log("Subscribed");
+    const userKeyPromise = loadUserKey();
     const q = query(
       notesCollection,
       where("userId", "==", user.uid),
       orderBy("createdAt", "desc"),
     );
-    console.log("Subscribed");
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const snapshotNotes = snapshot.docs
+
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
+      const userKey = await userKeyPromise;
+      const encryptedNotes = snapshot.docs
         .map((doc) => ({
           ref: doc.ref,
           ...doc.data(),
         }))
         .filter((note) => noteTypeGaurd(note));
-      setNotes(reverse.current ? snapshotNotes.toReversed() : snapshotNotes);
+      if (reverse.current) encryptedNotes.reverse();
+      const decryptedNotes: Note[] = await Promise.all(
+        encryptedNotes.map(async (note) => ({
+          ...note,
+          title: await decryptWithKey(note.title, userKey),
+          content: await decryptWithKey(note.content, userKey),
+        })),
+      );
+      setNotes(decryptedNotes);
     });
     return unsubscribe;
   }, [user]);
