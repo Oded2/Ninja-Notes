@@ -26,7 +26,7 @@ export default function CopyButton({ text }: Props) {
     <button
       onClick={handleCopy}
       disabled={disabled}
-      className="cursor-pointer rounded-2xl transition-opacity *:size-6 hover:opacity-70 active:opacity-60"
+      className="cursor-pointer rounded-2xl *:size-6"
     >
       <AnimatePresence mode="wait" initial={false}>
         {disabled ? (
