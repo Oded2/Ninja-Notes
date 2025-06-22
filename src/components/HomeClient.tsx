@@ -34,6 +34,10 @@ export default function ClientHome() {
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   // At least one of the notes are closed
   const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
+  // Create a constant used in the AddNote component so that the user key only has to be fetched once
+  const [userKeyComponent, setUserKeyComponent] = useState<CryptoKey | null>(
+    null,
+  );
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -42,9 +46,9 @@ export default function ClientHome() {
 
   useEffect(() => {
     if (!user) return;
-
     console.log("Subscribed");
     const userKeyPromise = loadUserKey();
+    userKeyPromise.then(setUserKeyComponent);
     const q = query(
       notesCollection,
       where("userId", "==", user.uid),
@@ -166,7 +170,7 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              <AddNote />
+              {userKeyComponent && <AddNote userKey={userKeyComponent} />}
             </motion.div>
           )}
         </AnimatePresence>

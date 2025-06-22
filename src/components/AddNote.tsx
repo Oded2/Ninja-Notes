@@ -6,14 +6,17 @@ import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
 import { encryptWithKey, handleError } from "@/lib/helpers";
-import { loadUserKey } from "@/lib/indexDB";
+
+type Props = {
+  userKey: CryptoKey;
+};
 
 const max = {
   title: 100,
   content: 5000,
 };
 
-export default function AddNote() {
+export default function AddNote({ userKey }: Props) {
   const id = useId();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -24,7 +27,6 @@ export default function AddNote() {
   const handleSubmit = async () => {
     if (!user) return;
     setInProgress(true);
-    const userKey = await loadUserKey();
     const encryptedTitle = await encryptWithKey(title.trim(), userKey);
     const encryptedContent = await encryptWithKey(content.trim(), userKey);
     const func = async () => {
