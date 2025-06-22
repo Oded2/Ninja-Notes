@@ -48,7 +48,6 @@ export default function AccountSettings() {
       // Re‐encrypt your E2EE vault key under the new password
       // Load the existing userKey (CryptoKey) from IndexedDB
       const userKeyBase64 = await loadUserKey().then((key) => exportKey(key));
-      const userKeySaved = saveUserKey(userKeyBase64);
       // Generate a new 16-byte salt
       const newSalt = crypto.getRandomValues(new Uint8Array(16));
       // Derive a new password key from the new password + new salt
@@ -68,7 +67,6 @@ export default function AccountSettings() {
         },
         { merge: true },
       );
-      await userKeySaved;
       alert("Your password has been updated");
     } catch (err) {
       handleError(err);
