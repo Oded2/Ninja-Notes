@@ -68,7 +68,6 @@ export default function AuthClient() {
       const data = userDoc.data();
       // Ensure that the data is valid
       if (userDataTypeGaurd(data)) {
-        console.log("Here");
         // Extract the encrypted key and the salt
         const { encryptedUserKey, salt } = data;
         // Get the password-derived key to decrypt the extracted encrypted key
