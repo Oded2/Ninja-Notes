@@ -31,16 +31,17 @@ export default function NoteViewer({
 
   return notes.length > 0 ? (
     <div className="flex flex-col rounded-lg border border-slate-950/20">
-      {notes.map((note) => {
-        const {
-          ref: { id },
-          title,
-          content,
-        } = note;
-        const isOpen = !closedNotes.includes(id);
-        return (
-          <AnimatePresence key={id} mode="popLayout">
+      <AnimatePresence mode="popLayout">
+        {notes.map((note) => {
+          const {
+            ref: { id },
+            title,
+            content,
+          } = note;
+          const isOpen = !closedNotes.includes(id);
+          return (
             <motion.div
+              key={id}
               layout
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -94,9 +95,9 @@ export default function NoteViewer({
                 </button>
               </div>
             </motion.div>
-          </AnimatePresence>
-        );
-      })}
+          );
+        })}{" "}
+      </AnimatePresence>
     </div>
   ) : (
     <div>No notes</div>
