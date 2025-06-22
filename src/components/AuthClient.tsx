@@ -8,6 +8,7 @@ import {
   derivePasswordKey,
   encryptWithKey,
   exportKey,
+  generateSalt,
   generateUserKey,
   handleError,
 } from "@/lib/helpers";
@@ -50,7 +51,7 @@ export default function AuthClient() {
         exportKey(key),
       );
       // Generate random salt
-      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const salt = generateSalt();
       // Generate a random key derived from the password
       const passwordKey = await derivePasswordKey(password, salt);
       // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password

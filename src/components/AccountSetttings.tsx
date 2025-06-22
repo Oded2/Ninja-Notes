@@ -9,6 +9,7 @@ import {
   derivePasswordKey,
   encryptWithKey,
   exportKey,
+  generateSalt,
   handleError,
 } from "@/lib/helpers";
 import {
@@ -49,7 +50,7 @@ export default function AccountSettings() {
       // Load the existing userKey (CryptoKey) from IndexedDB
       const userKeyBase64 = await loadUserKey().then((key) => exportKey(key));
       // Generate a new 16-byte salt
-      const newSalt = crypto.getRandomValues(new Uint8Array(16));
+      const newSalt = generateSalt();
       // Derive a new password key from the new password + new salt
       const newPasswordKey = await derivePasswordKey(newPassword, newSalt);
       // Encrypt the Base64 raw key under that new passwordKey

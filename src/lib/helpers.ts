@@ -62,6 +62,10 @@ export async function decryptWithKey(
   return new TextDecoder().decode(decrypted);
 }
 
+export function generateSalt() {
+  return crypto.getRandomValues(new Uint8Array(16));
+}
+
 export const handleError = (err: unknown) => {
   if (firebaseErrorTypeGaurd(err)) {
     const { code, message } = err;
