@@ -8,6 +8,7 @@ import { useUserStore } from "@/lib/stores/userStore";
 import { Rubik } from "next/font/google";
 import Toasts from "@/components/Toasts";
 import ConfirmModal from "@/components/ConfirmModal";
+import InputModal from "@/components/InputModal";
 
 const geistSans = Rubik({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
         </div>
         <Toasts />
         <ConfirmModal />
+        <InputModal />
       </body>
     </html>
   );

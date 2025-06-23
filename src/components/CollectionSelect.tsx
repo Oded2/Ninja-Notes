@@ -2,6 +2,7 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Dispatch, SetStateAction, useId } from "react";
 import Button from "./Button";
 import { defaultCollection } from "@/lib/constants";
+import { useInputStore } from "@/lib/stores/inputStore";
 
 type Props = {
   collections: string[];
@@ -17,10 +18,9 @@ export default function CollectionSelect({
   setVal,
 }: Props) {
   const id = useId();
+  const showInput = useInputStore((state) => state.showInput);
 
-  const onAdd = () => {
-    const collectionName = prompt("Enter collection name");
-    if (!collectionName) return;
+  const onAdd = (collectionName: string) => {
     setVal(collectionName);
     setCollections((state) => [...state, collectionName]);
   };
@@ -51,7 +51,12 @@ export default function CollectionSelect({
             <ChevronDownIcon className="size-4" />
           </div>
         </div>
-        <Button type="button" style="neutral" label="New" onClick={onAdd} />
+        <Button
+          type="button"
+          style="neutral"
+          label="New"
+          onClick={() => showInput("Enter collection name", onAdd)}
+        />
       </div>
     </div>
   );

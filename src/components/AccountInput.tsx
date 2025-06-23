@@ -1,7 +1,7 @@
 import { useId } from "react";
 
 type Props = {
-  label: string;
+  label?: string;
   val: string;
   setVal: (newVal: string) => void;
   type?: "email" | "password";
@@ -19,9 +19,11 @@ export default function AccountInput({
 
   return (
     <>
-      <label htmlFor={id} className="text-sm font-medium text-slate-950/80">
-        {label}
-      </label>
+      {label && (
+        <label htmlFor={id} className="text-sm font-medium text-slate-950/80">
+          {label}
+        </label>
+      )}
       <input
         type={type}
         id={id}
