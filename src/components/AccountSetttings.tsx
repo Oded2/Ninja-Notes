@@ -23,6 +23,7 @@ import {
 import { notesCollection, usersCollection } from "@/lib/firebase";
 import { loadUserKey } from "@/lib/indexDB";
 import { useToastStore } from "@/lib/stores/toastStore";
+import { useConfirmStore } from "@/lib/stores/confirmStore";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -32,6 +33,7 @@ export default function AccountSettings() {
   const [purgeCompleted, setPurgeCompleted] = useState(false);
   const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
   const add = useToastStore((state) => state.add);
+  const showConfirm = useConfirmStore((state) => state.showConfirm);
 
   const handleEmailChange = async () => {
     if (!user) return;
@@ -80,12 +82,7 @@ export default function AccountSettings() {
       handleError(err);
     }
   };
-  const handleNotePurge = async (interactive: boolean) => {
-    if (
-      interactive &&
-      !confirm("Are you sure you want to delete all of your notes?")
-    )
-      return;
+  const handleNotePurge = async (interactive = true) => {
     setPurgeCompleted(interactive);
     const q = query(notesCollection, where("userId", "==", user?.uid));
     const promises = await getDocs(q).then((snapshot) =>
@@ -103,7 +100,6 @@ export default function AccountSettings() {
       );
   };
   const handleAccountDelete = async () => {
-    if (!confirm("Are you sure you want to delete your account?")) return;
     setAccountDeleteCompleted(true);
     await handleNotePurge(false);
     await deleteDoc(doc(usersCollection, user?.uid)).catch(handleError);
@@ -145,10 +141,28 @@ export default function AccountSettings() {
         />
       </AccountInputContainer>
       <div className="divider mx-auto flex divide-x text-sm text-red-400 *:px-1.5 *:not-disabled:cursor-pointer *:not-disabled:hover:underline *:disabled:opacity-50">
-        <button disabled={purgeCompleted} onClick={() => handleNotePurge(true)}>
+        <button
+          disabled={purgeCompleted}
+          onClick={() =>
+            showConfirm(
+              "Purge notes",
+              "Are you sure you want to delete all of your notes?",
+              handleNotePurge,
+            )
+          }
+        >
           Purge Notes
         </button>
-        <button disabled={accountDeleteCompleted} onClick={handleAccountDelete}>
+        <button
+          disabled={accountDeleteCompleted}
+          onClick={() =>
+            showConfirm(
+              "Delete account",
+              "Are you sure you want to delete your account?",
+              handleAccountDelete,
+            )
+          }
+        >
           Delete Account
         </button>
       </div>
