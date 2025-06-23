@@ -1,4 +1,7 @@
 import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { Dispatch, SetStateAction } from "react";
+
+export type SetValShortcut<T> = Dispatch<SetStateAction<T>>;
 
 export type ToastTypes = "success" | "error";
 

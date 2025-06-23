@@ -10,6 +10,8 @@ import { useToastStore } from "@/lib/stores/toastStore";
 import CollectionSelect from "./CollectionSelect";
 import { defaultCollection } from "@/lib/constants";
 import { Note } from "@/lib/types";
+import { useInputStore } from "@/lib/stores/inputStore";
+import { PlusIcon } from "@heroicons/react/24/solid";
 
 type Props = {
   userKey: CryptoKey;
@@ -32,6 +34,8 @@ export default function AddNote({ userKey, notes }: Props) {
   const editNote = useEditStore((state) => state.note);
   const reset = useEditStore((state) => state.reset);
   const add = useToastStore((state) => state.add);
+  const showInput = useInputStore((state) => state.showInput);
+
   const handleSubmit = async () => {
     if (!user) return;
     const titleTrim = title.trim();
@@ -80,8 +84,15 @@ export default function AddNote({ userKey, notes }: Props) {
     setContent("");
   };
 
+  const onAdd = (collectionName: string) => {
+    setCollection(collectionName);
+    if (collections.includes(collectionName)) return;
+    setCollections((state) => [...state, collectionName]);
+  };
+
   useEffect(() => {
-    setCollections(notes.map((note) => note.collection));
+    // Remove any duplicates
+    setCollections([...new Set(notes.map((note) => note.collection))]);
   }, [notes]);
 
   useEffect(() => {
@@ -100,12 +111,20 @@ export default function AddNote({ userKey, notes }: Props) {
       }}
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
-      <CollectionSelect
-        collections={collections}
-        setCollections={setCollections}
-        val={collection}
-        setVal={setCollection}
-      />
+      <div className="flex gap-2">
+        <CollectionSelect
+          collections={collections}
+          val={collection}
+          setVal={setCollection}
+        />
+        <button
+          type="button"
+          onClick={() => showInput("Enter collection name", onAdd)}
+          className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
+        >
+          <PlusIcon className="size-6" />
+        </button>
+      </div>
       <InputContainer>
         <label className="font-medium" htmlFor={`title-${id}`}>
           Title

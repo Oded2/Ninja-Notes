@@ -1,8 +1,7 @@
 import { useEditStore } from "@/lib/stores/editStore";
-import { Note } from "@/lib/types";
+import { Note, SetValShortcut } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
-import { Dispatch, SetStateAction } from "react";
 import Collapse from "./Collapse";
 import { handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
@@ -13,7 +12,7 @@ import InlineDivider from "./InlineDivider";
 type Props = {
   notes: Note[];
   closedNotes: string[];
-  setClosedNotes: Dispatch<SetStateAction<string[]>>;
+  setClosedNotes: SetValShortcut<string[]>;
 };
 
 export default function NoteViewer({

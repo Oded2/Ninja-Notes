@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { RefObject, useId } from "react";
 
 type Props = {
   label?: string;
@@ -6,6 +6,7 @@ type Props = {
   setVal: (newVal: string) => void;
   type?: "email" | "password";
   placeholder?: string;
+  inputRef?: RefObject<HTMLInputElement | null>;
 };
 
 export default function AccountInput({
@@ -14,6 +15,7 @@ export default function AccountInput({
   setVal,
   type,
   placeholder,
+  inputRef,
 }: Props) {
   const id = useId();
 
@@ -26,6 +28,7 @@ export default function AccountInput({
       )}
       <input
         type={type}
+        ref={inputRef}
         id={id}
         value={val}
         onChange={(e) => setVal(e.target.value)}
