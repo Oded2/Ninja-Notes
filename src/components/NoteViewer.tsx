@@ -29,6 +29,7 @@ export default function NoteViewer({
         {notes.map((note) => {
           const {
             ref: { id },
+            collection,
             title,
             content,
           } = note;
@@ -45,20 +46,23 @@ export default function NoteViewer({
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <h2 className="text-xl font-bold">{title || "Untitled"}</h2>
-                  <span className="text-sm text-slate-950/80">
-                    {note.createdAt.toDate().toLocaleString(undefined, {
-                      minute: "numeric",
-                      hour: "numeric",
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </span>
-                  <span className="text-sm text-slate-950/80">
-                    {note.collection === defaultCollection
-                      ? "Default collection"
-                      : note.collection}
-                  </span>
+                  <div className="flex gap-0.5 text-sm text-slate-950/80">
+                    <span>
+                      {note.createdAt.toDate().toLocaleString(undefined, {
+                        minute: "numeric",
+                        hour: "numeric",
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                    <span>&middot;</span>
+                    <span>
+                      {collection === defaultCollection
+                        ? "Default collection"
+                        : collection}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
                   <CopyButton text={content} />
