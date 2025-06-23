@@ -22,7 +22,7 @@ export default function InputModal() {
   return (
     <Modal visible={!!content} closeFn={closeInput} title={content?.label}>
       <div className="my-3 flex flex-col">
-        <AccountInput val={val} setVal={setVal} />
+        <AccountInput placeholder="Enter text here" val={val} setVal={setVal} />
       </div>
       <ModalActions>
         <Button label="Cancel" small onClick={closeInput} />

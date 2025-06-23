@@ -88,6 +88,7 @@ export default function AddNote({ userKey, notes }: Props) {
     if (editNote) {
       setTitle(editNote.title);
       setContent(editNote.content);
+      setCollection(editNote.collection);
     }
   }, [editNote]);
 
