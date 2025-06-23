@@ -12,7 +12,7 @@ export default function NotFoundClient() {
       <h2 className="mb-2 text-2xl font-semibold">Even ninjas get lost!</h2>
       <p className="mb-6 text-slate-950/30">Not found</p>
       <Link href={user ? "/" : "/auth"} className="overflow-hidden rounded-xl">
-        <Button isPrimary label="Go back" rounded={false} fullWidth />
+        <Button style="primary" label="Go back" rounded={false} fullWidth />
       </Link>
     </div>
   );

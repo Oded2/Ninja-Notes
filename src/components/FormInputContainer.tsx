@@ -32,7 +32,7 @@ export default function FormInputContainer({
       <Button
         type="submit"
         label={submitText}
-        isPrimary
+        style="primary"
         disabled={inProgress}
       />
     </form>
