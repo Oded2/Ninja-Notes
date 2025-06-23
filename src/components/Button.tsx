@@ -32,7 +32,7 @@ export default function Button({
         {
           "bg-red-500": style === "primary",
           "bg-teal-600": style === "secondary",
-          "bg-gray-600": style === "neutral",
+          "bg-gray-500": style === "neutral",
           "rounded-xl": rounded,
           "w-full": fullWidth,
         },

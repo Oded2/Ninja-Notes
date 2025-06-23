@@ -37,10 +37,11 @@ export function noteTypeGaurd(obj: unknown): obj is Note {
   const note = obj as Record<string, unknown>;
   return (
     note.ref instanceof Object &&
-    "id" in note.ref && // basic check that it's a Firestore DocumentReference
+    "id" in note.ref && // minimal check for DocumentReference
     note.createdAt instanceof Timestamp &&
     typeof note.userId === "string" &&
-    (note.title === undefined || typeof note.title === "string") &&
-    (note.content === undefined || typeof note.content === "string")
+    typeof note.title === "string" &&
+    typeof note.content === "string" &&
+    typeof note.collection === "string"
   );
 }

@@ -70,6 +70,7 @@ export default function ClientHome() {
           ...note,
           title: await decryptWithKey(note.title, userKey),
           content: await decryptWithKey(note.content, userKey),
+          collection: await decryptWithKey(note.collection, userKey),
         })),
       );
       setNotes(decryptedNotes);
@@ -175,7 +176,9 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              {userKeyComponent && <AddNote userKey={userKeyComponent} />}
+              {userKeyComponent && (
+                <AddNote userKey={userKeyComponent} notes={notes} />
+              )}
             </motion.div>
           )}
         </AnimatePresence>

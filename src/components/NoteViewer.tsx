@@ -7,6 +7,7 @@ import Collapse from "./Collapse";
 import { handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
+import { defaultCollection } from "@/lib/constants";
 
 type Props = {
   notes: Note[];
@@ -52,6 +53,11 @@ export default function NoteViewer({
                       month: "long",
                       year: "numeric",
                     })}
+                  </span>
+                  <span className="text-sm text-slate-950/80">
+                    {note.collection === defaultCollection
+                      ? "Default collection"
+                      : note.collection}
                   </span>
                 </div>
                 <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">

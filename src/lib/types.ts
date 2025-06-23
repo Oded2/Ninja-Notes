@@ -13,6 +13,7 @@ export type Note = {
   userId: string;
   title: string;
   content: string;
+  collection: string;
 };
 
 export type Toast = {

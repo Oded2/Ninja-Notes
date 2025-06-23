@@ -7,9 +7,13 @@ import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
 import { encryptWithKey, handleError } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
+import CollectionSelect from "./CollectionSelect";
+import { defaultCollection } from "@/lib/constants";
+import { Note } from "@/lib/types";
 
 type Props = {
   userKey: CryptoKey;
+  notes: Note[];
 };
 
 const max = {
@@ -17,8 +21,12 @@ const max = {
   content: 5000,
 };
 
-export default function AddNote({ userKey }: Props) {
+export default function AddNote({ userKey, notes }: Props) {
   const id = useId();
+  const [collections, setCollections] = useState<string[]>(
+    notes.map((note) => note.collection),
+  );
+  const [collection, setCollection] = useState(defaultCollection);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [inProgress, setInProgress] = useState(false);
@@ -49,11 +57,13 @@ export default function AddNote({ userKey }: Props) {
     setInProgress(true);
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
+    const encryptedCollection = await encryptWithKey(collection, userKey);
     const func = async () => {
       if (editNote) {
         await updateDoc(editNote.ref, {
           title: encryptedTitle,
           content: encryptedContent,
+          collection: encryptedCollection,
           createdAt: serverTimestamp(),
         });
         reset();
@@ -61,17 +71,15 @@ export default function AddNote({ userKey }: Props) {
         await addDoc(notesCollection, {
           title: encryptedTitle,
           content: encryptedContent,
+          collection: encryptedCollection,
           userId: user.uid,
           createdAt: serverTimestamp(),
         });
     };
-    func()
-      .catch(handleError)
-      .finally(() => {
-        setTitle("");
-        setContent("");
-      });
+    func().catch(handleError);
     setInProgress(false);
+    setTitle("");
+    setContent("");
   };
 
   useEffect(() => {
@@ -89,6 +97,12 @@ export default function AddNote({ userKey }: Props) {
       }}
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
+      <CollectionSelect
+        collections={collections}
+        setCollections={setCollections}
+        val={collection}
+        setVal={setCollection}
+      />
       <InputContainer>
         <label className="font-medium" htmlFor={`title-${id}`}>
           Title
