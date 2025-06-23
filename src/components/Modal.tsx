@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 type Props = {
   visible: boolean;

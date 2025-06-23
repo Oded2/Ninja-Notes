@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 
 type Props = {
   open: boolean;
