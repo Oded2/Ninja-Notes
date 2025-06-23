@@ -8,7 +8,7 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { encryptWithKey, handleError } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import CollectionSelect from "./CollectionSelect";
-import { defaultCollection } from "@/lib/constants";
+import { defaultCollection, maxLengths } from "@/lib/constants";
 import { Note } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -16,11 +16,6 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 type Props = {
   userKey: CryptoKey;
   notes: Note[];
-};
-
-const max = {
-  title: 100,
-  content: 5000,
 };
 
 export default function AddNote({ userKey, notes }: Props) {
@@ -39,20 +34,20 @@ export default function AddNote({ userKey, notes }: Props) {
   const handleSubmit = async () => {
     if (!user) return;
     const titleTrim = title.trim();
-    if (titleTrim.length > max.title) {
+    if (titleTrim.length > maxLengths.title) {
       add(
         "error",
         "Invalid title",
-        `Title cannot exceed ${max.title.toLocaleString()} characters`,
+        `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
       );
       return;
     }
     const contentTrim = content.trim();
-    if (!contentTrim || contentTrim.length > max.content) {
+    if (!contentTrim || contentTrim.length > maxLengths.content) {
       add(
         "error",
         "Invalid content",
-        `Content cannot empty or exceed ${max.content.toLocaleString()} characters`,
+        `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
       );
       return;
     }
@@ -136,10 +131,10 @@ export default function AddNote({ userKey, notes }: Props) {
           id={`title-${id}`}
           placeholder="Could Bruce Wayne be the Batman?"
           className="grow outline-none"
-          maxLength={max.title}
+          maxLength={maxLengths.title}
           disabled={inProgress}
         />
-        <span className="text-xs">{`${title.length.toLocaleString()}/${max.title.toLocaleString()}`}</span>
+        <span className="text-xs">{`${title.length.toLocaleString()}/${maxLengths.title.toLocaleString()}`}</span>
       </InputContainer>
       <InputContainer>
         <label className="font-medium" htmlFor={id}>
@@ -154,7 +149,7 @@ export default function AddNote({ userKey, notes }: Props) {
           className="w-full resize-none outline-none"
           rows={8}
           required
-          maxLength={max.content}
+          maxLength={maxLengths.content}
           disabled={inProgress}
         ></textarea>
         <div className="my-1 flex grow justify-end gap-2 text-xs">
@@ -167,7 +162,7 @@ export default function AddNote({ userKey, notes }: Props) {
               Cancel edit
             </button>
           )}
-          <span>{`${content.length.toLocaleString()}/${max.content.toLocaleString()}`}</span>
+          <span>{`${content.length.toLocaleString()}/${maxLengths.content.toLocaleString()}`}</span>
         </div>
       </InputContainer>
       <div className="ms-auto">
