@@ -151,6 +151,7 @@ export default function AccountSettings() {
                   "Purge notes",
                   "Are you sure you want to delete all of your notes?",
                   handleNotePurge,
+                  "notes/purge",
                 )
               }
             >
@@ -165,6 +166,7 @@ export default function AccountSettings() {
                   "Delete account",
                   "Are you sure you want to delete your account?",
                   handleAccountDelete,
+                  "account/delete",
                 )
               }
             >

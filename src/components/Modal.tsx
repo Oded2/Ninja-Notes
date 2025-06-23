@@ -40,7 +40,7 @@ export default function Modal({ visible, closeFn, title, children }: Props) {
             className="fixed inset-0 z-20 flex items-center justify-center"
           >
             <div className="flex min-h-40 min-w-sm flex-col rounded-lg bg-gray-50 p-5 shadow-lg">
-              <h2 className="text-2xl font-medium">{title}</h2>
+              <h2 className="text-2xl font-bold">{title}</h2>
               {children}
             </div>
           </motion.div>

@@ -26,10 +26,7 @@ export default function InputModal() {
   };
 
   useEffect(() => {
-    if (content) {
-      const { current } = inputRef;
-      if (current) current.focus();
-    }
+    if (content) inputRef.current?.focus();
   }, [content]);
 
   return (
