@@ -24,6 +24,7 @@ import { notesCollection, usersCollection } from "@/lib/firebase";
 import { loadUserKey } from "@/lib/indexDB";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
+import InlineDivider from "./InlineDivider";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
@@ -140,31 +141,37 @@ export default function AccountSettings() {
           type="password"
         />
       </AccountInputContainer>
-      <div className="divider mx-auto flex divide-x text-sm text-red-400 *:px-1.5 *:not-disabled:cursor-pointer *:not-disabled:hover:underline *:disabled:opacity-50">
-        <button
-          disabled={purgeCompleted}
-          onClick={() =>
-            showConfirm(
-              "Purge notes",
-              "Are you sure you want to delete all of your notes?",
-              handleNotePurge,
-            )
-          }
-        >
-          Purge Notes
-        </button>
-        <button
-          disabled={accountDeleteCompleted}
-          onClick={() =>
-            showConfirm(
-              "Delete account",
-              "Are you sure you want to delete your account?",
-              handleAccountDelete,
-            )
-          }
-        >
-          Delete Account
-        </button>
+      <div className="mx-auto text-sm text-red-500 *:*:*:enabled:cursor-pointer *:*:*:enabled:hover:underline *:*:*:disabled:opacity-50">
+        <InlineDivider>
+          <div>
+            <button
+              disabled={purgeCompleted}
+              onClick={() =>
+                showConfirm(
+                  "Purge notes",
+                  "Are you sure you want to delete all of your notes?",
+                  handleNotePurge,
+                )
+              }
+            >
+              Purge Notes
+            </button>
+          </div>
+          <div>
+            <button
+              disabled={accountDeleteCompleted}
+              onClick={() =>
+                showConfirm(
+                  "Delete account",
+                  "Are you sure you want to delete your account?",
+                  handleAccountDelete,
+                )
+              }
+            >
+              Delete Account
+            </button>
+          </div>
+        </InlineDivider>
       </div>
     </div>
   );
