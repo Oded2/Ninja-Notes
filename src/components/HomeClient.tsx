@@ -92,7 +92,7 @@ export default function ClientHome() {
             alt="Logo"
             width={1024}
             height={1024}
-            className="mx-auto hidden size-24 max-h-full rounded-2xl sm:inline-block"
+            className="mx-auto my-auto hidden size-24 max-h-full rounded-2xl sm:inline-block"
           />
           <div className="my-auto flex flex-col gap-2 text-center">
             <h1 className="text-6xl font-bold text-slate-950">
