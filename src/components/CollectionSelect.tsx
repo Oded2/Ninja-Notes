@@ -19,6 +19,12 @@ export default function CollectionSelect({ collections, val, setVal }: Props) {
         <option value={defaultCollection}>Default collection</option>
         {collections
           .filter((value) => value !== defaultCollection)
+          .toSorted((a, b) => {
+            const al = a.toLowerCase();
+            const bl = b.toLowerCase();
+            if (al === bl) return a < b ? -1 : 1; // Uppercase first if same letter
+            return al < bl ? -1 : 1;
+          })
           .map((value, index) => (
             <option key={index} value={value}>
               {value}
