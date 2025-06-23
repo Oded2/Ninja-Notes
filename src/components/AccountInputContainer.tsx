@@ -30,7 +30,7 @@ export default function AccountInputContainer({
           label={submitText}
           fullWidth
           rounded={false}
-          isPrimary
+          style="primary"
           small
           disabled={inProgress}
         />
