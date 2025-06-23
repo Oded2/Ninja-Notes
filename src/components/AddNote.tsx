@@ -23,9 +23,7 @@ const max = {
 
 export default function AddNote({ userKey, notes }: Props) {
   const id = useId();
-  const [collections, setCollections] = useState<string[]>(
-    notes.map((note) => note.collection),
-  );
+  const [collections, setCollections] = useState<string[]>([]);
   const [collection, setCollection] = useState(defaultCollection);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -81,6 +79,10 @@ export default function AddNote({ userKey, notes }: Props) {
     setTitle("");
     setContent("");
   };
+
+  useEffect(() => {
+    setCollections(notes.map((note) => note.collection));
+  }, [notes]);
 
   useEffect(() => {
     if (editNote) {
