@@ -23,7 +23,7 @@ export default function NoteViewer({
   const setEditNote = useEditStore((state) => state.update);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
 
-  return notes.length > 0 ? (
+  return (
     <div className="flex flex-col rounded-lg border border-slate-950/20">
       <AnimatePresence>
         {notes.map((note) => {
@@ -109,7 +109,5 @@ export default function NoteViewer({
         })}{" "}
       </AnimatePresence>
     </div>
-  ) : (
-    <div>No notes</div>
   );
 }
