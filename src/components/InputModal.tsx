@@ -12,14 +12,16 @@ export default function InputModal() {
 
   const handleInput = () => {
     if (!content) return;
+    if (val.length == 0) {
+      return;
+    }
     content.callback(val);
     closeInput();
-    setVal("");
   };
 
   return (
     <Modal visible={!!content} closeFn={closeInput} title={content?.label}>
-      <div className="mt-2 flex flex-col">
+      <div className="my-3 flex flex-col">
         <AccountInput val={val} setVal={setVal} />
       </div>
       <ModalActions>
