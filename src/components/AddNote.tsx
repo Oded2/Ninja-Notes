@@ -54,6 +54,7 @@ export default function AddNote({ userKey }: Props) {
         await updateDoc(editNote.ref, {
           title: encryptedTitle,
           content: encryptedContent,
+          createdAt: serverTimestamp(),
         });
         reset();
       } else
