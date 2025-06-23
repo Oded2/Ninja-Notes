@@ -36,7 +36,7 @@ export default function CollectionSelect({
             id={id}
             value={val}
             onChange={(e) => setVal(e.target.value)}
-            className="w-full appearance-none rounded-2xl border-2 border-slate-950/0 bg-gray-100 p-2 ring ring-slate-950/20 transition-all outline-none focus:border-slate-950 focus:ring-0"
+            className="w-full appearance-none rounded-2xl border-2 border-slate-950/0 bg-gray-100 px-4 py-2 ring ring-slate-950/20 transition-all outline-none focus:border-slate-950 focus:ring-0"
           >
             <option value={defaultCollection}>Default</option>
             {collections
