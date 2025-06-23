@@ -1,5 +1,5 @@
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { Dispatch, SetStateAction, useId } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { defaultCollection } from "@/lib/constants";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
