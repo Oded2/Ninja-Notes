@@ -53,7 +53,6 @@ export default function CollectionSelect({
         </div>
         <Button
           type="button"
-          style="neutral"
           label="New"
           onClick={() => showInput("Enter collection name", onAdd)}
         />
