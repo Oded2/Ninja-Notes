@@ -17,7 +17,6 @@ export default function CollectionSelect({
   val,
   setVal,
 }: Props) {
-  const id = useId();
   const showInput = useInputStore((state) => state.showInput);
 
   const onAdd = (collectionName: string) => {
@@ -29,7 +28,6 @@ export default function CollectionSelect({
     <div className="flex gap-2">
       <div className="relative grow">
         <select
-          id={id}
           value={val}
           onChange={(e) => setVal(e.target.value)}
           className="w-full appearance-none rounded-2xl border-2 border-slate-950/0 bg-gray-100 px-4 py-2 ring ring-slate-950/20 transition-all outline-none focus:border-slate-950 focus:ring-0"
