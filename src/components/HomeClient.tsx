@@ -22,6 +22,7 @@ import VerifyEmail from "./VerifyEmail";
 import { decryptWithKey } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
+import CollectionSelect from "./CollectionSelect";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -38,6 +39,11 @@ export default function ClientHome() {
   // Create a constant used in the AddNote component so that the user key only has to be fetched once
   const [userKeyComponent, setUserKeyComponent] = useState<CryptoKey | null>(
     null,
+  );
+  const [collectionFilter, setCollectionFilter] = useState("");
+  const collections = useMemo(
+    () => [...new Set(notes.map((note) => note.collection))],
+    [notes],
   );
 
   useEffect(() => {
@@ -138,33 +144,47 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              <div className="mb-4 flex gap-2 *:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-                <button
-                  onClick={() => {
-                    setNotes((state) => state.toReversed());
-                    reverse.current = !reverse.current;
-                  }}
-                >
-                  <ArrowsUpDownIcon className="size-6" />
-                </button>
-                <motion.button
-                  initial={false}
-                  animate={{ rotate: notesOpen ? 180 : 0 }}
-                  transition={{
-                    type: "spring",
-                    duration: 0.5,
-                  }}
-                  onClick={() => {
-                    if (notesOpen) setClosedNotes([]);
-                    else setClosedNotes(notes.map((note) => note.ref.id));
-                  }}
-                >
-                  <ChevronDoubleUpIcon className="size-6" />
-                </motion.button>
+              <div className="mb-4 flex gap-2">
+                <div className="flex gap-2 *:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
+                  <button
+                    onClick={() => {
+                      setNotes((state) => state.toReversed());
+                      reverse.current = !reverse.current;
+                    }}
+                  >
+                    <ArrowsUpDownIcon className="size-6" />
+                  </button>
+                  <motion.button
+                    initial={false}
+                    animate={{ rotate: notesOpen ? 180 : 0 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.5,
+                    }}
+                    onClick={() => {
+                      if (notesOpen) setClosedNotes([]);
+                      else setClosedNotes(notes.map((note) => note.ref.id));
+                    }}
+                  >
+                    <ChevronDoubleUpIcon className="size-6" />
+                  </motion.button>
+                </div>
+                <div className="max-w-sm grow">
+                  <CollectionSelect
+                    allowAll
+                    collections={collections}
+                    setVal={setCollectionFilter}
+                  />
+                </div>
               </div>
-
               <NoteViewer
-                notes={notes}
+                notes={
+                  collectionFilter.length == 0
+                    ? notes
+                    : notes.filter(
+                        (note) => note.collection === collectionFilter,
+                      )
+                }
                 closedNotes={closedNotes}
                 setClosedNotes={setClosedNotes}
               />

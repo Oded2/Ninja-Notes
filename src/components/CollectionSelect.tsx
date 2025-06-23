@@ -4,11 +4,17 @@ import { SetValShortcut } from "@/lib/types";
 
 type Props = {
   collections: string[];
-  val: string;
+  val?: string;
   setVal: SetValShortcut<string>;
+  allowAll?: boolean;
 };
 
-export default function CollectionSelect({ collections, val, setVal }: Props) {
+export default function CollectionSelect({
+  collections,
+  val,
+  setVal,
+  allowAll,
+}: Props) {
   return (
     <div className="relative grow">
       <select
@@ -16,6 +22,7 @@ export default function CollectionSelect({ collections, val, setVal }: Props) {
         onChange={(e) => setVal(e.target.value)}
         className="w-full appearance-none rounded-2xl border-2 border-slate-950/0 bg-gray-100 px-4 py-2 ring ring-slate-950/20 transition-all outline-none focus:border-slate-950 focus:ring-0"
       >
+        {allowAll && <option value="">All collections</option>}
         <option value={defaultCollection}>Default collection</option>
         {collections
           .filter((value) => value !== defaultCollection)

@@ -25,7 +25,7 @@ export default function NoteViewer({
 
   return notes.length > 0 ? (
     <div className="flex flex-col rounded-lg border border-slate-950/20">
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence>
         {notes.map((note) => {
           const {
             ref: { id },
