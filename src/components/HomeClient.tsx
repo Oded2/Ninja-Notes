@@ -119,9 +119,13 @@ export default function ClientHome() {
           <Button
             onClick={() => setViewNotes(false)}
             label="Add Note"
-            isPrimary
+            style="primary"
           />
-          <Button onClick={() => setViewNotes(true)} label="View Notes" />
+          <Button
+            onClick={() => setViewNotes(true)}
+            style="secondary"
+            label="View Notes"
+          />
         </div>
         <AnimatePresence initial={false} mode="wait">
           {viewNotes ? (

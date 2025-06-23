@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useUserStore } from "@/lib/stores/userStore";
 import { Rubik } from "next/font/google";
 import Toasts from "@/components/Toasts";
+import ConfirmModal from "@/components/ConfirmModal";
 
 const geistSans = Rubik({
   subsets: ["latin"],
@@ -52,6 +53,7 @@ export default function RootLayout({
           </div>
         </div>
         <Toasts />
+        <ConfirmModal />
       </body>
     </html>
   );

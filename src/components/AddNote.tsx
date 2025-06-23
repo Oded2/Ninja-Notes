@@ -138,7 +138,7 @@ export default function AddNote({ userKey }: Props) {
           type="submit"
           disabled={inProgress}
           label={editNote ? "Edit" : "Add"}
-          isPrimary
+          style="primary"
         />
       </div>
     </form>

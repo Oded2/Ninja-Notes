@@ -1,7 +1,8 @@
 import clsx from "clsx";
 
 type Props = {
-  isPrimary?: boolean;
+  style?: "primary" | "secondary" | "neutral";
+  isSecondary?: boolean;
   onClick?: () => void;
   label?: string;
   type?: "button" | "submit";
@@ -12,7 +13,7 @@ type Props = {
 };
 
 export default function Button({
-  isPrimary,
+  style = "neutral",
   onClick,
   label,
   type,
@@ -29,8 +30,9 @@ export default function Button({
       className={clsx(
         "group relative cursor-pointer overflow-hidden p-1 text-slate-50 shadow disabled:cursor-default",
         {
-          "bg-red-500": isPrimary,
-          "bg-teal-600": !isPrimary,
+          "bg-red-500": style === "primary",
+          "bg-teal-600": style === "secondary",
+          "bg-gray-600": style === "neutral",
           "rounded-xl": rounded,
           "w-full": fullWidth,
         },

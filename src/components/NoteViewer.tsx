@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction } from "react";
 import Collapse from "./Collapse";
 import { handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
+import { useConfirmStore } from "@/lib/stores/confirmStore";
 
 type Props = {
   notes: Note[];
@@ -19,15 +20,7 @@ export default function NoteViewer({
   setClosedNotes,
 }: Props) {
   const setEditNote = useEditStore((state) => state.update);
-  const handleDelete = (note: Note) => {
-    if (
-      !confirm(
-        `This will delete "${note.title || "Untitled"}". Are you sure you want to continue?`,
-      )
-    )
-      return;
-    deleteDoc(note.ref).catch(handleError);
-  };
+  const showConfirm = useConfirmStore((state) => state.showConfirm);
 
   return notes.length > 0 ? (
     <div className="flex flex-col rounded-lg border border-slate-950/20">
@@ -88,7 +81,13 @@ export default function NoteViewer({
                 )}
                 <button onClick={() => setEditNote(note)}>Edit</button>
                 <button
-                  onClick={() => handleDelete(note)}
+                  onClick={() =>
+                    showConfirm(
+                      "Delete note?",
+                      `This will delete "${note.title || "Untitled"}". Are you sure you want to continue?`,
+                      async () => deleteDoc(note.ref).catch(handleError),
+                    )
+                  }
                   className="text-red-400"
                 >
                   Delete
