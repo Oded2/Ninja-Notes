@@ -19,16 +19,23 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
-import { decryptWithKey } from "@/lib/helpers";
+import { decryptWithKey, deleteByQuery, handleError } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
 import CollectionSelect from "./CollectionSelect";
+import IconButton from "./IconButton";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import { useToastStore } from "@/lib/stores/toastStore";
+import { useConfirmStore } from "@/lib/stores/confirmStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
+  const addToast = useToastStore((state) => state.add);
+  const showConfirm = useConfirmStore((state) => state.showConfirm);
   const first = useRef(false);
   const editNote = useEditStore((state) => state.note);
   const [notes, setNotes] = useState<Note[]>([]);
+  const [encryptedNotes, setEncryptedNotes] = useState<Note[]>([]);
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
@@ -40,11 +47,36 @@ export default function ClientHome() {
   const [userKeyComponent, setUserKeyComponent] = useState<CryptoKey | null>(
     null,
   );
+  // An empty string implies all collections
   const [collectionFilter, setCollectionFilter] = useState("");
   const collections = useMemo(
     () => [...new Set(notes.map((note) => note.collection))],
     [notes],
   );
+
+  const deleteCollection = async (collectionName: string) => {
+    if (!userKeyComponent) {
+      // Keep alert
+      alert("User encryption key not found");
+      return;
+    }
+    const decryptedNames = notes.map((note) => note.collection);
+    const encryptedNames = encryptedNotes
+      .map((note) => note.collection)
+      .filter((_, i) => decryptedNames[i] === collectionName);
+    const q = query(
+      notesCollection,
+      where("collection", "in", encryptedNames),
+      where("userId", "==", user?.uid),
+    );
+    await deleteByQuery(q).catch(handleError);
+    setCollectionFilter("");
+    addToast(
+      "success",
+      "Collection delete",
+      `Collection '${collectionName}' has been successfully deleted.`,
+    );
+  };
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -72,6 +104,7 @@ export default function ClientHome() {
         }))
         .filter((note) => noteTypeGaurd(note));
       if (reverse.current) encryptedNotes.reverse();
+      setEncryptedNotes(encryptedNotes);
       const decryptedNotes: Note[] = await Promise.all(
         encryptedNotes.map(async (note) => ({
           ...note,
@@ -146,8 +179,8 @@ export default function ClientHome() {
             >
               {notes.length > 0 ? (
                 <>
-                  <div className="mb-4 flex gap-2">
-                    <div className="flex gap-2 *:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
+                  <div className="mb-4 flex gap-2 *:flex *:gap-2">
+                    <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
                       <button
                         onClick={() => {
                           setNotes((state) => state.toReversed());
@@ -179,6 +212,23 @@ export default function ClientHome() {
                         setVal={setCollectionFilter}
                       />
                     </div>
+                    {collectionFilter.length > 0 && (
+                      <div>
+                        <IconButton
+                          onClick={() =>
+                            showConfirm(
+                              "Delete collection?",
+                              `All notes under the collection '${collectionFilter}' will be deleted.`,
+                              async () =>
+                                await deleteCollection(collectionFilter),
+                              collectionFilter,
+                            )
+                          }
+                        >
+                          <TrashIcon />
+                        </IconButton>
+                      </div>
+                    )}
                   </div>
                   <NoteViewer
                     notes={

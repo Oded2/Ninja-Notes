@@ -13,11 +13,16 @@ export default function ConfirmModal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const text = content?.text;
 
+  const handleClose = () => {
+    closeConfirm();
+    setVal("");
+  };
+
   const handleConfirm = () => {
     if (!content) return;
     setInProgress(true);
     content.callback().then(() => {
-      closeConfirm();
+      handleClose();
       setInProgress(false);
     });
   };
@@ -27,7 +32,7 @@ export default function ConfirmModal() {
   }, [content]);
 
   return (
-    <Modal visible={!!content} closeFn={closeConfirm} title={content?.title}>
+    <Modal visible={!!content} closeFn={handleClose} title={content?.title}>
       <span className="text-slate-950/80">{content?.description}</span>
       {text && (
         <div className="my-3 flex flex-col gap-1">
@@ -43,7 +48,7 @@ export default function ConfirmModal() {
         </div>
       )}
       <ModalActions>
-        <Button label="Cancel" small onClick={closeConfirm} />
+        <Button label="Cancel" small onClick={handleClose} />
         <Button
           label="Confirm"
           small

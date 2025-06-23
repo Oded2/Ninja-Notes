@@ -1,5 +1,13 @@
+import { deleteDoc, getDocs, Query } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGaurd } from "./typegaurds";
+
+export async function deleteByQuery(q: Query) {
+  const promises = await getDocs(q).then((snapshot) =>
+    snapshot.docs.map((doc) => deleteDoc(doc.ref)),
+  );
+  await Promise.all(promises);
+}
 
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [

@@ -6,20 +6,14 @@ import AccountInputContainer from "./AccountInputContainer";
 import { useUserStore } from "@/lib/stores/userStore";
 import { updateEmail, updatePassword } from "firebase/auth";
 import {
+  deleteByQuery,
   derivePasswordKey,
   encryptWithKey,
   exportKey,
   generateSalt,
   handleError,
 } from "@/lib/helpers";
-import {
-  deleteDoc,
-  doc,
-  getDocs,
-  query,
-  setDoc,
-  where,
-} from "firebase/firestore";
+import { deleteDoc, doc, query, setDoc, where } from "firebase/firestore";
 import { notesCollection, usersCollection } from "@/lib/firebase";
 import { loadUserKey } from "@/lib/indexDB";
 import { useToastStore } from "@/lib/stores/toastStore";
@@ -41,6 +35,7 @@ export default function AccountSettings() {
     await updateEmail(user, newEmail).catch(handleError);
     setNewEmail("");
   };
+
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
       add("error", "Error", "Passwords must match");
@@ -83,13 +78,11 @@ export default function AccountSettings() {
       handleError(err);
     }
   };
+
   const handleNotePurge = async (interactive = true) => {
     setPurgeCompleted(interactive);
     const q = query(notesCollection, where("userId", "==", user?.uid));
-    const promises = await getDocs(q).then((snapshot) =>
-      snapshot.docs.map((doc) => deleteDoc(doc.ref)),
-    );
-    await Promise.all(promises).catch((e) => {
+    deleteByQuery(q).catch((e) => {
       handleError(e);
       setPurgeCompleted(false);
     });
