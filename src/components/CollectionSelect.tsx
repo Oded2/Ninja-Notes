@@ -4,7 +4,7 @@ import { SetValShortcut } from "@/lib/types";
 
 type Props = {
   collections: string[];
-  val?: string;
+  val: string;
   setVal: SetValShortcut<string>;
   allowAll?: boolean;
 };

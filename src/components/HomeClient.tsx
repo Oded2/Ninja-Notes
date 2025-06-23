@@ -175,6 +175,7 @@ export default function ClientHome() {
                       <CollectionSelect
                         allowAll
                         collections={collections}
+                        val={collectionFilter}
                         setVal={setCollectionFilter}
                       />
                     </div>
