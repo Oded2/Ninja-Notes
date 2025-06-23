@@ -21,6 +21,7 @@ import {
 import VerifyEmail from "./VerifyEmail";
 import { decryptWithKey } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
+import InlineDivider from "./InlineDivider";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -98,7 +99,7 @@ export default function ClientHome() {
             <h1 className="text-6xl font-bold text-slate-950">
               <span className="text-red-500">Ninja</span> Notes
             </h1>
-            <div className="mx-auto flex flex-col divide-y text-slate-950/80 *:py-1 sm:flex-row sm:divide-x sm:divide-y-0 *:sm:px-1 *:sm:py-0">
+            <InlineDivider>
               <div>{email}</div>
               <div>
                 <Link href="/account" className="hover:underline">
@@ -113,7 +114,7 @@ export default function ClientHome() {
                   Sign out
                 </button>
               </div>
-            </div>
+            </InlineDivider>
           </div>
         </div>
         <div className="mt-5 flex justify-center gap-4 border-b-2 border-slate-200/50 pb-10">

@@ -8,6 +8,7 @@ import { handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultCollection } from "@/lib/constants";
+import InlineDivider from "./InlineDivider";
 
 type Props = {
   notes: Note[];
@@ -46,22 +47,23 @@ export default function NoteViewer({
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <h2 className="text-xl font-bold">{title || "Untitled"}</h2>
-                  <div className="flex gap-0.5 text-sm text-slate-950/80">
-                    <span>
-                      {note.createdAt.toDate().toLocaleString(undefined, {
-                        minute: "numeric",
-                        hour: "numeric",
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span>&middot;</span>
-                    <span>
-                      {collection === defaultCollection
-                        ? "Default collection"
-                        : collection}
-                    </span>
+                  <div className="text-sm text-slate-950/80">
+                    <InlineDivider>
+                      <div>
+                        {note.createdAt.toDate().toLocaleString(undefined, {
+                          minute: "numeric",
+                          hour: "numeric",
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </div>
+                      <div>
+                        {collection === defaultCollection
+                          ? "Default collection"
+                          : collection}
+                      </div>
+                    </InlineDivider>
                   </div>
                 </div>
                 <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
