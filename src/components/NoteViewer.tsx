@@ -96,7 +96,7 @@ export default function NoteViewer({
                     showConfirm(
                       "Delete note?",
                       `This will delete "${note.title || "Untitled"}". Are you sure you want to continue?`,
-                      async () => deleteDoc(note.ref).catch(handleError),
+                      async () => await deleteDoc(note.ref).catch(handleError),
                     )
                   }
                   className="text-red-400"
