@@ -5,97 +5,31 @@ import Button from "@/components/Button";
 import NoteViewer from "@/components/NoteViewer";
 import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { authHandlers, listsCollection, notesCollection } from "@/lib/firebase";
-import {
-  deleteDoc,
-  doc,
-  onSnapshot,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { getDocs, onSnapshot, orderBy, query, where } from "firebase/firestore";
 import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
-import { List, Note } from "@/lib/types";
+import { List } from "@/lib/types";
 import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
-import {
-  ArrowsUpDownIcon,
-  ChevronDoubleUpIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/solid";
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
-import { decryptWithKey, deleteByQuery, handleError } from "@/lib/helpers";
+import { decryptWithKey } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
-import ListSelect from "./ListSelect";
-import IconButton from "./IconButton";
-import { TrashIcon } from "@heroicons/react/24/outline";
-import { useToastStore } from "@/lib/stores/toastStore";
-import { useConfirmStore } from "@/lib/stores/confirmStore";
-import { defaultListName } from "@/lib/constants";
+import { useNotesStore } from "@/lib/stores/notesStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
-  const addToast = useToastStore((state) => state.add);
-  const showConfirm = useConfirmStore((state) => state.showConfirm);
   const first = useRef(false);
   const editNote = useEditStore((state) => state.note);
-  const [notes, setNotes] = useState<Note[]>([]);
+  const addNote = useNotesStore((state) => state.add);
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
-  const reverse = useRef(false);
-  const [closedNotes, setClosedNotes] = useState<string[]>([]);
-  // At least one of the notes are closed
-  const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
-  // Create a constant used in the AddNote component so that the user key only has to be fetched once
-  const [userKeyComponent, setUserKeyComponent] = useState<CryptoKey | null>(
-    null,
-  );
-  // An undefined implies all lists
-  const [listFilter, setListFilter] = useState<List | undefined>(undefined);
+  const [userKey, setUserKey] = useState<CryptoKey | null>(null);
   const [lists, setLists] = useState<List[]>([]);
-  const filteredNotes = useMemo(
-    () =>
-      listFilter
-        ? notes.filter((note) => note.listId === listFilter.id)
-        : notes,
-    [notes, listFilter],
-  );
-
-  const deleteList = async (list: List) => {
-    if (!userKeyComponent) {
-      // Keep alert
-      alert("User encryption key not found");
-      return;
-    }
-    const { id } = list;
-    const q = query(
-      notesCollection,
-      where("userId", "==", user?.uid),
-      where("listId", "==", id),
-    );
-    // Delete every note in that list
-    await deleteByQuery(q).catch(handleError);
-    if (list.name !== defaultListName) {
-      // User isn't deleting the default collection
-      // Delete the list
-      const docRef = doc(listsCollection, id);
-      await deleteDoc(docRef).catch(handleError);
-      // Set the collection filter back to all
-      setListFilter(undefined);
-    }
-    const { name } = list;
-    addToast(
-      "success",
-      "Collection delete",
-      name === defaultListName
-        ? "The default collection has been successfully deleted"
-        : `Collection '${name}' has been successfully deleted`,
-    );
-  };
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -103,42 +37,39 @@ export default function ClientHome() {
   }, [user]);
 
   useEffect(() => {
-    if (!user) return;
+    loadUserKey().then(setUserKey);
+  }, []);
+
+  useEffect(() => {
+    if (!user || !userKey) return;
     console.log("Subscribed");
     const { uid } = user;
-    const userKeyPromise = loadUserKey();
-    userKeyPromise.then(setUserKeyComponent);
 
     const notesQuery = query(
       notesCollection,
       where("userId", "==", uid),
-      orderBy("createdAt", "desc"),
+      orderBy("createdAt"),
     );
     const listsQuery = query(listsCollection, where("userId", "==", uid));
 
-    const unsubscribeNotes = onSnapshot(notesQuery, async (snapshot) => {
-      const userKey = await userKeyPromise;
-      if (!userKey) return;
-      const encryptedNotes = snapshot.docs
-        .map((doc) => ({
-          id: doc.ref.id,
-          ...doc.data(),
-        }))
-        .filter((note) => noteTypeGuard(note));
-      if (reverse.current) encryptedNotes.reverse();
-      const decryptedNotes: Note[] = await Promise.all(
-        encryptedNotes.map(async (note) => ({
-          ...note,
-          title: await decryptWithKey(note.title, userKey),
-          content: await decryptWithKey(note.content, userKey),
-        })),
-      );
-      setNotes(decryptedNotes);
-    });
+    const notesPromise = getDocs(notesQuery)
+      .then((snapshot) =>
+        snapshot.docs
+          .map((doc) => ({
+            id: doc.ref.id,
+            ...doc.data(),
+          }))
+          .filter((note) => noteTypeGuard(note))
+          .map(async (note) => ({
+            ...note,
+            title: await decryptWithKey(note.title, userKey),
+            content: await decryptWithKey(note.content, userKey),
+          })),
+      )
+      .then((decryptedNotesPromise) => Promise.all(decryptedNotesPromise));
+    notesPromise.then((notes) => notes.forEach((note) => addNote(note)));
 
     const unsubscribeLists = onSnapshot(listsQuery, async (snapshot) => {
-      const userKey = await userKeyPromise;
-      if (!userKey) return;
       const encryptedLists = snapshot.docs
         .map((doc) => ({
           id: doc.ref.id,
@@ -153,11 +84,8 @@ export default function ClientHome() {
       );
       setLists(decryptedLists);
     });
-    return () => {
-      unsubscribeNotes();
-      unsubscribeLists();
-    };
-  }, [user]);
+    return unsubscribeLists;
+  }, [user, userKey, addNote]);
 
   useEffect(() => {
     if (first.current) setViewNotes(!editNote);
@@ -209,7 +137,7 @@ export default function ClientHome() {
             label="View Notes"
           />
         </div>
-        {userKeyComponent && (
+        {userKey && (
           <AnimatePresence initial={false} mode="wait">
             {viewNotes ? (
               <motion.div
@@ -219,72 +147,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <div className="mb-4 flex gap-2 *:flex *:gap-2">
-                  <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-                    <button
-                      onClick={() => {
-                        setNotes((state) => state.toReversed());
-                        reverse.current = !reverse.current;
-                      }}
-                    >
-                      <ArrowsUpDownIcon className="size-6" />
-                    </button>
-                    <motion.button
-                      initial={false}
-                      animate={{ rotate: notesOpen ? 180 : 0 }}
-                      transition={{
-                        type: "spring",
-                        duration: 0.5,
-                      }}
-                      onClick={() => {
-                        if (notesOpen) setClosedNotes([]);
-                        else setClosedNotes(notes.map((note) => note.id));
-                      }}
-                    >
-                      <ChevronDoubleUpIcon className="size-6" />
-                    </motion.button>
-                  </div>
-                  <div className="max-w-sm grow">
-                    <ListSelect
-                      allowAll
-                      lists={lists}
-                      val={listFilter}
-                      setVal={setListFilter}
-                    />
-                  </div>
-                  {listFilter && (
-                    <div>
-                      <IconButton
-                        onClick={() => {
-                          const { name } = listFilter;
-                          const isDefaultList = name === defaultListName;
-                          showConfirm(
-                            "Delete collection?",
-                            isDefaultList
-                              ? "All notes under the default collection will be deleted."
-                              : `All notes under the collection '${name}' will be deleted.`,
-                            async () => await deleteList(listFilter),
-                            isDefaultList ? "Default collection" : name,
-                          );
-                        }}
-                      >
-                        <TrashIcon />
-                      </IconButton>
-                    </div>
-                  )}
-                </div>
-                {filteredNotes.length > 0 ? (
-                  <NoteViewer
-                    notes={filteredNotes}
-                    closedNotes={closedNotes}
-                    setClosedNotes={setClosedNotes}
-                    lists={lists}
-                    userKey={userKeyComponent}
-                    setListFilter={setListFilter}
-                  />
-                ) : (
-                  <div>No notes</div>
-                )}
+                <NoteViewer lists={lists} userKey={userKey} />
               </motion.div>
             ) : (
               <motion.div
@@ -294,7 +157,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <AddNote userKey={userKeyComponent} lists={lists} />
+                <AddNote userKey={userKey} lists={lists} />
               </motion.div>
             )}
           </AnimatePresence>

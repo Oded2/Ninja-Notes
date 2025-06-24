@@ -1,7 +1,13 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import Button from "./Button";
 import InputContainer from "./InputContainer";
-import { addDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  doc,
+  serverTimestamp,
+  Timestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
@@ -13,6 +19,7 @@ import { List } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { User } from "firebase/auth";
+import { useNotesStore } from "@/lib/stores/notesStore";
 
 type Props = {
   userKey: CryptoKey;
@@ -26,10 +33,12 @@ export default function AddNote({ userKey, lists }: Props) {
   const [content, setContent] = useState("");
   const [inProgress, setInProgress] = useState(false);
   const user = useUserStore((state) => state.user);
-  const editNote = useEditStore((state) => state.note);
-  const reset = useEditStore((state) => state.reset);
+  const activeEditNote = useEditStore((state) => state.note);
+  const resetEdit = useEditStore((state) => state.reset);
   const addToast = useToastStore((state) => state.add);
   const showInput = useInputStore((state) => state.showInput);
+  const addNote = useNotesStore((state) => state.add);
+  const editNote = useNotesStore((state) => state.edit);
   const defaultListId = useMemo(
     () => lists.find((list) => list.name === defaultListName)?.id,
     [lists],
@@ -42,36 +51,57 @@ export default function AddNote({ userKey, lists }: Props) {
     if (!validate(user, titleTrim, contentTrim)) return;
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
-    const id = currentList?.id ?? defaultListId;
-    if (!id) {
+    const listId = currentList?.id ?? defaultListId;
+    if (!listId) {
       alert("Cannot find default list ID");
       setInProgress(false);
       return;
     }
     const func = async () => {
-      if (editNote) {
-        const docRef = doc(notesCollection, editNote.id);
-        await updateDoc(docRef, {
+      if (activeEditNote) {
+        const { id } = activeEditNote;
+        const docRef = doc(notesCollection, id);
+        const toEdit = {
           title: encryptedTitle,
           content: encryptedContent,
-          listId: id,
+          listId: listId,
           editedAt: serverTimestamp(),
+        };
+        await updateDoc(docRef, toEdit);
+        editNote(id, {
+          ...activeEditNote,
+          ...toEdit,
+          editedAt: Timestamp.now(),
+          title: titleTrim,
+          content: contentTrim,
         });
-        reset();
-      } else
-        await addDoc(notesCollection, {
+        resetEdit();
+      } else {
+        const toAdd = {
           title: encryptedTitle,
           content: encryptedContent,
-          listId: id,
+          listId: listId,
           userId: user.uid,
           createdAt: serverTimestamp(),
+        };
+        const { id } = await addDoc(notesCollection, toAdd);
+        addNote({
+          ...toAdd,
+          id,
+          createdAt: Timestamp.now(),
+          title: titleTrim,
+          content: contentTrim,
         });
+      }
     };
-    func().catch(handleError);
-    setInProgress(false);
-    setTitle("");
-    setContent("");
-    addToast("success", "Note added", undefined, 2000);
+    func()
+      .catch(handleError)
+      .finally(() => {
+        setInProgress(false);
+        setTitle("");
+        setContent("");
+        addToast("success", "Note added", undefined, 2000);
+      });
   };
 
   const validate = (
@@ -116,14 +146,16 @@ export default function AddNote({ userKey, lists }: Props) {
   };
 
   useEffect(() => {
-    if (editNote) {
-      setTitle(editNote.title);
-      setContent(editNote.content);
-      const editListId = lists.find((list) => list.id === editNote.listId);
+    if (activeEditNote) {
+      setTitle(activeEditNote.title);
+      setContent(activeEditNote.content);
+      const editListId = lists.find(
+        (list) => list.id === activeEditNote.listId,
+      );
       if (editListId) setCurrentList(editListId);
       else alert("Edit list id not found");
     }
-  }, [editNote, lists]);
+  }, [activeEditNote, lists]);
 
   return (
     <form
@@ -178,10 +210,10 @@ export default function AddNote({ userKey, lists }: Props) {
           disabled={inProgress}
         ></textarea>
         <div className="my-1 flex grow justify-end gap-2 text-xs">
-          {editNote && (
+          {activeEditNote && (
             <button
               type="button"
-              onClick={reset}
+              onClick={resetEdit}
               className="cursor-pointer hover:underline"
             >
               Cancel edit
@@ -194,7 +226,7 @@ export default function AddNote({ userKey, lists }: Props) {
         <Button
           type="submit"
           disabled={inProgress}
-          label={editNote ? "Edit" : "Add"}
+          label={activeEditNote ? "Edit" : "Add"}
           style="primary"
         />
       </div>
