@@ -8,6 +8,8 @@ import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultCollection } from "@/lib/constants";
 import InlineDivider from "./InlineDivider";
+import Tooltip from "./Tooltip";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   notes: Note[];
@@ -50,7 +52,9 @@ export default function NoteViewer({
                   <div className="text-sm text-slate-950/80">
                     <InlineDivider>
                       {editedAt && (
-                        <div>{`Edited ${formatTimestamp(editedAt)}`}</div>
+                        <Tooltip tip={`Edited: ${formatTimestamp(editedAt)}`}>
+                          <InformationCircleIcon className="size-4" />
+                        </Tooltip>
                       )}
                       <div>{formatTimestamp(note.createdAt)}</div>
                       <div>
@@ -102,7 +106,7 @@ export default function NoteViewer({
               </div>
             </motion.div>
           );
-        })}{" "}
+        })}
       </AnimatePresence>
     </div>
   );

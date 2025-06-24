@@ -15,7 +15,7 @@ export const formatTimestamp = (timestamp: Timestamp) => {
     minute: "numeric",
     hour: "numeric",
     day: "numeric",
-    month: "numeric",
+    month: "long",
     year: "numeric",
   });
 };
