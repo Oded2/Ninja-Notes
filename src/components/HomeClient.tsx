@@ -58,6 +58,13 @@ export default function ClientHome() {
     () => [...new Set(notes.map((note) => note.collection))],
     [notes],
   );
+  const filteredNotes = useMemo(
+    () =>
+      collectionFilter.length > 0
+        ? notes.filter((note) => note.collection === collectionFilter)
+        : notes,
+    [notes, collectionFilter],
+  );
 
   const deleteCollection = async (collectionName: string) => {
     if (!userKeyComponent) {
@@ -180,77 +187,68 @@ export default function ClientHome() {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.1 }}
             >
-              {notes.length > 0 ? (
-                <>
-                  <div className="mb-4 flex gap-2 *:flex *:gap-2">
-                    <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-                      <button
-                        onClick={() => {
-                          setNotes((state) => state.toReversed());
-                          reverse.current = !reverse.current;
-                        }}
-                      >
-                        <ArrowsUpDownIcon className="size-6" />
-                      </button>
-                      <motion.button
-                        initial={false}
-                        animate={{ rotate: notesOpen ? 180 : 0 }}
-                        transition={{
-                          type: "spring",
-                          duration: 0.5,
-                        }}
-                        onClick={() => {
-                          if (notesOpen) setClosedNotes([]);
-                          else setClosedNotes(notes.map((note) => note.ref.id));
-                        }}
-                      >
-                        <ChevronDoubleUpIcon className="size-6" />
-                      </motion.button>
-                    </div>
-                    <div className="max-w-sm grow">
-                      <CollectionSelect
-                        allowAll
-                        collections={collections}
-                        val={collectionFilter}
-                        setVal={setCollectionFilter}
-                      />
-                    </div>
-                    {collectionFilter.length > 0 && (
-                      <div>
-                        <IconButton
-                          onClick={() =>
-                            showConfirm(
-                              "Delete collection?",
-                              collectionFilter === defaultCollection
-                                ? "All notes under the default collection will be deleted."
-                                : `All notes under the collection '${collectionFilter}' will be deleted.`,
-                              async () =>
-                                await deleteCollection(collectionFilter),
-                              collectionFilter === defaultCollection
-                                ? "Default collection"
-                                : collectionFilter,
-                            )
-                          }
-                        >
-                          <TrashIcon />
-                        </IconButton>
-                      </div>
-                    )}
-                  </div>
-                  <NoteViewer
-                    notes={
-                      collectionFilter.length == 0
-                        ? notes
-                        : notes.filter(
-                            (note) => note.collection === collectionFilter,
-                          )
-                    }
-                    closedNotes={closedNotes}
-                    setClosedNotes={setClosedNotes}
+              <div className="mb-4 flex gap-2 *:flex *:gap-2">
+                <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
+                  <button
+                    onClick={() => {
+                      setNotes((state) => state.toReversed());
+                      reverse.current = !reverse.current;
+                    }}
+                  >
+                    <ArrowsUpDownIcon className="size-6" />
+                  </button>
+                  <motion.button
+                    initial={false}
+                    animate={{ rotate: notesOpen ? 180 : 0 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.5,
+                    }}
+                    onClick={() => {
+                      if (notesOpen) setClosedNotes([]);
+                      else setClosedNotes(notes.map((note) => note.ref.id));
+                    }}
+                  >
+                    <ChevronDoubleUpIcon className="size-6" />
+                  </motion.button>
+                </div>
+                <div className="max-w-sm grow">
+                  <CollectionSelect
+                    allowAll
+                    collections={collections}
+                    val={collectionFilter}
+                    setVal={setCollectionFilter}
                   />
-                </>
+                </div>
+                {collectionFilter.length > 0 && (
+                  <div>
+                    <IconButton
+                      onClick={() =>
+                        showConfirm(
+                          "Delete collection?",
+                          collectionFilter === defaultCollection
+                            ? "All notes under the default collection will be deleted."
+                            : `All notes under the collection '${collectionFilter}' will be deleted.`,
+                          async () => await deleteCollection(collectionFilter),
+                          collectionFilter === defaultCollection
+                            ? "Default collection"
+                            : collectionFilter,
+                        )
+                      }
+                    >
+                      <TrashIcon />
+                    </IconButton>
+                  </div>
+                )}
+              </div>
+              {filteredNotes.length > 0 ? (
+                <NoteViewer
+                  notes={filteredNotes}
+                  closedNotes={closedNotes}
+                  setClosedNotes={setClosedNotes}
+                />
               ) : (
-                <span>No notes</span>
+                <div>No notes</div>
               )}
             </motion.div>
           ) : (
