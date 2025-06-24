@@ -1,4 +1,4 @@
-import { deleteDoc, getDocs, Query } from "firebase/firestore";
+import { deleteDoc, getDocs, Query, Timestamp } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGaurd } from "./typegaurds";
 
@@ -8,6 +8,16 @@ export const fullTrim = (s: string) => {
     .split("\n")
     .map((p) => p.trimEnd())
     .join("\n");
+};
+
+export const formatTimestamp = (timestamp: Timestamp) => {
+  return timestamp.toDate().toLocaleString(undefined, {
+    minute: "numeric",
+    hour: "numeric",
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+  });
 };
 
 export async function deleteByQuery(q: Query) {

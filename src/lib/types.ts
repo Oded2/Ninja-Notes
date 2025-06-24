@@ -13,6 +13,7 @@ export type UserData = {
 export type Note = {
   ref: DocumentReference<DocumentData, DocumentData>;
   createdAt: Timestamp;
+  editedAt?: Timestamp;
   userId: string;
   title: string;
   content: string;

@@ -63,7 +63,7 @@ export default function AddNote({ userKey, notes }: Props) {
           content: encryptedContent,
           collection: encryptedCollection,
           collectionHash,
-          createdAt: serverTimestamp(),
+          editedAt: serverTimestamp(),
         });
         reset();
       } else

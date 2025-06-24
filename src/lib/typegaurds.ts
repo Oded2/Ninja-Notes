@@ -40,6 +40,7 @@ export function noteTypeGaurd(obj: unknown): obj is Note {
     note.ref !== null &&
     "id" in note.ref &&
     note.createdAt instanceof Timestamp &&
+    (note.editedAt === undefined || note.editedAt instanceof Timestamp) &&
     typeof note.userId === "string" &&
     typeof note.title === "string" &&
     typeof note.content === "string" &&

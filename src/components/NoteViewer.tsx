@@ -3,7 +3,7 @@ import { Note, SetValShortcut } from "@/lib/types";
 import { deleteDoc } from "firebase/firestore";
 import { AnimatePresence, motion } from "framer-motion";
 import Collapse from "./Collapse";
-import { handleError } from "@/lib/helpers";
+import { formatTimestamp, handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultCollection } from "@/lib/constants";
@@ -34,6 +34,7 @@ export default function NoteViewer({
             content,
           } = note;
           const isOpen = !closedNotes.includes(id);
+          const { editedAt } = note;
           return (
             <motion.div
               key={id}
@@ -48,15 +49,10 @@ export default function NoteViewer({
                   <h2 className="text-xl font-bold">{title || "Untitled"}</h2>
                   <div className="text-sm text-slate-950/80">
                     <InlineDivider>
-                      <div>
-                        {note.createdAt.toDate().toLocaleString(undefined, {
-                          minute: "numeric",
-                          hour: "numeric",
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })}
-                      </div>
+                      {editedAt && (
+                        <div>{`Edited ${formatTimestamp(editedAt)}`}</div>
+                      )}
+                      <div>{formatTimestamp(note.createdAt)}</div>
                       <div>
                         {collection === defaultCollection
                           ? "Default collection"
