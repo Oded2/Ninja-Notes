@@ -62,8 +62,8 @@ export default function ClientHome() {
     }
     const decryptedNames = notes.map((note) => note.collection);
     const encryptedNames = encryptedNotes
-      .map((note) => note.collection)
-      .filter((_, i) => decryptedNames[i] === collectionName);
+      .filter((_, i) => decryptedNames[i] === collectionName)
+      .map((note) => note.collection);
     const q = query(
       notesCollection,
       where("collection", "in", encryptedNames),
