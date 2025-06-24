@@ -34,4 +34,5 @@ const authHandlers = {
     await clearUserKey();
   },
 };
+
 export { app, usersCollection, notesCollection, auth, authHandlers };
