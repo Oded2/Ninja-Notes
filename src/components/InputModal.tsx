@@ -32,19 +32,19 @@ export default function InputModal() {
   return (
     <Modal visible={!!content} closeFn={handleClose} title={content?.label}>
       <form
+        className="mt-3 flex grow flex-col gap-3"
         onSubmit={(e) => {
           e.preventDefault();
           handleInput();
         }}
       >
-        <div className="my-3 flex flex-col">
-          <AccountInput
-            inputRef={inputRef}
-            placeholder="Enter text here"
-            val={val}
-            setVal={setVal}
-          />
-        </div>
+        <AccountInput
+          inputRef={inputRef}
+          placeholder="Enter text here"
+          val={val}
+          setVal={setVal}
+        />
+
         <ModalActions>
           <Button type="button" label="Cancel" small onClick={handleClose} />
           <Button type="submit" label="Confirm" style="primary" small />
