@@ -79,10 +79,10 @@ export default function AddNote({ userKey, notes }: Props) {
     setContent("");
   };
 
-  const onAdd = (collectionName: string) => {
-    setCollection(collectionName);
+  const addCollection = (collectionName: string) => {
     if (collections.includes(collectionName)) return;
     setCollections((state) => [...state, collectionName]);
+    setCollection(collectionName);
   };
 
   useEffect(() => {
@@ -114,7 +114,7 @@ export default function AddNote({ userKey, notes }: Props) {
         />
         <button
           type="button"
-          onClick={() => showInput("Enter collection name", onAdd)}
+          onClick={() => showInput("Enter collection name", addCollection)}
           className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
         >
           <PlusIcon className="size-6" />
