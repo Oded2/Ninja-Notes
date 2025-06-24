@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, Timestamp } from "firebase/firestore";
+import { DocumentReference, Timestamp } from "firebase/firestore";
 import { Dispatch, SetStateAction } from "react";
 
 export type SetValShortcut<T> = Dispatch<SetStateAction<T>>;
@@ -11,14 +11,18 @@ export type UserData = {
 };
 
 export type Note = {
-  ref: DocumentReference<DocumentData, DocumentData>;
+  ref: DocumentReference;
   createdAt: Timestamp;
   editedAt?: Timestamp;
   userId: string;
   title: string;
   content: string;
-  collection: string;
-  collectionHash: string;
+  listId: string;
+};
+
+export type List = {
+  ref: DocumentReference;
+  name: string;
 };
 
 export type Toast = {

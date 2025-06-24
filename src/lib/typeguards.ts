@@ -1,7 +1,7 @@
-import { Timestamp } from "firebase/firestore";
-import { Note, UserData } from "./types";
+import { DocumentReference, Timestamp } from "firebase/firestore";
+import { List, Note, UserData } from "./types";
 
-export function firebaseErrorTypeGaurd(
+export function firebaseErrorTypeGuard(
   error: unknown,
 ): error is { code: string; message: string } {
   return (
@@ -14,7 +14,7 @@ export function firebaseErrorTypeGaurd(
   );
 }
 
-export function userDataTypeGaurd(obj: unknown): obj is UserData {
+export function userDataTypeGuard(obj: unknown): obj is UserData {
   if (
     typeof obj === "object" &&
     obj !== null &&
@@ -32,7 +32,7 @@ export function userDataTypeGaurd(obj: unknown): obj is UserData {
   return false;
 }
 
-export function noteTypeGaurd(obj: unknown): obj is Note {
+export function noteTypeGuard(obj: unknown): obj is Note {
   if (typeof obj !== "object" || obj === null) return false;
   const note = obj as Record<string, unknown>;
   return (
@@ -43,8 +43,21 @@ export function noteTypeGaurd(obj: unknown): obj is Note {
     (note.editedAt === undefined || note.editedAt instanceof Timestamp) &&
     typeof note.userId === "string" &&
     typeof note.title === "string" &&
-    typeof note.content === "string" &&
-    typeof note.collection === "string" &&
-    typeof note.collectionHash === "string"
+    typeof note.content === "string"
   );
+}
+
+export function listTypeGuard(obj: unknown): obj is List {
+  if (
+    typeof obj === "object" &&
+    obj !== null &&
+    "ref" in obj &&
+    "name" in obj
+  ) {
+    const casted = obj as Record<string, unknown>;
+    return (
+      casted.ref instanceof DocumentReference && typeof casted.name === "string"
+    );
+  }
+  return false;
 }

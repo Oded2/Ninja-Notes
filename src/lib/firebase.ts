@@ -23,6 +23,7 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const usersCollection = collection(db, "users");
 const notesCollection = collection(db, "notes");
+const listsCollection = collection(db, "lists");
 const auth = getAuth(app);
 const authHandlers = {
   signup: (email: string, password: string) =>
@@ -35,4 +36,11 @@ const authHandlers = {
   },
 };
 
-export { app, usersCollection, notesCollection, auth, authHandlers };
+export {
+  app,
+  usersCollection,
+  notesCollection,
+  listsCollection,
+  auth,
+  authHandlers,
+};

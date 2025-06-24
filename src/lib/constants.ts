@@ -5,4 +5,4 @@ export const maxLengths = {
 };
 
 // Random value to allow the user to create any collection name
-export const defaultCollection = "2a030440-0f91-455b-a8ee-41dc8dbd3e75";
+export const defaultListName = "2a030440-0f91-455b-a8ee-41dc8dbd3e75";

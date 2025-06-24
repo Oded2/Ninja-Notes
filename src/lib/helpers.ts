@@ -1,6 +1,6 @@
 import { deleteDoc, getDocs, Query, Timestamp } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
-import { firebaseErrorTypeGaurd } from "./typegaurds";
+import { firebaseErrorTypeGuard } from "./typeguards";
 
 export const fullTrim = (s: string) => {
   return s
@@ -25,12 +25,6 @@ export async function deleteByQuery(q: Query) {
     snapshot.docs.map((doc) => deleteDoc(doc.ref)),
   );
   await Promise.all(promises);
-}
-
-export async function hashText(plainText: string) {
-  const encoder = new TextEncoder();
-  const hash = await crypto.subtle.digest("SHA-256", encoder.encode(plainText));
-  return toHex(hash);
 }
 
 export function generateUserKey() {
@@ -101,7 +95,7 @@ export function generateSalt() {
 
 export const getError = (err: unknown) => {
   console.error(err);
-  if (firebaseErrorTypeGaurd(err)) {
+  if (firebaseErrorTypeGuard(err)) {
     const { code, message } = err;
     const errorCodeMap: Record<string, string> = {
       "auth/invalid-credential": "Invalid credentials",
@@ -116,7 +110,7 @@ export const getError = (err: unknown) => {
 };
 
 export const handleError = (err: unknown) => {
-  if (firebaseErrorTypeGaurd(err)) {
+  if (firebaseErrorTypeGuard(err)) {
     const { code, message } = err;
     console.error(`Firebase error\nCode: ${code}\nMessage: ${message}`);
     const errorCodeMap: Record<string, string> = {
@@ -131,11 +125,3 @@ export const handleError = (err: unknown) => {
       .add("error", "Error", errorCodeMap[code] ?? message);
   } else console.error(err);
 };
-
-// Local helper functions
-
-function toHex(buffer: ArrayBuffer): string {
-  return Array.from(new Uint8Array(buffer))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}

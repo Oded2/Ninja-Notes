@@ -7,10 +7,16 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { authHandlers, notesCollection } from "@/lib/firebase";
-import { onSnapshot, orderBy, query, where } from "firebase/firestore";
-import { noteTypeGaurd } from "@/lib/typegaurds";
-import { Note } from "@/lib/types";
+import { authHandlers, listsCollection, notesCollection } from "@/lib/firebase";
+import {
+  deleteDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
+import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
+import { List, Note } from "@/lib/types";
 import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
 import {
@@ -19,20 +25,15 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
-import {
-  decryptWithKey,
-  deleteByQuery,
-  handleError,
-  hashText,
-} from "@/lib/helpers";
+import { decryptWithKey, deleteByQuery, handleError } from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
-import CollectionSelect from "./CollectionSelect";
+import ListSelect from "./ListSelect";
 import IconButton from "./IconButton";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
-import { defaultCollection } from "@/lib/constants";
+import { defaultListName } from "@/lib/constants";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -52,40 +53,43 @@ export default function ClientHome() {
   const [userKeyComponent, setUserKeyComponent] = useState<CryptoKey | null>(
     null,
   );
-  // An empty string implies all collections
-  const [collectionFilter, setCollectionFilter] = useState("");
-  const collections = useMemo(
-    () => [...new Set(notes.map((note) => note.collection))],
-    [notes],
-  );
+  // An undefined implies all lists
+  const [listFilter, setListFilter] = useState<List | undefined>(undefined);
+  const [lists, setLists] = useState<List[]>([]);
   const filteredNotes = useMemo(
     () =>
-      collectionFilter.length > 0
-        ? notes.filter((note) => note.collection === collectionFilter)
+      listFilter
+        ? notes.filter((note) => note.listId === listFilter.ref.id)
         : notes,
-    [notes, collectionFilter],
+    [notes, listFilter],
   );
 
-  const deleteCollection = async (collectionName: string) => {
+  const deleteCollection = async (list: List) => {
     if (!userKeyComponent) {
       // Keep alert
       alert("User encryption key not found");
       return;
     }
-    const collectionHash = await hashText(collectionName);
     const q = query(
       notesCollection,
       where("userId", "==", user?.uid),
-      where("collectionHash", "==", collectionHash),
+      where("listId", "==", list.ref.id),
     );
     await deleteByQuery(q).catch(handleError);
-    setCollectionFilter("");
+    if (list.name !== defaultListName) {
+      // User isn't deleting the default collection
+      // Delete the list
+      await deleteDoc(list.ref).catch(handleError);
+      // Set the collection filter back to all
+      setListFilter(undefined);
+    }
+    const { name } = list;
     addToast(
       "success",
       "Collection delete",
-      collectionName === defaultCollection
+      name === defaultListName
         ? "The default collection has been successfully deleted"
-        : `Collection '${collectionName}' has been successfully deleted`,
+        : `Collection '${name}' has been successfully deleted`,
     );
   };
 
@@ -97,15 +101,18 @@ export default function ClientHome() {
   useEffect(() => {
     if (!user) return;
     console.log("Subscribed");
+    const { uid } = user;
     const userKeyPromise = loadUserKey();
     userKeyPromise.then(setUserKeyComponent);
-    const q = query(
+
+    const notesQuery = query(
       notesCollection,
-      where("userId", "==", user.uid),
+      where("userId", "==", uid),
       orderBy("createdAt", "desc"),
     );
+    const listsQuery = query(listsCollection, where("userId", "==", uid));
 
-    const unsubscribe = onSnapshot(q, async (snapshot) => {
+    const unsubscribeNotes = onSnapshot(notesQuery, async (snapshot) => {
       const userKey = await userKeyPromise;
       if (!userKey) return;
       const encryptedNotes = snapshot.docs
@@ -113,19 +120,39 @@ export default function ClientHome() {
           ref: doc.ref,
           ...doc.data(),
         }))
-        .filter((note) => noteTypeGaurd(note));
+        .filter((note) => noteTypeGuard(note));
       if (reverse.current) encryptedNotes.reverse();
       const decryptedNotes: Note[] = await Promise.all(
         encryptedNotes.map(async (note) => ({
           ...note,
           title: await decryptWithKey(note.title, userKey),
           content: await decryptWithKey(note.content, userKey),
-          collection: await decryptWithKey(note.collection, userKey),
         })),
       );
       setNotes(decryptedNotes);
     });
-    return unsubscribe;
+
+    const unsubscribeLists = onSnapshot(listsQuery, async (snapshot) => {
+      const userKey = await userKeyPromise;
+      if (!userKey) return;
+      const encryptedLists = snapshot.docs
+        .map((doc) => ({
+          ref: doc.ref,
+          ...doc.data(),
+        }))
+        .filter((list) => listTypeGuard(list));
+      const decryptedLists: List[] = await Promise.all(
+        encryptedLists.map(async (list) => ({
+          ...list,
+          name: await decryptWithKey(list.name, userKey),
+        })),
+      );
+      setLists(decryptedLists);
+    });
+    return () => {
+      unsubscribeNotes();
+      unsubscribeLists();
+    };
   }, [user]);
 
   useEffect(() => {
@@ -178,93 +205,96 @@ export default function ClientHome() {
             label="View Notes"
           />
         </div>
-        <AnimatePresence initial={false} mode="wait">
-          {viewNotes ? (
-            <motion.div
-              key="noteViewer"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.1 }}
-            >
-              <div className="mb-4 flex gap-2 *:flex *:gap-2">
-                <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-                  <button
-                    onClick={() => {
-                      setNotes((state) => state.toReversed());
-                      reverse.current = !reverse.current;
-                    }}
-                  >
-                    <ArrowsUpDownIcon className="size-6" />
-                  </button>
-                  <motion.button
-                    initial={false}
-                    animate={{ rotate: notesOpen ? 180 : 0 }}
-                    transition={{
-                      type: "spring",
-                      duration: 0.5,
-                    }}
-                    onClick={() => {
-                      if (notesOpen) setClosedNotes([]);
-                      else setClosedNotes(notes.map((note) => note.ref.id));
-                    }}
-                  >
-                    <ChevronDoubleUpIcon className="size-6" />
-                  </motion.button>
-                </div>
-                <div className="max-w-sm grow">
-                  <CollectionSelect
-                    allowAll
-                    collections={collections}
-                    val={collectionFilter}
-                    setVal={setCollectionFilter}
-                  />
-                </div>
-                {collectionFilter.length > 0 && (
-                  <div>
-                    <IconButton
-                      onClick={() =>
-                        showConfirm(
-                          "Delete collection?",
-                          collectionFilter === defaultCollection
-                            ? "All notes under the default collection will be deleted."
-                            : `All notes under the collection '${collectionFilter}' will be deleted.`,
-                          async () => await deleteCollection(collectionFilter),
-                          collectionFilter === defaultCollection
-                            ? "Default collection"
-                            : collectionFilter,
-                        )
-                      }
+        {userKeyComponent && (
+          <AnimatePresence initial={false} mode="wait">
+            {viewNotes ? (
+              <motion.div
+                key="noteViewer"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.1 }}
+              >
+                <div className="mb-4 flex gap-2 *:flex *:gap-2">
+                  <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
+                    <button
+                      onClick={() => {
+                        setNotes((state) => state.toReversed());
+                        reverse.current = !reverse.current;
+                      }}
                     >
-                      <TrashIcon />
-                    </IconButton>
+                      <ArrowsUpDownIcon className="size-6" />
+                    </button>
+                    <motion.button
+                      initial={false}
+                      animate={{ rotate: notesOpen ? 180 : 0 }}
+                      transition={{
+                        type: "spring",
+                        duration: 0.5,
+                      }}
+                      onClick={() => {
+                        if (notesOpen) setClosedNotes([]);
+                        else setClosedNotes(notes.map((note) => note.ref.id));
+                      }}
+                    >
+                      <ChevronDoubleUpIcon className="size-6" />
+                    </motion.button>
                   </div>
+                  <div className="max-w-sm grow">
+                    <ListSelect
+                      allowAll
+                      lists={lists}
+                      val={listFilter}
+                      setVal={setListFilter}
+                    />
+                  </div>
+                  {listFilter && (
+                    <div>
+                      <IconButton
+                        onClick={() => {
+                          const { name } = listFilter;
+                          const isDefaultList = name === defaultListName;
+                          showConfirm(
+                            "Delete collection?",
+                            isDefaultList
+                              ? "All notes under the default collection will be deleted."
+                              : `All notes under the collection '${name}' will be deleted.`,
+                            async () => await deleteCollection(listFilter),
+                            isDefaultList ? "Default collection" : name,
+                          );
+                        }}
+                      >
+                        <TrashIcon />
+                      </IconButton>
+                    </div>
+                  )}
+                </div>
+                {filteredNotes.length > 0 ? (
+                  <NoteViewer
+                    notes={filteredNotes}
+                    closedNotes={closedNotes}
+                    setClosedNotes={setClosedNotes}
+                    lists={lists}
+                    userKey={userKeyComponent}
+                    setListFilter={setListFilter}
+                  />
+                ) : (
+                  <div>No notes</div>
                 )}
-              </div>
-              {filteredNotes.length > 0 ? (
-                <NoteViewer
-                  notes={filteredNotes}
-                  closedNotes={closedNotes}
-                  setClosedNotes={setClosedNotes}
-                />
-              ) : (
-                <div>No notes</div>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div
-              key="addNote"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.1 }}
-            >
-              {userKeyComponent && (
-                <AddNote userKey={userKeyComponent} notes={notes} />
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="addNote"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.1 }}
+              >
+                <AddNote userKey={userKeyComponent} lists={lists} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </div>
       {!loading && !user?.emailVerified && (
         <>

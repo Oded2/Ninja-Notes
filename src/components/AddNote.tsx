@@ -1,27 +1,27 @@
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import Button from "./Button";
 import InputContainer from "./InputContainer";
 import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
-import { notesCollection } from "@/lib/firebase";
+import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, fullTrim, handleError, hashText } from "@/lib/helpers";
+import { encryptWithKey, fullTrim, handleError } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
-import CollectionSelect from "./CollectionSelect";
-import { defaultCollection, maxLengths } from "@/lib/constants";
-import { Note } from "@/lib/types";
+import ListSelect from "./ListSelect";
+import { defaultListName, maxLengths } from "@/lib/constants";
+import { List } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
+import { User } from "firebase/auth";
 
 type Props = {
   userKey: CryptoKey;
-  notes: Note[];
+  lists: List[];
 };
 
-export default function AddNote({ userKey, notes }: Props) {
+export default function AddNote({ userKey, lists }: Props) {
   const id = useId();
-  const [collections, setCollections] = useState<string[]>([]);
-  const [collection, setCollection] = useState(defaultCollection);
+  const [currentList, setCurrentList] = useState<List | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [inProgress, setInProgress] = useState(false);
@@ -30,39 +30,30 @@ export default function AddNote({ userKey, notes }: Props) {
   const reset = useEditStore((state) => state.reset);
   const addToast = useToastStore((state) => state.add);
   const showInput = useInputStore((state) => state.showInput);
+  const defaultListId = useMemo(
+    () => lists.find((list) => list.name === defaultListName)?.ref.id,
+    [lists],
+  );
 
   const handleSubmit = async () => {
-    if (!user) return;
-    const titleTrim = fullTrim(title);
-    if (titleTrim.length > maxLengths.title) {
-      addToast(
-        "error",
-        "Invalid title",
-        `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
-      );
-      return;
-    }
-    const contentTrim = fullTrim(content);
-    if (!contentTrim || contentTrim.length > maxLengths.content) {
-      addToast(
-        "error",
-        "Invalid content",
-        `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
-      );
-      return;
-    }
     setInProgress(true);
+    const titleTrim = fullTrim(title);
+    const contentTrim = fullTrim(content);
+    if (!validate(user, titleTrim, contentTrim)) return;
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
-    const encryptedCollection = await encryptWithKey(collection, userKey);
-    const collectionHash = await hashText(collection);
+    const id = currentList?.ref.id ?? defaultListId;
+    if (!id) {
+      alert("Cannot find default list ID");
+      setInProgress(false);
+      return;
+    }
     const func = async () => {
       if (editNote) {
         await updateDoc(editNote.ref, {
           title: encryptedTitle,
           content: encryptedContent,
-          collection: encryptedCollection,
-          collectionHash,
+          listId: id,
           editedAt: serverTimestamp(),
         });
         reset();
@@ -70,8 +61,7 @@ export default function AddNote({ userKey, notes }: Props) {
         await addDoc(notesCollection, {
           title: encryptedTitle,
           content: encryptedContent,
-          collection: encryptedCollection,
-          collectionHash,
+          listId: id,
           userId: user.uid,
           createdAt: serverTimestamp(),
         });
@@ -83,24 +73,56 @@ export default function AddNote({ userKey, notes }: Props) {
     addToast("success", "Note added", undefined, 2000);
   };
 
-  const addCollection = (collectionName: string) => {
-    if (collections.includes(collectionName)) return;
-    setCollections((state) => [...state, collectionName]);
-    setCollection(collectionName);
+  const validate = (
+    user: User | null,
+    titleTrim: string,
+    contentTrim: string,
+  ): user is User => {
+    if (!user) return false;
+    if (titleTrim.length > maxLengths.title) {
+      addToast(
+        "error",
+        "Invalid title",
+        `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
+      );
+      return false;
+    }
+    if (!contentTrim || contentTrim.length > maxLengths.content) {
+      addToast(
+        "error",
+        "Invalid content",
+        `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
+      );
+      return false;
+    }
+    return true;
   };
 
-  useEffect(() => {
-    // Remove any duplicates
-    setCollections([...new Set(notes.map((note) => note.collection))]);
-  }, [notes]);
+  const addList = async (listName: string) => {
+    if (lists.some((list) => list.name === listName)) {
+      addToast("error", "Duplicate list");
+      return;
+    }
+    const encryptedName = await encryptWithKey(listName, userKey);
+    const ref = await addDoc(listsCollection, {
+      name: encryptedName,
+      userId: user?.uid,
+    });
+    setCurrentList({
+      name: listName,
+      ref,
+    });
+  };
 
   useEffect(() => {
     if (editNote) {
       setTitle(editNote.title);
       setContent(editNote.content);
-      setCollection(editNote.collection);
+      const editListId = lists.find((list) => list.ref.id === editNote.listId);
+      if (editListId) setCurrentList(editListId);
+      else alert("Edit list id not found");
     }
-  }, [editNote]);
+  }, [editNote, lists]);
 
   return (
     <form
@@ -111,19 +133,11 @@ export default function AddNote({ userKey, notes }: Props) {
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
       <div className="flex gap-2">
-        <CollectionSelect
-          collections={collections}
-          val={collection}
-          setVal={setCollection}
-        />
+        <ListSelect lists={lists} val={currentList} setVal={setCurrentList} />
         <button
           type="button"
           onClick={() =>
-            showInput(
-              "Enter collection name",
-              addCollection,
-              maxLengths.collection,
-            )
+            showInput("Enter collection name", addList, maxLengths.collection)
           }
           className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
         >

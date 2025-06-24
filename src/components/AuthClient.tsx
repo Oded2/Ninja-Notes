@@ -2,7 +2,8 @@
 
 import FormInput from "@/components/FormInput";
 import FormInputContainer from "@/components/FormInputContainer";
-import { authHandlers, usersCollection } from "@/lib/firebase";
+import { defaultListName } from "@/lib/constants";
+import { authHandlers, listsCollection, usersCollection } from "@/lib/firebase";
 import {
   decryptWithKey,
   derivePasswordKey,
@@ -14,13 +15,13 @@ import {
 } from "@/lib/helpers";
 import { saveUserKey } from "@/lib/indexDB";
 import { useToastStore } from "@/lib/stores/toastStore";
-import { userDataTypeGaurd } from "@/lib/typegaurds";
+import { userDataTypeGuard } from "@/lib/typeguards";
 import {
   EnvelopeIcon,
   KeyIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/16/solid";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -48,12 +49,12 @@ export default function AuthClient() {
       return { user: null };
     });
     if (!user) return;
-    const userDocRef = doc(usersCollection, user.uid);
+    const { uid } = user;
+    const userDocRef = doc(usersCollection, uid);
     if (isSignUp) {
       // Generate a key then export it
-      const userKeyBase64 = await generateUserKey().then((key) =>
-        exportKey(key),
-      );
+      const userKey = await generateUserKey();
+      const userKeyBase64 = await exportKey(userKey);
       // Generate random salt
       const salt = generateSalt();
       // Generate a random key derived from the password
@@ -67,11 +68,16 @@ export default function AuthClient() {
         encryptedUserKey,
         salt: Array.from(salt),
       }).catch(handleError);
+      // Add a default collection for the user
+      await addDoc(listsCollection, {
+        name: encryptWithKey(defaultListName, userKey),
+        userId: uid,
+      });
     } else {
       const userDoc = await getDoc(userDocRef);
       const data = userDoc.data();
       // Ensure that the data is valid
-      if (userDataTypeGaurd(data)) {
+      if (userDataTypeGuard(data)) {
         // Extract the encrypted key and the salt
         const { encryptedUserKey, salt } = data;
         // Get the password-derived key to decrypt the extracted encrypted key
