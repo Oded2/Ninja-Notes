@@ -32,6 +32,7 @@ import IconButton from "./IconButton";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
+import { defaultCollection } from "@/lib/constants";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -75,7 +76,9 @@ export default function ClientHome() {
     addToast(
       "success",
       "Collection delete",
-      `Collection '${collectionName}' has been successfully deleted.`,
+      collectionName === defaultCollection
+        ? "The default collection has been successfully deleted"
+        : `Collection '${collectionName}' has been successfully deleted`,
     );
   };
 
@@ -218,10 +221,14 @@ export default function ClientHome() {
                           onClick={() =>
                             showConfirm(
                               "Delete collection?",
-                              `All notes under the collection '${collectionFilter}' will be deleted.`,
+                              collectionFilter === defaultCollection
+                                ? "All notes under the default collection will be deleted."
+                                : `All notes under the collection '${collectionFilter}' will be deleted.`,
                               async () =>
                                 await deleteCollection(collectionFilter),
-                              collectionFilter,
+                              collectionFilter === defaultCollection
+                                ? "Default collection"
+                                : collectionFilter,
                             )
                           }
                         >
