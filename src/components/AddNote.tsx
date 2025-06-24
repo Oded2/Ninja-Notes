@@ -5,7 +5,7 @@ import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, handleError } from "@/lib/helpers";
+import { encryptWithKey, handleError, hashText } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import CollectionSelect from "./CollectionSelect";
 import { defaultCollection, maxLengths } from "@/lib/constants";
@@ -28,14 +28,14 @@ export default function AddNote({ userKey, notes }: Props) {
   const user = useUserStore((state) => state.user);
   const editNote = useEditStore((state) => state.note);
   const reset = useEditStore((state) => state.reset);
-  const add = useToastStore((state) => state.add);
+  const addToast = useToastStore((state) => state.add);
   const showInput = useInputStore((state) => state.showInput);
 
   const handleSubmit = async () => {
     if (!user) return;
     const titleTrim = title.trim();
     if (titleTrim.length > maxLengths.title) {
-      add(
+      addToast(
         "error",
         "Invalid title",
         `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
@@ -44,7 +44,7 @@ export default function AddNote({ userKey, notes }: Props) {
     }
     const contentTrim = content.trim();
     if (!contentTrim || contentTrim.length > maxLengths.content) {
-      add(
+      addToast(
         "error",
         "Invalid content",
         `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
@@ -55,12 +55,14 @@ export default function AddNote({ userKey, notes }: Props) {
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
     const encryptedCollection = await encryptWithKey(collection, userKey);
+    const collectionHash = await hashText(collection);
     const func = async () => {
       if (editNote) {
         await updateDoc(editNote.ref, {
           title: encryptedTitle,
           content: encryptedContent,
           collection: encryptedCollection,
+          collectionHash,
           createdAt: serverTimestamp(),
         });
         reset();
@@ -69,6 +71,7 @@ export default function AddNote({ userKey, notes }: Props) {
           title: encryptedTitle,
           content: encryptedContent,
           collection: encryptedCollection,
+          collectionHash,
           userId: user.uid,
           createdAt: serverTimestamp(),
         });

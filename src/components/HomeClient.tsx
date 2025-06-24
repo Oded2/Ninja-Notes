@@ -19,7 +19,12 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
-import { decryptWithKey, deleteByQuery, handleError } from "@/lib/helpers";
+import {
+  decryptWithKey,
+  deleteByQuery,
+  handleError,
+  hashText,
+} from "@/lib/helpers";
 import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
 import CollectionSelect from "./CollectionSelect";
@@ -35,7 +40,6 @@ export default function ClientHome() {
   const first = useRef(false);
   const editNote = useEditStore((state) => state.note);
   const [notes, setNotes] = useState<Note[]>([]);
-  const [encryptedNotes, setEncryptedNotes] = useState<Note[]>([]);
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
@@ -60,14 +64,11 @@ export default function ClientHome() {
       alert("User encryption key not found");
       return;
     }
-    const decryptedNames = notes.map((note) => note.collection);
-    const encryptedNames = encryptedNotes
-      .filter((_, i) => decryptedNames[i] === collectionName)
-      .map((note) => note.collection);
+    const collectionHash = await hashText(collectionName);
     const q = query(
       notesCollection,
-      where("collection", "in", encryptedNames),
       where("userId", "==", user?.uid),
+      where("collectionHash", "==", collectionHash),
     );
     await deleteByQuery(q).catch(handleError);
     setCollectionFilter("");
@@ -104,7 +105,6 @@ export default function ClientHome() {
         }))
         .filter((note) => noteTypeGaurd(note));
       if (reverse.current) encryptedNotes.reverse();
-      setEncryptedNotes(encryptedNotes);
       const decryptedNotes: Note[] = await Promise.all(
         encryptedNotes.map(async (note) => ({
           ...note,

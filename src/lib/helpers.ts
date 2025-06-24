@@ -9,6 +9,12 @@ export async function deleteByQuery(q: Query) {
   await Promise.all(promises);
 }
 
+export async function hashText(plainText: string) {
+  const encoder = new TextEncoder();
+  const hash = await crypto.subtle.digest("SHA-256", encoder.encode(plainText));
+  return toHex(hash);
+}
+
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
     "encrypt",
@@ -107,3 +113,11 @@ export const handleError = (err: unknown) => {
       .add("error", "Error", errorCodeMap[code] ?? message);
   } else console.error(err);
 };
+
+// Local helper functions
+
+function toHex(buffer: ArrayBuffer): string {
+  return Array.from(new Uint8Array(buffer))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}

@@ -36,12 +36,14 @@ export function noteTypeGaurd(obj: unknown): obj is Note {
   if (typeof obj !== "object" || obj === null) return false;
   const note = obj as Record<string, unknown>;
   return (
-    note.ref instanceof Object &&
-    "id" in note.ref && // minimal check for DocumentReference
+    typeof note.ref === "object" &&
+    note.ref !== null &&
+    "id" in note.ref &&
     note.createdAt instanceof Timestamp &&
     typeof note.userId === "string" &&
     typeof note.title === "string" &&
     typeof note.content === "string" &&
-    typeof note.collection === "string"
+    typeof note.collection === "string" &&
+    typeof note.collectionHash === "string"
   );
 }

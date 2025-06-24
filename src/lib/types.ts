@@ -17,6 +17,7 @@ export type Note = {
   title: string;
   content: string;
   collection: string;
+  collectionHash: string;
 };
 
 export type Toast = {
