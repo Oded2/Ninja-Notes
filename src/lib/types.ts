@@ -24,7 +24,7 @@ export type Note = {
 export type Toast = {
   type: ToastTypes;
   title: string;
-  content: string;
+  description?: string;
   id: string;
   duration?: number;
 };

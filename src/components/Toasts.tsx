@@ -25,7 +25,7 @@ function ToastComponent({ toast }: ToastProps) {
   const { duration } = toast;
   const [durationLeft, setDurationLeft] = useState(duration ?? 0);
   const remove = useToastStore((state) => state.remove);
-  const { id } = toast;
+  const { id, description } = toast;
   useEffect(() => {
     console.log("Toast mount");
     if (duration) {
@@ -55,7 +55,7 @@ function ToastComponent({ toast }: ToastProps) {
       )}
     >
       <span className="text-lg font-semibold">{toast.title}</span>
-      <span className="font-light">{toast.content}</span>
+      {description && <span className="font-light">{description}</span>}
       {duration && (
         <div className="mt-2 h-3 w-full overflow-hidden rounded-2xl border">
           <div

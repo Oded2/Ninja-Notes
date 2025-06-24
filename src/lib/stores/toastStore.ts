@@ -6,7 +6,7 @@ type ToastStore = {
   add: (
     type: ToastTypes,
     title: string,
-    content: string,
+    description?: string,
     duration?: number,
   ) => string;
   remove: (id: string) => void;
@@ -14,7 +14,7 @@ type ToastStore = {
 
 export const useToastStore = create<ToastStore>((set) => ({
   toasts: [],
-  add: (type, title, content, duration = 5000) => {
+  add: (type, title, description, duration = 5000) => {
     const id = crypto.randomUUID();
     set((state) => ({
       toasts: [
@@ -22,7 +22,7 @@ export const useToastStore = create<ToastStore>((set) => ({
         {
           type,
           title,
-          content,
+          description,
           duration,
           id,
         },

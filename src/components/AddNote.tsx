@@ -80,6 +80,7 @@ export default function AddNote({ userKey, notes }: Props) {
     setInProgress(false);
     setTitle("");
     setContent("");
+    addToast("success", "Note added", undefined, 2000);
   };
 
   const addCollection = (collectionName: string) => {
