@@ -2,6 +2,14 @@ import { deleteDoc, getDocs, Query } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGaurd } from "./typegaurds";
 
+export const fullTrim = (s: string) => {
+  return s
+    .trim()
+    .split("\n")
+    .map((p) => p.trimEnd())
+    .join("\n");
+};
+
 export async function deleteByQuery(q: Query) {
   const promises = await getDocs(q).then((snapshot) =>
     snapshot.docs.map((doc) => deleteDoc(doc.ref)),

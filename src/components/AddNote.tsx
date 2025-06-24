@@ -5,7 +5,7 @@ import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, handleError, hashText } from "@/lib/helpers";
+import { encryptWithKey, fullTrim, handleError, hashText } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import CollectionSelect from "./CollectionSelect";
 import { defaultCollection, maxLengths } from "@/lib/constants";
@@ -33,7 +33,7 @@ export default function AddNote({ userKey, notes }: Props) {
 
   const handleSubmit = async () => {
     if (!user) return;
-    const titleTrim = title.trim();
+    const titleTrim = fullTrim(title);
     if (titleTrim.length > maxLengths.title) {
       addToast(
         "error",
@@ -42,7 +42,7 @@ export default function AddNote({ userKey, notes }: Props) {
       );
       return;
     }
-    const contentTrim = content.trim();
+    const contentTrim = fullTrim(content);
     if (!contentTrim || contentTrim.length > maxLengths.content) {
       addToast(
         "error",
