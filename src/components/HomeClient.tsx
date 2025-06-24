@@ -10,6 +10,7 @@ import Image from "next/image";
 import { authHandlers, listsCollection, notesCollection } from "@/lib/firebase";
 import {
   deleteDoc,
+  doc,
   onSnapshot,
   orderBy,
   query,
@@ -59,27 +60,30 @@ export default function ClientHome() {
   const filteredNotes = useMemo(
     () =>
       listFilter
-        ? notes.filter((note) => note.listId === listFilter.ref.id)
+        ? notes.filter((note) => note.listId === listFilter.id)
         : notes,
     [notes, listFilter],
   );
 
-  const deleteCollection = async (list: List) => {
+  const deleteList = async (list: List) => {
     if (!userKeyComponent) {
       // Keep alert
       alert("User encryption key not found");
       return;
     }
+    const { id } = list;
     const q = query(
       notesCollection,
       where("userId", "==", user?.uid),
-      where("listId", "==", list.ref.id),
+      where("listId", "==", id),
     );
+    // Delete every note in that list
     await deleteByQuery(q).catch(handleError);
     if (list.name !== defaultListName) {
       // User isn't deleting the default collection
       // Delete the list
-      await deleteDoc(list.ref).catch(handleError);
+      const docRef = doc(listsCollection, id);
+      await deleteDoc(docRef).catch(handleError);
       // Set the collection filter back to all
       setListFilter(undefined);
     }
@@ -117,7 +121,7 @@ export default function ClientHome() {
       if (!userKey) return;
       const encryptedNotes = snapshot.docs
         .map((doc) => ({
-          ref: doc.ref,
+          id: doc.ref.id,
           ...doc.data(),
         }))
         .filter((note) => noteTypeGuard(note));
@@ -137,7 +141,7 @@ export default function ClientHome() {
       if (!userKey) return;
       const encryptedLists = snapshot.docs
         .map((doc) => ({
-          ref: doc.ref,
+          id: doc.ref.id,
           ...doc.data(),
         }))
         .filter((list) => listTypeGuard(list));
@@ -234,7 +238,7 @@ export default function ClientHome() {
                       }}
                       onClick={() => {
                         if (notesOpen) setClosedNotes([]);
-                        else setClosedNotes(notes.map((note) => note.ref.id));
+                        else setClosedNotes(notes.map((note) => note.id));
                       }}
                     >
                       <ChevronDoubleUpIcon className="size-6" />
@@ -259,7 +263,7 @@ export default function ClientHome() {
                             isDefaultList
                               ? "All notes under the default collection will be deleted."
                               : `All notes under the collection '${name}' will be deleted.`,
-                            async () => await deleteCollection(listFilter),
+                            async () => await deleteList(listFilter),
                             isDefaultList ? "Default collection" : name,
                           );
                         }}

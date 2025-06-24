@@ -1,4 +1,4 @@
-import { DocumentReference, Timestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { List, Note, UserData } from "./types";
 
 export function firebaseErrorTypeGuard(
@@ -36,28 +36,18 @@ export function noteTypeGuard(obj: unknown): obj is Note {
   if (typeof obj !== "object" || obj === null) return false;
   const note = obj as Record<string, unknown>;
   return (
-    typeof note.ref === "object" &&
-    note.ref !== null &&
-    "id" in note.ref &&
+    typeof note.id === "string" &&
     note.createdAt instanceof Timestamp &&
     (note.editedAt === undefined || note.editedAt instanceof Timestamp) &&
     typeof note.userId === "string" &&
     typeof note.title === "string" &&
-    typeof note.content === "string"
+    typeof note.content === "string" &&
+    typeof note.listId === "string"
   );
 }
 
 export function listTypeGuard(obj: unknown): obj is List {
-  if (
-    typeof obj === "object" &&
-    obj !== null &&
-    "ref" in obj &&
-    "name" in obj
-  ) {
-    const casted = obj as Record<string, unknown>;
-    return (
-      casted.ref instanceof DocumentReference && typeof casted.name === "string"
-    );
-  }
-  return false;
+  if (typeof obj !== "object" || obj === null) return false;
+  const list = obj as Record<string, unknown>;
+  return typeof list.id === "string" && typeof list.name === "string";
 }

@@ -8,7 +8,7 @@ import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultListName } from "@/lib/constants";
 import InlineDivider from "./InlineDivider";
 import { deleteDoc, doc, getDoc } from "firebase/firestore";
-import { listsCollection } from "@/lib/firebase";
+import { listsCollection, notesCollection } from "@/lib/firebase";
 
 type Props = {
   notes: Note[];
@@ -31,11 +31,12 @@ export default function NoteViewer({
   const showConfirm = useConfirmStore((state) => state.showConfirm);
 
   const handleDelete = async (note: Note) => {
-    const { ref, listId } = note;
+    const { id, listId } = note;
     const isLastInList = notes.every(
-      (noteItem) => noteItem.ref.id === ref.id || noteItem.listId !== listId,
+      (noteItem) => noteItem.id === id || noteItem.listId !== listId,
     );
-    await deleteDoc(ref).catch(handleError);
+    const docRef = doc(notesCollection, id);
+    await deleteDoc(docRef).catch(handleError);
     if (isLastInList) {
       console.log("Last in list");
       // The note was the last one in its list
@@ -63,15 +64,10 @@ export default function NoteViewer({
     <div className="flex flex-col rounded-lg border border-slate-950/20">
       <AnimatePresence>
         {notes.map((note) => {
-          const {
-            ref: { id },
-            listId,
-            title,
-            content,
-          } = note;
+          const { id, listId, title, content } = note;
           const isOpen = !closedNotes.includes(id);
           const { editedAt } = note;
-          const listName = lists.find((list) => list.ref.id === listId)?.name;
+          const listName = lists.find((list) => list.id === listId)?.name;
           return (
             <motion.div
               key={id}

@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useState } from "react";
 import Button from "./Button";
 import InputContainer from "./InputContainer";
-import { addDoc, serverTimestamp, updateDoc } from "firebase/firestore";
+import { addDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
@@ -31,7 +31,7 @@ export default function AddNote({ userKey, lists }: Props) {
   const addToast = useToastStore((state) => state.add);
   const showInput = useInputStore((state) => state.showInput);
   const defaultListId = useMemo(
-    () => lists.find((list) => list.name === defaultListName)?.ref.id,
+    () => lists.find((list) => list.name === defaultListName)?.id,
     [lists],
   );
 
@@ -42,7 +42,7 @@ export default function AddNote({ userKey, lists }: Props) {
     if (!validate(user, titleTrim, contentTrim)) return;
     const encryptedTitle = await encryptWithKey(titleTrim, userKey);
     const encryptedContent = await encryptWithKey(contentTrim, userKey);
-    const id = currentList?.ref.id ?? defaultListId;
+    const id = currentList?.id ?? defaultListId;
     if (!id) {
       alert("Cannot find default list ID");
       setInProgress(false);
@@ -50,7 +50,8 @@ export default function AddNote({ userKey, lists }: Props) {
     }
     const func = async () => {
       if (editNote) {
-        await updateDoc(editNote.ref, {
+        const docRef = doc(notesCollection, editNote.id);
+        await updateDoc(docRef, {
           title: encryptedTitle,
           content: encryptedContent,
           listId: id,
@@ -110,7 +111,7 @@ export default function AddNote({ userKey, lists }: Props) {
     });
     setCurrentList({
       name: listName,
-      ref,
+      id: ref.id,
     });
   };
 
@@ -118,7 +119,7 @@ export default function AddNote({ userKey, lists }: Props) {
     if (editNote) {
       setTitle(editNote.title);
       setContent(editNote.content);
-      const editListId = lists.find((list) => list.ref.id === editNote.listId);
+      const editListId = lists.find((list) => list.id === editNote.listId);
       if (editListId) setCurrentList(editListId);
       else alert("Edit list id not found");
     }
