@@ -41,7 +41,7 @@ export default function NoteViewer({ lists, userKey }: Props) {
   const removeNote = useNotesStore((state) => state.remove);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const addToast = useToastStore((state) => state.add);
-  // An undefined implies all lists
+  // Undefined implies all lists
   const [listFilter, setListFilter] = useState<List | undefined>(undefined);
   // At least one of the notes are closed
   const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
