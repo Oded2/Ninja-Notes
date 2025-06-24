@@ -43,6 +43,7 @@ export default function InputModal() {
           placeholder="Enter text here"
           val={val}
           setVal={setVal}
+          maxLength={content?.maxLength}
         />
 
         <ModalActions>

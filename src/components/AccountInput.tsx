@@ -7,6 +7,7 @@ type Props = {
   type?: "email" | "password";
   placeholder?: string;
   inputRef?: RefObject<HTMLInputElement | null>;
+  maxLength?: number;
 };
 
 export default function AccountInput({
@@ -16,6 +17,7 @@ export default function AccountInput({
   type,
   placeholder,
   inputRef,
+  maxLength,
 }: Props) {
   const id = useId();
 
@@ -36,7 +38,7 @@ export default function AccountInput({
         placeholder={placeholder}
         required
         minLength={type === "password" ? 8 : undefined}
-        maxLength={type === "password" ? 4096 : undefined}
+        maxLength={type === "password" ? 4096 : maxLength}
       />
     </>
   );

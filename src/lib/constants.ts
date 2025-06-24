@@ -1,7 +1,7 @@
 export const maxLengths = {
   title: 100,
   content: 5000,
-  collection: 100,
+  collection: 50,
 };
 
 // Random value to allow the user to create any collection name
