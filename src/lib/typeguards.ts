@@ -49,5 +49,9 @@ export function noteTypeGuard(obj: unknown): obj is Note {
 export function listTypeGuard(obj: unknown): obj is List {
   if (typeof obj !== "object" || obj === null) return false;
   const list = obj as Record<string, unknown>;
-  return typeof list.id === "string" && typeof list.name === "string";
+  return (
+    typeof list.id === "string" &&
+    typeof list.name === "string" &&
+    typeof list.userId === "string"
+  );
 }

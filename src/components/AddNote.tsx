@@ -132,16 +132,24 @@ export default function AddNote({ userKey }: Props) {
   };
 
   const handleListAdd = async (listName: string) => {
+    if (!user) return;
     if (lists.some((list) => list.name === listName)) {
       addToast("error", "Duplicate list");
       return;
     }
+
     const encryptedName = await encryptWithKey(listName, userKey);
+
+    const toAdd = {
+      userId: user.uid,
+    };
     const { id } = await addDoc(listsCollection, {
+      ...toAdd,
       name: encryptedName,
       userId: user?.uid,
     });
     const newList: List = {
+      ...toAdd,
       name: listName,
       id,
     };

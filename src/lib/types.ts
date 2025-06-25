@@ -23,6 +23,7 @@ export type Note = {
 export type List = {
   id: string;
   name: string;
+  userId: string;
 };
 
 export type Toast = {
