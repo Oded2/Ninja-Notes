@@ -19,7 +19,7 @@ import {
 } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import ListSelect from "./ListSelect";
-import { maxLengths } from "@/lib/constants";
+import { decoyListId, maxLengths } from "@/lib/constants";
 import { List } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -43,6 +43,8 @@ export default function AddNote() {
   const editNote = useNotesStore((state) => state.edit);
   const lists = useListsStore((state) => state.lists);
   const addList = useListsStore((state) => state.add);
+  const removeList = useListsStore((state) => state.remove);
+  const renameList = useListsStore((state) => state.rename);
   const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
 
   const validate = (
@@ -70,60 +72,80 @@ export default function AddNote() {
     return true;
   };
 
-  const handleSubmit = async () => {
-    if (!userKey) return;
-    setInProgress(true);
-    const titleTrim = fullTrim(title);
-    const contentTrim = fullTrim(content);
-    const listId = currentList?.id ?? defaultListId;
-    if (!validate(user, titleTrim, contentTrim)) return;
+  const addNoteDoc = async (titleTrim: string, contentTrim: string) => {
+    if (!userKey || !user) return;
+    let listId = currentList?.id ?? defaultListId;
     if (!listId) {
       alert("Default list id not found");
       return;
+    }
+    if (listId === decoyListId && currentList) {
+      // User has created a new list
+      console.log("Adding list");
+      const encryptedName = await encryptWithKey(
+        fullTrim(currentList.name),
+        userKey,
+      );
+      const { id } = await addDoc(listsCollection, {
+        name: encryptedName,
+        userId: currentList.userId,
+      });
+      const newList = { ...currentList, id };
+      // Add the actual list from the database to the store and set it
+      addList(newList);
+      setCurrentList(newList);
+      // Remove the decoy
+      removeList(decoyListId);
+      listId = id;
     }
     const [encryptedTitle, encryptedContent] = await Promise.all([
       encryptWithKey(titleTrim, userKey),
       encryptWithKey(contentTrim, userKey),
     ]);
+    if (activeEditNote) {
+      const { id } = activeEditNote;
+      const docRef = doc(notesCollection, id);
+      const toEdit = {
+        title: encryptedTitle,
+        content: encryptedContent,
+        listId,
+        editedAt: serverTimestamp(),
+      };
+      await updateDoc(docRef, toEdit);
+      editNote(id, {
+        ...activeEditNote,
+        ...toEdit,
+        editedAt: Timestamp.now(),
+        title: titleTrim,
+        content: contentTrim,
+      });
+      resetEdit();
+    } else {
+      const toAdd = {
+        title: encryptedTitle,
+        content: encryptedContent,
+        listId,
+        userId: user.uid,
+        createdAt: serverTimestamp(),
+      };
+      const { id } = await addDoc(notesCollection, toAdd);
+      addNote({
+        ...toAdd,
+        id,
+        createdAt: Timestamp.now(),
+        title: titleTrim,
+        content: contentTrim,
+      });
+    }
+  };
 
-    const func = async () => {
-      if (activeEditNote) {
-        const { id } = activeEditNote;
-        const docRef = doc(notesCollection, id);
-        const toEdit = {
-          title: encryptedTitle,
-          content: encryptedContent,
-          listId: listId,
-          editedAt: serverTimestamp(),
-        };
-        await updateDoc(docRef, toEdit);
-        editNote(id, {
-          ...activeEditNote,
-          ...toEdit,
-          editedAt: Timestamp.now(),
-          title: titleTrim,
-          content: contentTrim,
-        });
-        resetEdit();
-      } else {
-        const toAdd = {
-          title: encryptedTitle,
-          content: encryptedContent,
-          listId: listId,
-          userId: user.uid,
-          createdAt: serverTimestamp(),
-        };
-        const { id } = await addDoc(notesCollection, toAdd);
-        addNote({
-          ...toAdd,
-          id,
-          createdAt: Timestamp.now(),
-          title: titleTrim,
-          content: contentTrim,
-        });
-      }
-    };
-    func()
+  const handleSubmit = () => {
+    setInProgress(true);
+    const titleTrim = fullTrim(title);
+    const contentTrim = fullTrim(content);
+    if (!validate(user, titleTrim, contentTrim)) return;
+
+    addNoteDoc(titleTrim, contentTrim)
       .catch(handleError)
       .finally(() => {
         setInProgress(false);
@@ -138,29 +160,36 @@ export default function AddNote() {
       });
   };
 
-  const handleListAdd = async (listName: string) => {
+  const handleListAdd = (listName: string) => {
+    // Add the list locally before adding it to firebase, in case the user changes his mind
     if (!user || !userKey) return;
     if (lists.some((list) => list.name === listName)) {
-      addToast("error", "Duplicate list");
+      addToast(
+        "error",
+        "Duplicate list",
+        `You already have a list with the name: ${listName}`,
+      );
       return;
     }
-    const toAdd = {
-      userId: user.uid,
-    };
-    const encryptedName = await encryptWithKey(listName, userKey);
-    const { id } = await addDoc(listsCollection, {
-      ...toAdd,
-      name: encryptedName,
-      userId: user?.uid,
-    });
+    const existingDecoyList = lists.find((list) => list.id === decoyListId);
+    if (existingDecoyList) {
+      // The user already added a list, but is now adding a different one
+      renameList(decoyListId, listName);
+      setCurrentList({ ...existingDecoyList, name: listName });
+      return;
+    }
     const newList: List = {
-      ...toAdd,
+      userId: user.uid,
       name: listName,
-      id,
+      id: decoyListId,
     };
     addList(newList);
     setCurrentList(newList);
   };
+
+  useEffect(() => {
+    return () => removeList(decoyListId);
+  }, [removeList]);
 
   useEffect(() => {
     if (activeEditNote) {
