@@ -3,6 +3,7 @@ import Button from "./Button";
 import InputContainer from "./InputContainer";
 import {
   addDoc,
+  deleteDoc,
   doc,
   serverTimestamp,
   Timestamp,
@@ -70,12 +71,12 @@ export default function AddNote() {
 
   const addNoteDoc = async (titleTrim: string, contentTrim: string) => {
     if (!userKey || !user) return;
-    let listId = currentList?.id ?? defaultListId;
-    if (!listId) {
+    let noteListId = currentList?.id ?? defaultListId;
+    if (!noteListId) {
       alert("Default list id not found");
       return;
     }
-    if (listId === decoyListId && currentList) {
+    if (noteListId === decoyListId && currentList) {
       // User has created a new list
       console.log("Adding list");
       const encryptedName = await encryptWithKey(
@@ -92,22 +93,23 @@ export default function AddNote() {
       setCurrentList(newList);
       // Remove the decoy
       removeList(decoyListId);
-      listId = id;
+      noteListId = id;
     }
     const [encryptedTitle, encryptedContent] = await Promise.all([
       encryptWithKey(titleTrim, userKey),
       encryptWithKey(contentTrim, userKey),
     ]);
     if (activeEditNote) {
-      const { id } = activeEditNote;
-      const docRef = doc(notesCollection, id);
+      const promises: Promise<void>[] = [];
+      const { id, listId } = activeEditNote;
       const toEdit = {
         title: encryptedTitle,
         content: encryptedContent,
-        listId,
+        listId: noteListId,
         editedAt: serverTimestamp(),
       };
-      await updateDoc(docRef, toEdit);
+      const docRef = doc(notesCollection, id);
+      promises.push(updateDoc(docRef, toEdit));
       editNote(id, {
         ...activeEditNote,
         ...toEdit,
@@ -115,12 +117,25 @@ export default function AddNote() {
         title: titleTrim,
         content: contentTrim,
       });
+      if (
+        !useNotesStore.getState().notes.some((note) => note.listId === listId)
+      ) {
+        // The user has changed the note's list, and the original list is now empty
+        const notDefaultList = findDefaultListId() !== listId;
+        if (notDefaultList) {
+          // The list that is now empty is not the default list
+          const listDocRef = doc(listsCollection, listId);
+          removeList(listId);
+          promises.push(deleteDoc(listDocRef));
+        }
+      }
+      await Promise.all(promises);
       resetEdit();
     } else {
       const toAdd = {
         title: encryptedTitle,
         content: encryptedContent,
-        listId,
+        listId: noteListId,
         userId: user.uid,
         createdAt: serverTimestamp(),
       };
@@ -169,6 +184,7 @@ export default function AddNote() {
     }
     const existingDecoyList = lists.find((list) => list.id === decoyListId);
     if (existingDecoyList) {
+      console.log("here", existingDecoyList);
       // The user already added a list, but is now adding a different one
       renameList(decoyListId, listName);
       setCurrentList({ ...existingDecoyList, name: listName });
@@ -181,6 +197,7 @@ export default function AddNote() {
     };
     addList(newList);
     setCurrentList(newList);
+    console.log(newList);
   };
 
   useEffect(() => {
@@ -191,13 +208,13 @@ export default function AddNote() {
     if (activeEditNote) {
       setTitle(activeEditNote.title);
       setContent(activeEditNote.content);
-      const editListId = lists.find(
-        (list) => list.id === activeEditNote.listId,
-      );
+      const editListId = useListsStore
+        .getState()
+        .lists.find((list) => list.id === activeEditNote.listId);
       if (editListId) setCurrentList(editListId);
       else alert("Edit list id not found");
     }
-  }, [activeEditNote, lists]);
+  }, [activeEditNote]);
 
   return (
     <form

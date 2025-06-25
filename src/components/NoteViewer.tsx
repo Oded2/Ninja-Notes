@@ -56,6 +56,7 @@ export default function NoteViewer() {
     const docRef = doc(notesCollection, id);
     promises.push(deleteDoc(docRef));
     if (isLastInList) {
+      // If the note is the last of its list, then the list needs to be deleted as well
       console.log("Last in list");
       // The list should only be deleted if it's not the default list
       const notDefaultList = findDefaultListId() !== listId;
