@@ -88,7 +88,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <NoteViewer userKey={userKey} />
+                <NoteViewer />
               </motion.div>
             ) : (
               <motion.div
@@ -98,7 +98,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <AddNote userKey={userKey} />
+                <AddNote />
               </motion.div>
             )}
           </AnimatePresence>

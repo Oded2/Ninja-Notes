@@ -42,7 +42,7 @@ export const decryptValues = <
 
 export const findDefaultListId = (lists: List[]) => {
   const defaultList = lists.find((list) => list.name === defaultListName);
-  if (!defaultList) throw Error("Default list not found");
+  if (!defaultList) return null;
   return defaultList.id;
 };
 

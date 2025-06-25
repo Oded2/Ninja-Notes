@@ -27,17 +27,14 @@ import { User } from "firebase/auth";
 import { useNotesStore } from "@/lib/stores/notesStore";
 import { useListsStore } from "@/lib/stores/listsStore";
 
-type Props = {
-  userKey: CryptoKey;
-};
-
-export default function AddNote({ userKey }: Props) {
+export default function AddNote() {
   const labelId = useId();
   const [currentList, setCurrentList] = useState<List | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [inProgress, setInProgress] = useState(false);
   const user = useUserStore((state) => state.user);
+  const userKey = useUserStore((state) => state.key);
   const activeEditNote = useEditStore((state) => state.note);
   const resetEdit = useEditStore((state) => state.reset);
   const addToast = useToastStore((state) => state.add);
@@ -74,15 +71,21 @@ export default function AddNote({ userKey }: Props) {
   };
 
   const handleSubmit = async () => {
+    if (!userKey) return;
     setInProgress(true);
     const titleTrim = fullTrim(title);
     const contentTrim = fullTrim(content);
+    const listId = currentList?.id ?? defaultListId;
     if (!validate(user, titleTrim, contentTrim)) return;
+    if (!listId) {
+      alert("Default list id not found");
+      return;
+    }
     const [encryptedTitle, encryptedContent] = await Promise.all([
       encryptWithKey(titleTrim, userKey),
       encryptWithKey(contentTrim, userKey),
     ]);
-    const listId = currentList?.id ?? defaultListId;
+
     const func = async () => {
       if (activeEditNote) {
         const { id } = activeEditNote;
@@ -131,7 +134,7 @@ export default function AddNote({ userKey }: Props) {
   };
 
   const handleListAdd = async (listName: string) => {
-    if (!user) return;
+    if (!user || !userKey) return;
     if (lists.some((list) => list.name === listName)) {
       addToast("error", "Duplicate list");
       return;

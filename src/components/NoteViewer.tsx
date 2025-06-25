@@ -3,8 +3,8 @@ import { List, Note } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import Collapse from "./Collapse";
 import {
-  decryptWithKey,
   deleteByQuery,
+  findDefaultListId,
   formatTimestamp,
   handleError,
 } from "@/lib/helpers";
@@ -12,7 +12,7 @@ import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultListName } from "@/lib/constants";
 import InlineDivider from "./InlineDivider";
-import { deleteDoc, doc, getDoc, query, where } from "firebase/firestore";
+import { deleteDoc, doc, query, where } from "firebase/firestore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useNotesStore } from "@/lib/stores/notesStore";
 import {
@@ -27,11 +27,7 @@ import { useToastStore } from "@/lib/stores/toastStore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { useListsStore } from "@/lib/stores/listsStore";
 
-type Props = {
-  userKey: CryptoKey;
-};
-
-export default function NoteViewer({ userKey }: Props) {
+export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
   const setEditNote = useEditStore((state) => state.update);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
@@ -65,22 +61,13 @@ export default function NoteViewer({ userKey }: Props) {
     promises.push(deleteDoc(docRef));
     if (isLastInList) {
       console.log("Last in list");
-      // The note was the last one in its list
-      // Since the list is now empty, it needs to be deleted
       // The list should only be deleted if it's not the default list
-      const listRef = doc(listsCollection, listId);
-      const listDocSnap = await getDoc(listRef);
-      const encryptedName = listDocSnap.get("name");
-      if (typeof encryptedName !== "string") {
-        alert("Invalid list name");
-        return;
-      }
-      const notDefaultList = await decryptWithKey(encryptedName, userKey).then(
-        (decryptedName) => decryptedName !== defaultListName,
-      );
+      const notDefaultList = findDefaultListId(lists) !== listId;
       if (notDefaultList) {
+        const listRef = doc(listsCollection, listId);
         console.log("Deleting list");
         promises.push(deleteDoc(listRef));
+        removeList(listId);
         setListFilter(undefined);
       }
     }
