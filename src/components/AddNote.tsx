@@ -11,10 +11,15 @@ import {
 import { useUserStore } from "@/lib/stores/userStore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, fullTrim, handleError } from "@/lib/helpers";
+import {
+  encryptWithKey,
+  findDefaultListId,
+  fullTrim,
+  handleError,
+} from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import ListSelect from "./ListSelect";
-import { defaultListName, maxLengths } from "@/lib/constants";
+import { maxLengths } from "@/lib/constants";
 import { List } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
@@ -41,24 +46,43 @@ export default function AddNote({ userKey }: Props) {
   const editNote = useNotesStore((state) => state.edit);
   const lists = useListsStore((state) => state.lists);
   const addList = useListsStore((state) => state.add);
-  const defaultListId = useMemo(
-    () => lists.find((list) => list.name === defaultListName)?.id,
-    [lists],
-  );
+  const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
+
+  const validate = (
+    user: User | null,
+    titleTrim: string,
+    contentTrim: string,
+  ): user is User => {
+    if (!user) return false;
+    if (titleTrim.length > maxLengths.title) {
+      addToast(
+        "error",
+        "Invalid title",
+        `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
+      );
+      return false;
+    }
+    if (!contentTrim || contentTrim.length > maxLengths.content) {
+      addToast(
+        "error",
+        "Invalid content",
+        `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
+      );
+      return false;
+    }
+    return true;
+  };
 
   const handleSubmit = async () => {
     setInProgress(true);
     const titleTrim = fullTrim(title);
     const contentTrim = fullTrim(content);
     if (!validate(user, titleTrim, contentTrim)) return;
-    const encryptedTitle = await encryptWithKey(titleTrim, userKey);
-    const encryptedContent = await encryptWithKey(contentTrim, userKey);
+    const [encryptedTitle, encryptedContent] = await Promise.all([
+      encryptWithKey(titleTrim, userKey),
+      encryptWithKey(contentTrim, userKey),
+    ]);
     const listId = currentList?.id ?? defaultListId;
-    if (!listId) {
-      alert("Cannot find default list ID");
-      setInProgress(false);
-      return;
-    }
     const func = async () => {
       if (activeEditNote) {
         const { id } = activeEditNote;
@@ -106,43 +130,16 @@ export default function AddNote({ userKey }: Props) {
       });
   };
 
-  const validate = (
-    user: User | null,
-    titleTrim: string,
-    contentTrim: string,
-  ): user is User => {
-    if (!user) return false;
-    if (titleTrim.length > maxLengths.title) {
-      addToast(
-        "error",
-        "Invalid title",
-        `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
-      );
-      return false;
-    }
-    if (!contentTrim || contentTrim.length > maxLengths.content) {
-      addToast(
-        "error",
-        "Invalid content",
-        `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
-      );
-      return false;
-    }
-    return true;
-  };
-
   const handleListAdd = async (listName: string) => {
     if (!user) return;
     if (lists.some((list) => list.name === listName)) {
       addToast("error", "Duplicate list");
       return;
     }
-
-    const encryptedName = await encryptWithKey(listName, userKey);
-
     const toAdd = {
       userId: user.uid,
     };
+    const encryptedName = await encryptWithKey(listName, userKey);
     const { id } = await addDoc(listsCollection, {
       ...toAdd,
       name: encryptedName,
