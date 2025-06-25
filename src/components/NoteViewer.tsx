@@ -2,12 +2,17 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { List, Note } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import Collapse from "./Collapse";
-import { deleteByQuery, formatTimestamp, handleError } from "@/lib/helpers";
+import {
+  deleteByQuery,
+  encryptWithKey,
+  formatTimestamp,
+  handleError,
+} from "@/lib/helpers";
 import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultListName } from "@/lib/constants";
 import InlineDivider from "./InlineDivider";
-import { deleteDoc, doc, query, where } from "firebase/firestore";
+import { deleteDoc, doc, query, updateDoc, where } from "firebase/firestore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useNotesStore } from "@/lib/stores/notesStore";
 import {
@@ -17,15 +22,17 @@ import {
 import { useMemo, useState } from "react";
 import ListSelect from "./ListSelect";
 import IconButton from "./IconButton";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useUserStore } from "@/lib/stores/userStore";
 import { useListsStore } from "@/lib/stores/listsStore";
+import { useInputStore } from "@/lib/stores/inputStore";
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
   const setEditNote = useEditStore((state) => state.update);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
+  const showInput = useInputStore((state) => state.showInput);
   const notes = useNotesStore((state) => state.notes);
   const purgeNotes = useNotesStore((state) => state.purge);
   const reverseNotes = useNotesStore((state) => state.reverse);
@@ -77,6 +84,27 @@ export default function NoteViewer() {
     addToast("success", "Note removed", undefined, 2000);
   };
 
+  const renameList = async (list: List, newName: string) => {
+    const { key } = useUserStore.getState();
+    if (!key) return;
+    const { rename } = useListsStore.getState();
+    const { id, userId, name } = list;
+    const docRef = doc(listsCollection, id);
+    const encryptedName = await encryptWithKey(newName, key);
+    await updateDoc(docRef, {
+      name: encryptedName,
+      userId,
+    });
+    list.name = newName;
+    rename(id, newName);
+    setListFilter(list);
+    addToast(
+      "success",
+      "Rename successfull",
+      `Renamed collection "${name}" to "${newName}"`,
+    );
+  };
+
   const deleteList = async (list: List) => {
     const { id, name } = list;
     const promises: Promise<void>[] = [];
@@ -115,11 +143,7 @@ export default function NoteViewer() {
     <>
       <div className="mb-4 flex gap-2 *:flex *:gap-2">
         <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-          <button
-            onClick={() => {
-              reverseNotes();
-            }}
-          >
+          <button onClick={() => reverseNotes()}>
             <ArrowsUpDownIcon className="size-6" />
           </button>
           <motion.button
@@ -142,7 +166,22 @@ export default function NoteViewer() {
         </div>
         {listFilter && (
           <div>
+            {listFilter.name !== defaultListName && (
+              <IconButton
+                style="neutral"
+                onClick={() => {
+                  const { name } = listFilter;
+                  showInput(
+                    `Rename collection: ${name}`,
+                    async (newName) => await renameList(listFilter, newName),
+                  );
+                }}
+              >
+                <PencilIcon />
+              </IconButton>
+            )}
             <IconButton
+              style="error"
               onClick={() => {
                 const { name } = listFilter;
                 const isDefaultList = name === defaultListName;
