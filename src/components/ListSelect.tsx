@@ -2,16 +2,17 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { defaultListName } from "@/lib/constants";
 import { List, SetValShortcut } from "@/lib/types";
 import { useId, useMemo } from "react";
+import { useListsStore } from "@/lib/stores/listsStore";
 
 type Props = {
-  lists: List[];
   val: List | undefined;
   setVal: SetValShortcut<List | undefined>;
   allowAll?: boolean;
 };
 
-export default function ListSelect({ lists, val, setVal, allowAll }: Props) {
+export default function ListSelect({ val, setVal, allowAll }: Props) {
   const allId = useId();
+  const lists = useListsStore((state) => state.lists);
   const defaultListId = useMemo(
     () => lists.find((list) => list.name === defaultListName)?.id,
     [lists],

@@ -1,6 +1,50 @@
 import { deleteDoc, getDocs, Query, Timestamp } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGuard } from "./typeguards";
+import { List } from "./types";
+import { defaultListName } from "./constants";
+
+export const getTypedDocs = async <T>(
+  q: Query,
+  typeguard: (obj: unknown) => obj is T,
+) => {
+  const snapshot = await getDocs(q);
+  return snapshot.docs
+    .map((doc) => {
+      const withId = { id: doc.id, ...doc.data() };
+      return withId as unknown;
+    })
+    .filter(typeguard);
+};
+
+export const decryptValues = <
+  T extends Record<string, unknown>,
+  K extends keyof T,
+>(
+  key: CryptoKey,
+  objs: T[],
+  ...params: K[]
+): Promise<T[]> => {
+  return Promise.all(
+    objs.map(async (obj) => {
+      const newObj = { ...obj };
+      for (const param of params) {
+        const val = obj[param];
+        if (typeof val === "string") {
+          // Since val is of type T[K], it means that T[K] is a string, making it safe to cast
+          newObj[param] = (await decryptWithKey(val, key)) as T[K];
+        }
+      }
+      return newObj;
+    }),
+  );
+};
+
+export const findDefaultListId = (lists: List[]) => {
+  const defaultList = lists.find((list) => list.name === defaultListName);
+  if (!defaultList) throw Error("Default list not found");
+  return defaultList.id;
+};
 
 export const fullTrim = (s: string) => {
   return s

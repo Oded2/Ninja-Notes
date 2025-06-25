@@ -20,13 +20,13 @@ import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { User } from "firebase/auth";
 import { useNotesStore } from "@/lib/stores/notesStore";
+import { useListsStore } from "@/lib/stores/listsStore";
 
 type Props = {
   userKey: CryptoKey;
-  lists: List[];
 };
 
-export default function AddNote({ userKey, lists }: Props) {
+export default function AddNote({ userKey }: Props) {
   const id = useId();
   const [currentList, setCurrentList] = useState<List | undefined>(undefined);
   const [title, setTitle] = useState("");
@@ -39,6 +39,8 @@ export default function AddNote({ userKey, lists }: Props) {
   const showInput = useInputStore((state) => state.showInput);
   const addNote = useNotesStore((state) => state.add);
   const editNote = useNotesStore((state) => state.edit);
+  const lists = useListsStore((state) => state.lists);
+  const addList = useListsStore((state) => state.add);
   const defaultListId = useMemo(
     () => lists.find((list) => list.name === defaultListName)?.id,
     [lists],
@@ -129,20 +131,22 @@ export default function AddNote({ userKey, lists }: Props) {
     return true;
   };
 
-  const addList = async (listName: string) => {
+  const handleListAdd = async (listName: string) => {
     if (lists.some((list) => list.name === listName)) {
       addToast("error", "Duplicate list");
       return;
     }
     const encryptedName = await encryptWithKey(listName, userKey);
-    const ref = await addDoc(listsCollection, {
+    const { id } = await addDoc(listsCollection, {
       name: encryptedName,
       userId: user?.uid,
     });
-    setCurrentList({
+    const newList: List = {
       name: listName,
-      id: ref.id,
-    });
+      id,
+    };
+    addList(newList);
+    setCurrentList(newList);
   };
 
   useEffect(() => {
@@ -166,11 +170,15 @@ export default function AddNote({ userKey, lists }: Props) {
       className="mx-auto flex w-full max-w-xl flex-col gap-4"
     >
       <div className="flex gap-2">
-        <ListSelect lists={lists} val={currentList} setVal={setCurrentList} />
+        <ListSelect val={currentList} setVal={setCurrentList} />
         <button
           type="button"
           onClick={() =>
-            showInput("Enter collection name", addList, maxLengths.collection)
+            showInput(
+              "Enter collection name",
+              handleListAdd,
+              maxLengths.collection,
+            )
           }
           className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
         >

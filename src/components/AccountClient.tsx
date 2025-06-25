@@ -19,6 +19,7 @@ export default function AccountClient() {
           height={1024}
           width={1024}
           className="my-auto size-92 rounded-2xl"
+          priority
         />
       </div>
       <div className="grow p-5">

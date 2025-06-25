@@ -10,18 +10,33 @@ import {
   derivePasswordKey,
   encryptWithKey,
   exportKey,
+  findDefaultListId,
   generateSalt,
   handleError,
 } from "@/lib/helpers";
-import { deleteDoc, doc, query, setDoc, where } from "firebase/firestore";
-import { notesCollection, usersCollection } from "@/lib/firebase";
-import { loadUserKey } from "@/lib/indexDB";
+import {
+  deleteDoc,
+  doc,
+  documentId,
+  orderBy,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import {
+  listsCollection,
+  notesCollection,
+  usersCollection,
+} from "@/lib/firebase";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import InlineDivider from "./InlineDivider";
+import { useListsStore } from "@/lib/stores/listsStore";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
+  const userKey = useUserStore((state) => state.key);
+  const lists = useListsStore((state) => state.lists);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -45,7 +60,6 @@ export default function AccountSettings() {
     try {
       // Re‐encrypt your E2EE vault key under the new password
       // Load the existing userKey (CryptoKey) from IndexedDB
-      const userKey = await loadUserKey();
       if (!userKey) return;
       const userKeyBase64 = await exportKey(userKey);
       // Generate a new 16-byte salt
@@ -80,9 +94,23 @@ export default function AccountSettings() {
   };
 
   const handleNotePurge = async (interactive = true) => {
+    if (!userKey) return;
     setPurgeCompleted(interactive);
-    const q = query(notesCollection, where("userId", "==", user?.uid));
-    deleteByQuery(q).catch((e) => {
+    const userId = user?.uid;
+    const defaultListId = findDefaultListId(lists);
+    const documentIdFieldPath = documentId();
+    const listsQuery = query(
+      listsCollection,
+      where("userId", "==", userId),
+      where(documentIdFieldPath, "!=", defaultListId),
+      orderBy(documentIdFieldPath), // required when using `!=` on documentId
+    );
+    await deleteByQuery(listsQuery).catch((e) => {
+      handleError(e);
+      setPurgeCompleted(false);
+    });
+    const notesQuery = query(notesCollection, where("userId", "==", userId));
+    await deleteByQuery(notesQuery).catch((e) => {
       handleError(e);
       setPurgeCompleted(false);
     });
@@ -93,6 +121,7 @@ export default function AccountSettings() {
         "Your notes have been successfully deleted",
       );
   };
+
   const handleAccountDelete = async () => {
     setAccountDeleteCompleted(true);
     await handleNotePurge(false);

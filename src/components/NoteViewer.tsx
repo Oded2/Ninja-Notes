@@ -25,13 +25,13 @@ import IconButton from "./IconButton";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useUserStore } from "@/lib/stores/userStore";
+import { useListsStore } from "@/lib/stores/listsStore";
 
 type Props = {
-  lists: List[];
   userKey: CryptoKey;
 };
 
-export default function NoteViewer({ lists, userKey }: Props) {
+export default function NoteViewer({ userKey }: Props) {
   const user = useUserStore((state) => state.user);
   const setEditNote = useEditStore((state) => state.update);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
@@ -39,6 +39,8 @@ export default function NoteViewer({ lists, userKey }: Props) {
   const purgeNotes = useNotesStore((state) => state.purge);
   const reverseNotes = useNotesStore((state) => state.reverse);
   const removeNote = useNotesStore((state) => state.remove);
+  const lists = useListsStore((state) => state.lists);
+  const removeList = useListsStore((state) => state.remove);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const addToast = useToastStore((state) => state.add);
   // Undefined implies all lists
@@ -101,6 +103,7 @@ export default function NoteViewer({ lists, userKey }: Props) {
       await deleteDoc(docRef).catch(handleError);
       // Set the collection filter back to all
       setListFilter(undefined);
+      removeList(id);
     }
     purgeNotes(id);
     addToast(
@@ -139,12 +142,7 @@ export default function NoteViewer({ lists, userKey }: Props) {
           </motion.button>
         </div>
         <div className="max-w-sm grow">
-          <ListSelect
-            allowAll
-            lists={lists}
-            val={listFilter}
-            setVal={setListFilter}
-          />
+          <ListSelect allowAll val={listFilter} setVal={setListFilter} />
         </div>
         {listFilter && (
           <div>

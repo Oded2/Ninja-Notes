@@ -7,29 +7,21 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { authHandlers, listsCollection, notesCollection } from "@/lib/firebase";
-import { getDocs, onSnapshot, orderBy, query, where } from "firebase/firestore";
-import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
-import { List } from "@/lib/types";
+import { authHandlers } from "@/lib/firebase";
 import { useUserStore } from "@/lib/stores/userStore";
 import Link from "next/link";
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import VerifyEmail from "./VerifyEmail";
-import { decryptWithKey } from "@/lib/helpers";
-import { loadUserKey } from "@/lib/indexDB";
 import InlineDivider from "./InlineDivider";
-import { useNotesStore } from "@/lib/stores/notesStore";
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
-  const editNote = useEditStore((state) => state.note);
-  const addNote = useNotesStore((state) => state.add);
+  const activeEditNote = useEditStore((state) => state.note);
   const user = useUserStore((state) => state.user);
+  const userKey = useUserStore((state) => state.key);
   const loading = useUserStore((state) => state.loading);
   const [email, setEmail] = useState<string | null>(null);
-  const [userKey, setUserKey] = useState<CryptoKey | null>(null);
-  const [lists, setLists] = useState<List[]>([]);
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -37,60 +29,9 @@ export default function ClientHome() {
   }, [user]);
 
   useEffect(() => {
-    loadUserKey().then(setUserKey);
-  }, []);
-
-  useEffect(() => {
-    if (!user || !userKey) return;
-    console.log("Subscribed");
-    const { uid } = user;
-
-    const notesQuery = query(
-      notesCollection,
-      where("userId", "==", uid),
-      orderBy("createdAt"),
-    );
-    const listsQuery = query(listsCollection, where("userId", "==", uid));
-
-    const notesPromise = getDocs(notesQuery)
-      .then((snapshot) =>
-        snapshot.docs
-          .map((doc) => ({
-            id: doc.ref.id,
-            ...doc.data(),
-          }))
-          .filter((note) => noteTypeGuard(note))
-          .map(async (note) => ({
-            ...note,
-            title: await decryptWithKey(note.title, userKey),
-            content: await decryptWithKey(note.content, userKey),
-          })),
-      )
-      .then((decryptedNotesPromise) => Promise.all(decryptedNotesPromise));
-    notesPromise.then((notes) => notes.forEach((note) => addNote(note)));
-
-    const unsubscribeLists = onSnapshot(listsQuery, async (snapshot) => {
-      const encryptedLists = snapshot.docs
-        .map((doc) => ({
-          id: doc.ref.id,
-          ...doc.data(),
-        }))
-        .filter((list) => listTypeGuard(list));
-      const decryptedLists: List[] = await Promise.all(
-        encryptedLists.map(async (list) => ({
-          ...list,
-          name: await decryptWithKey(list.name, userKey),
-        })),
-      );
-      setLists(decryptedLists);
-    });
-    return unsubscribeLists;
-  }, [user, userKey, addNote]);
-
-  useEffect(() => {
-    if (first.current) setViewNotes(!editNote);
+    if (first.current) setViewNotes(!activeEditNote);
     else first.current = true;
-  }, [editNote]);
+  }, [activeEditNote]);
 
   return (
     <>
@@ -108,7 +49,7 @@ export default function ClientHome() {
               <span className="text-red-500">Ninja</span> Notes
             </h1>
             <InlineDivider>
-              <div>{email}</div>
+              {email && <div>{email}</div>}
               <div>
                 <Link href="/account" className="hover:underline">
                   Account
@@ -147,7 +88,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <NoteViewer lists={lists} userKey={userKey} />
+                <NoteViewer userKey={userKey} />
               </motion.div>
             ) : (
               <motion.div
@@ -157,7 +98,7 @@ export default function ClientHome() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.1 }}
               >
-                <AddNote userKey={userKey} lists={lists} />
+                <AddNote userKey={userKey} />
               </motion.div>
             )}
           </AnimatePresence>
