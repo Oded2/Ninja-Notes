@@ -42,48 +42,54 @@ export default function AccountSettings() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [purgeCompleted, setPurgeCompleted] = useState(false);
   const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
-  const add = useToastStore((state) => state.add);
+  const addToast = useToastStore((state) => state.add);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
 
   const handleEmailChange = async () => {
     if (!user) return;
     await updateEmail(user, newEmail).catch(handleError);
+    addToast(
+      "success",
+      "Email updated",
+      "Your email has been successfully updated",
+    );
     setNewEmail("");
   };
 
   const handlePasswordChange = async () => {
     if (newPassword !== confirmPassword) {
-      add("error", "Error", "Passwords must match");
+      addToast("error", "Error", "Passwords must match");
       return;
     }
-    if (!user) return;
+    if (!user || !userKey) return;
     try {
-      // Re‐encrypt your E2EE vault key under the new password
-      // Load the existing userKey (CryptoKey) from IndexedDB
-      if (!userKey) return;
-      const userKeyBase64 = await exportKey(userKey);
+      // Re‐encrypt the E2EE vault key under the new password
       // Generate a new 16-byte salt
       const newSalt = generateSalt();
       // Derive a new password key from the new password + new salt
-      const newPasswordKey = await derivePasswordKey(newPassword, newSalt);
+      const [userKeyBase64, newPasswordKey] = await Promise.all([
+        exportKey(userKey),
+        derivePasswordKey(newPassword, newSalt),
+      ]);
       // Encrypt the Base64 raw key under that new passwordKey
       const newEncryptedUserKey = await encryptWithKey(
         userKeyBase64,
         newPasswordKey,
       );
-      // Update password
-      await updatePassword(user, newPassword);
       const userDocRef = doc(usersCollection, user.uid);
-      // Write the updated encrypted user key + salt back to Firestore
-      await setDoc(
-        userDocRef,
-        {
-          encryptedUserKey: newEncryptedUserKey,
-          salt: Array.from(newSalt),
-        },
-        { merge: true },
-      );
-      add(
+      // Write the updated encrypted user key + salt back to Firestore and change the password
+      await Promise.all([
+        updatePassword(user, newPassword),
+        setDoc(
+          userDocRef,
+          {
+            encryptedUserKey: newEncryptedUserKey,
+            salt: Array.from(newSalt),
+          },
+          { merge: true },
+        ),
+      ]);
+      addToast(
         "success",
         "Password updated",
         "Your password has been successfully updated",
@@ -105,17 +111,16 @@ export default function AccountSettings() {
       where(documentIdFieldPath, "!=", defaultListId),
       orderBy(documentIdFieldPath), // required when using `!=` on documentId
     );
-    await deleteByQuery(listsQuery).catch((e) => {
-      handleError(e);
-      setPurgeCompleted(false);
-    });
     const notesQuery = query(notesCollection, where("userId", "==", userId));
-    await deleteByQuery(notesQuery).catch((e) => {
+    await Promise.all([
+      deleteByQuery(listsQuery),
+      deleteByQuery(notesQuery),
+    ]).catch((e) => {
       handleError(e);
       setPurgeCompleted(false);
     });
     if (interactive)
-      add(
+      addToast(
         "success",
         "Notes purged successfully",
         "Your notes have been successfully deleted",
@@ -123,10 +128,16 @@ export default function AccountSettings() {
   };
 
   const handleAccountDelete = async () => {
+    if (!user) return;
     setAccountDeleteCompleted(true);
-    await handleNotePurge(false);
-    await deleteDoc(doc(usersCollection, user?.uid)).catch(handleError);
-    await user?.delete().catch((e) => {
+    const docRef = doc(usersCollection, user.uid);
+    await Promise.all([handleNotePurge(false), deleteDoc(docRef)]).catch(
+      (e) => {
+        handleError(e);
+        setAccountDeleteCompleted(false);
+      },
+    );
+    await user.delete().catch((e) => {
       handleError(e);
       setAccountDeleteCompleted(false);
     });
