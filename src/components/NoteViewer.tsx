@@ -60,8 +60,9 @@ export default function NoteViewer({ userKey }: Props) {
     const isLastInList = notes.every(
       (noteItem) => noteItem.id === id || noteItem.listId !== listId,
     );
+    const promises: Promise<void>[] = [];
     const docRef = doc(notesCollection, id);
-    await deleteDoc(docRef).catch(handleError);
+    promises.push(deleteDoc(docRef));
     if (isLastInList) {
       console.log("Last in list");
       // The note was the last one in its list
@@ -79,9 +80,14 @@ export default function NoteViewer({ userKey }: Props) {
       );
       if (notDefaultList) {
         console.log("Deleting list");
-        await deleteDoc(listRef);
+        promises.push(deleteDoc(listRef));
         setListFilter(undefined);
       }
+    }
+    try {
+      await Promise.all(promises);
+    } catch (err) {
+      handleError(err);
     }
     removeNote(id);
     addToast("success", "Note removed", undefined, 2000);
@@ -89,21 +95,27 @@ export default function NoteViewer({ userKey }: Props) {
 
   const deleteList = async (list: List) => {
     const { id, name } = list;
+    const promises: Promise<void>[] = [];
     const q = query(
       notesCollection,
       where("userId", "==", user?.uid),
       where("listId", "==", id),
     );
     // Delete every note in that list
-    await deleteByQuery(q).catch(handleError);
+    promises.push(deleteByQuery(q));
     if (name !== defaultListName) {
       // User isn't deleting the default collection
       // Delete the list
       const docRef = doc(listsCollection, id);
-      await deleteDoc(docRef).catch(handleError);
+      promises.push(deleteDoc(docRef));
       // Set the collection filter back to all
       setListFilter(undefined);
       removeList(id);
+    }
+    try {
+      await Promise.all(promises);
+    } catch (err) {
+      handleError(err);
     }
     purgeNotes(id);
     addToast(
