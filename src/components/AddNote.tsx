@@ -27,7 +27,7 @@ type Props = {
 };
 
 export default function AddNote({ userKey }: Props) {
-  const id = useId();
+  const labelId = useId();
   const [currentList, setCurrentList] = useState<List | undefined>(undefined);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -194,14 +194,14 @@ export default function AddNote({ userKey }: Props) {
         </button>
       </div>
       <InputContainer>
-        <label className="font-medium" htmlFor={`title-${id}`}>
+        <label className="font-medium" htmlFor={`title-${labelId}`}>
           Title
         </label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           type="text"
-          id={`title-${id}`}
+          id={`title-${labelId}`}
           placeholder="Could Bruce Wayne be the Batman?"
           className="grow outline-none"
           maxLength={maxLengths.title}
@@ -210,13 +210,13 @@ export default function AddNote({ userKey }: Props) {
         <span className="text-xs">{`${title.length.toLocaleString()}/${maxLengths.title.toLocaleString()}`}</span>
       </InputContainer>
       <InputContainer>
-        <label className="font-medium" htmlFor={id}>
+        <label className="font-medium" htmlFor={labelId}>
           Create new note
         </label>
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          id={id}
+          id={labelId}
           dir="auto"
           placeholder="What's on your mind?"
           className="w-full resize-none outline-none"
