@@ -1,8 +1,6 @@
 import { deleteDoc, getDocs, Query, Timestamp } from "firebase/firestore";
 import { useToastStore } from "./stores/toastStore";
 import { firebaseErrorTypeGuard } from "./typeguards";
-import { List } from "./types";
-import { defaultListName } from "./constants";
 
 export const getTypedDocs = async <T>(
   q: Query,
@@ -38,12 +36,6 @@ export const decryptValues = <
       return newObj;
     }),
   );
-};
-
-export const findDefaultListId = (lists: List[]) => {
-  const defaultList = lists.find((list) => list.name === defaultListName);
-  if (!defaultList) return null;
-  return defaultList.id;
 };
 
 export const fullTrim = (s: string) => {

@@ -10,7 +10,6 @@ import {
   derivePasswordKey,
   encryptWithKey,
   exportKey,
-  findDefaultListId,
   generateSalt,
   handleError,
 } from "@/lib/helpers";
@@ -36,7 +35,7 @@ import { useListsStore } from "@/lib/stores/listsStore";
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
   const userKey = useUserStore((state) => state.key);
-  const lists = useListsStore((state) => state.lists);
+  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -103,7 +102,7 @@ export default function AccountSettings() {
     if (!userKey) return;
     setPurgeCompleted(interactive);
     const userId = user?.uid;
-    const defaultListId = findDefaultListId(lists);
+    const defaultListId = findDefaultListId();
     const documentIdFieldPath = documentId();
     const listsQuery = query(
       listsCollection,

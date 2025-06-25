@@ -11,12 +11,7 @@ import {
 import { useUserStore } from "@/lib/stores/userStore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import {
-  encryptWithKey,
-  findDefaultListId,
-  fullTrim,
-  handleError,
-} from "@/lib/helpers";
+import { encryptWithKey, fullTrim, handleError } from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import ListSelect from "./ListSelect";
 import { decoyListId, maxLengths } from "@/lib/constants";
@@ -45,7 +40,8 @@ export default function AddNote() {
   const addList = useListsStore((state) => state.add);
   const removeList = useListsStore((state) => state.remove);
   const renameList = useListsStore((state) => state.rename);
-  const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
+  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
+  const defaultListId = useMemo(findDefaultListId, [findDefaultListId]);
 
   const validate = (
     user: User | null,

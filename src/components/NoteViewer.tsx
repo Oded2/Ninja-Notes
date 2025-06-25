@@ -2,12 +2,7 @@ import { useEditStore } from "@/lib/stores/editStore";
 import { List, Note } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import Collapse from "./Collapse";
-import {
-  deleteByQuery,
-  findDefaultListId,
-  formatTimestamp,
-  handleError,
-} from "@/lib/helpers";
+import { deleteByQuery, formatTimestamp, handleError } from "@/lib/helpers";
 import CopyButton from "./CopyButton";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import { defaultListName } from "@/lib/constants";
@@ -37,6 +32,7 @@ export default function NoteViewer() {
   const removeNote = useNotesStore((state) => state.remove);
   const lists = useListsStore((state) => state.lists);
   const removeList = useListsStore((state) => state.remove);
+  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const addToast = useToastStore((state) => state.add);
   // Undefined implies all lists
@@ -62,7 +58,7 @@ export default function NoteViewer() {
     if (isLastInList) {
       console.log("Last in list");
       // The list should only be deleted if it's not the default list
-      const notDefaultList = findDefaultListId(lists) !== listId;
+      const notDefaultList = findDefaultListId() !== listId;
       if (notDefaultList) {
         const listRef = doc(listsCollection, listId);
         console.log("Deleting list");
