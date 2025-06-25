@@ -129,7 +129,12 @@ export default function AddNote() {
         setInProgress(false);
         setTitle("");
         setContent("");
-        addToast("success", "Note added", undefined, 2000);
+        addToast(
+          "success",
+          activeEditNote ? "Note edited" : "Note added",
+          undefined,
+          2000,
+        );
       });
   };
 
