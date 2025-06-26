@@ -19,6 +19,7 @@ import {
   documentId,
   orderBy,
   query,
+  QueryConstraint,
   setDoc,
   where,
 } from "firebase/firestore";
@@ -104,12 +105,17 @@ export default function AccountSettings() {
     const userId = user?.uid;
     const defaultListId = findDefaultListId();
     const documentIdFieldPath = documentId();
-    const listsQuery = query(
-      listsCollection,
+    const listsQueryConditions: QueryConstraint[] = [
       where("userId", "==", userId),
-      where(documentIdFieldPath, "!=", defaultListId),
-      orderBy(documentIdFieldPath), // required when using `!=` on documentId
-    );
+    ];
+    if (interactive) {
+      // The user is not deleting the account, therefore the default list must be not be deleted
+      listsQueryConditions.push(
+        where(documentIdFieldPath, "!=", defaultListId),
+      );
+      listsQueryConditions.push(orderBy(documentIdFieldPath)); // Required by firebase;
+    }
+    const listsQuery = query(listsCollection, ...listsQueryConditions);
     const notesQuery = query(notesCollection, where("userId", "==", userId));
     await Promise.all([
       deleteByQuery(listsQuery),
@@ -124,6 +130,7 @@ export default function AccountSettings() {
         "Notes purged successfully",
         "Your notes have been successfully deleted",
       );
+    // TODO: Synchronize stores
   };
 
   const handleAccountDelete = async () => {

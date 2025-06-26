@@ -100,7 +100,7 @@ export default function NoteViewer() {
     setListFilter(list);
     addToast(
       "success",
-      "Rename successfull",
+      "Rename successful",
       `Renamed collection "${name}" to "${newName}"`,
     );
   };

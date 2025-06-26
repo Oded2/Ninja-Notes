@@ -14,6 +14,7 @@ import {
   handleError,
 } from "@/lib/helpers";
 import { saveUserKey } from "@/lib/indexDB";
+import { useListsStore } from "@/lib/stores/listsStore";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { userDataTypeGuard } from "@/lib/typeguards";
 import {
@@ -21,6 +22,7 @@ import {
   KeyIcon,
   ShieldCheckIcon,
 } from "@heroicons/react/16/solid";
+import clsx from "clsx";
 import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -34,11 +36,11 @@ export default function AuthClient() {
   const [inProgress, setInProgress] = useState(false);
   const { signup, signin } = authHandlers;
   const router = useRouter();
-  const add = useToastStore((state) => state.add);
+  const addToast = useToastStore((state) => state.add);
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {
-      add("error", "Error", "Passwords must match");
+      addToast("error", "Error", "Passwords must match");
       return;
     }
     setInProgress(true);
@@ -52,28 +54,37 @@ export default function AuthClient() {
     const { uid } = user;
     const userDocRef = doc(usersCollection, uid);
     if (isSignUp) {
-      // Generate a key then export it
-      const userKey = await generateUserKey();
-      const userKeyBase64 = await exportKey(userKey);
-      // Generate random salt
       const salt = generateSalt();
-      // Generate a random key derived from the password
-      const passwordKey = await derivePasswordKey(password, salt);
+      const userKey = await generateUserKey();
+      const [userKeyBase64, passwordKey] = await Promise.all([
+        exportKey(userKey),
+        derivePasswordKey(password, salt),
+      ]);
       // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password
-      const encryptedUserKey = await encryptWithKey(userKeyBase64, passwordKey);
-      // Save to indexDB
-      await saveUserKey(userKeyBase64);
-      // Add to firebase
-      await setDoc(userDocRef, {
-        encryptedUserKey,
-        salt: Array.from(salt),
-      }).catch(handleError);
-      // Add a default collection for the user
-      await addDoc(listsCollection, {
-        name: encryptWithKey(defaultListName, userKey),
+      const [encryptedUserKey, encryptedDefaultListName] = await Promise.all([
+        encryptWithKey(userKeyBase64, passwordKey),
+        encryptWithKey(defaultListName, userKey),
+      ]);
+      // Save to indexDB, create a doc for the user under the user's collection, and create a default collection for the user
+      const [{ id }] = await Promise.all([
+        addDoc(listsCollection, {
+          name: encryptedDefaultListName,
+          userId: uid,
+        }),
+        saveUserKey(userKeyBase64),
+        setDoc(userDocRef, {
+          encryptedUserKey,
+          salt: Array.from(salt),
+        }),
+      ]);
+      // Since the default list was added to the user's lists, then it needs to be added locally as well
+      useListsStore.getState().add({
+        name: defaultListName,
         userId: uid,
+        id,
       });
     } else {
+      // User is logging in
       const userDoc = await getDoc(userDocRef);
       const data = userDoc.data();
       // Ensure that the data is valid
@@ -149,7 +160,12 @@ export default function AuthClient() {
               setVal={setConfirmPassword}
               required
             >
-              <ShieldCheckIcon />
+              <ShieldCheckIcon
+                className={clsx({
+                  "text-emerald-600":
+                    password.length >= 8 && password === confirmPassword,
+                })}
+              />
             </FormInput>
             <span className="text-sm">
               There&apos;s no way to recover your password. Please store it
