@@ -95,9 +95,8 @@ export default function NoteViewer() {
       name: encryptedName,
       userId,
     });
-    list.name = newName;
     rename(id, newName);
-    setListFilter(list);
+    setListFilter({ ...list, name: newName });
     addToast(
       "success",
       "Rename successful",
