@@ -11,7 +11,7 @@ import ConfirmModal from "@/components/ConfirmModal";
 import InputModal from "@/components/InputModal";
 import { loadUserKey } from "@/lib/indexDB";
 import { orderBy, query, where } from "firebase/firestore";
-import { decryptValues, getTypedDocs } from "@/lib/helpers";
+import { getTypedDecryptedDocs } from "@/lib/helpers";
 import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
 import { useNotesStore } from "@/lib/stores/notesStore";
 import { useListsStore } from "@/lib/stores/listsStore";
@@ -47,15 +47,21 @@ export default function RootLayout({
       where("userId", "==", uid),
       orderBy("createdAt"),
     );
-    const notesPromise = getTypedDocs(notesQuery, noteTypeGuard).then(
-      (encryptedNotes) =>
-        decryptValues(userKey, encryptedNotes, "title", "content"),
+    const notesPromise = getTypedDecryptedDocs(
+      notesQuery,
+      noteTypeGuard,
+      userKey,
+      "title",
+      "content",
     );
     notesPromise.then((notes) => notes.forEach((note) => addNote(note)));
     // Fetch lists
     const listsQuery = query(listsCollection, where("userId", "==", uid));
-    const listsPromise = getTypedDocs(listsQuery, listTypeGuard).then(
-      (encryptedLists) => decryptValues(userKey, encryptedLists, "name"),
+    const listsPromise = getTypedDecryptedDocs(
+      listsQuery,
+      listTypeGuard,
+      userKey,
+      "name",
     );
     listsPromise.then((lists) => lists.forEach((list) => addList(list)));
   }, [user, userKey, addNote, addList]);
