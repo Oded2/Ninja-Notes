@@ -8,6 +8,7 @@ type ListsStore = {
   remove: (id: string) => void;
   rename: (id: string, newName: string) => void;
   findDefaultListId: () => string | undefined;
+  purge: () => void;
 };
 
 export const useListsStore = create<ListsStore>((set, get) => ({
@@ -21,8 +22,10 @@ export const useListsStore = create<ListsStore>((set, get) => ({
         list.id === id ? { ...list, name: newName } : list,
       ),
     })),
+
   findDefaultListId: () => {
     const { lists } = get();
     return lists.find((list) => list.name === defaultListName)?.id;
   },
+  purge: () => set(() => ({ lists: [] })),
 }));
