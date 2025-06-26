@@ -1,5 +1,5 @@
 import { get, set, del } from "idb-keyval";
-import { authHandlers } from "./firebase";
+import { useUserStore } from "./stores/userStore";
 
 const keyName = "userKey";
 
@@ -15,16 +15,16 @@ function importKey(base64: string): Promise<CryptoKey> {
 // Store base64-encoded raw key
 export function saveUserKey(base64Key: string) {
   console.log("Saving user key");
-  return set(keyName, base64Key);
+  const saveUserKeyToStore = importKey(base64Key).then((key) =>
+    useUserStore.getState().setKey(key),
+  );
+  return Promise.all([set(keyName, base64Key), saveUserKeyToStore]);
 }
 
 export async function loadUserKey() {
   console.log("Loading user key");
   const base64 = await get(keyName);
   if (typeof base64 !== "string") {
-    // Keep alert
-    alert("Your session key is missing or invalid. Please sign in again.");
-    await authHandlers.signout();
     return null;
   }
   return await importKey(base64);

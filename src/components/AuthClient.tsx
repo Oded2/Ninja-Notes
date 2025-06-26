@@ -65,7 +65,7 @@ export default function AuthClient() {
         encryptWithKey(userKeyBase64, passwordKey),
         encryptWithKey(defaultListName, userKey),
       ]);
-      // Save to indexDB, create a doc for the user under the user's collection, and create a default collection for the user
+      // Create a default list for the user, save the user key to indexDB, create a document for the user
       const [{ id }] = await Promise.all([
         addDoc(listsCollection, {
           name: encryptedDefaultListName,

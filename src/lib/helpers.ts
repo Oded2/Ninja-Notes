@@ -107,7 +107,7 @@ export async function encryptWithKey(
     key,
     encoder.encode(plainText),
   );
-  return `${btoa(String.fromCharCode(...iv))}:${btoa(String.fromCharCode(...new Uint8Array(encrypted)))}`;
+  return `${uint8ArrayToBase64(iv)}:${uint8ArrayToBase64(new Uint8Array(encrypted))}`;
 }
 
 export async function decryptWithKey(
@@ -115,8 +115,8 @@ export async function decryptWithKey(
   key: CryptoKey,
 ): Promise<string> {
   const [ivB64, dataB64] = encryptedText.split(":");
-  const iv = Uint8Array.from(atob(ivB64), (c) => c.charCodeAt(0));
-  const data = Uint8Array.from(atob(dataB64), (c) => c.charCodeAt(0));
+  const iv = base64ToUint8Array(ivB64);
+  const data = base64ToUint8Array(dataB64);
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-GCM", iv },
     key,
@@ -161,3 +161,17 @@ export const handleError = (err: unknown) => {
       .add("error", "Error", errorCodeMap[code] ?? message);
   } else console.error(err);
 };
+
+function uint8ArrayToBase64(u8: Uint8Array): string {
+  return btoa(String.fromCharCode(...u8));
+}
+
+function base64ToUint8Array(b64: string): Uint8Array {
+  const binary = atob(b64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
