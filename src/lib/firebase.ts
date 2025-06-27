@@ -33,7 +33,7 @@ const authHandlers = {
     signInWithEmailAndPassword(auth, email, password),
   signout: async () => {
     await Promise.all([signOut(auth), clearUserKey()]);
-    useContentStore.getState().purgeNotes();
+    useContentStore.getState().purge();
   },
 };
 

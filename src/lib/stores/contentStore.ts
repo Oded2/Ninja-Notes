@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { List, Note } from "../types";
-import { decoyListId } from "../constants";
+import { decoyListId, defaultListName } from "../constants";
 import { findDefaultListId } from "../helpers";
 
 type ContentStore = {
@@ -9,13 +9,13 @@ type ContentStore = {
   addNote: (note: Note, list?: List) => void;
   editNote: (id: string, newNote: Note, list?: List) => string | undefined; // Returns the deleted list's id (if a list was deleted);
   removeNote: (id: string) => string | undefined;
-  purgeNotes: () => void;
   addList: (list: List, newNotes: Note[]) => void;
   addDecoyList: (name: string) => List;
   removeDecoyList: () => void;
   renameList: (id: string, newName: string) => void;
   removeList: (id: string) => boolean;
   reverseNotes: () => void;
+  purge: (full?: boolean) => void;
 };
 
 /**
@@ -76,7 +76,6 @@ export const useContentStore = create<ContentStore>((set) => ({
         notes: filteredNotes,
       };
       const defaultListId = findDefaultListId(state.lists);
-      if (!defaultListId) alert("Cannot find default list id");
       if (
         removedNoteListId !== defaultListId &&
         !filteredNotes.some((note) => note.listId === removedNoteListId)
@@ -89,7 +88,6 @@ export const useContentStore = create<ContentStore>((set) => ({
     });
     return deletedListId;
   },
-  purgeNotes: () => set({ notes: [], lists: [] }),
   addList: (list, newNotes) =>
     set((state) => ({
       lists: [list, ...state.lists],
@@ -129,4 +127,11 @@ export const useContentStore = create<ContentStore>((set) => ({
     return notDefaultList;
   },
   reverseNotes: () => set((state) => ({ notes: state.notes.toReversed() })),
+  purge: (full) =>
+    set((state) => ({
+      notes: [],
+      lists: full
+        ? []
+        : state.lists.filter((list) => list.name === defaultListName),
+    })),
 }));

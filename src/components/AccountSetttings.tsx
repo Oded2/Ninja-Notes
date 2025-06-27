@@ -45,6 +45,7 @@ export default function AccountSettings() {
   const addToast = useToastStore((state) => state.add);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
   const lists = useContentStore((state) => state.lists);
+  const purge = useContentStore((state) => state.purge);
 
   const handleEmailChange = async () => {
     if (!user) return;
@@ -131,7 +132,7 @@ export default function AccountSettings() {
         "Notes purged successfully",
         "Your notes have been successfully deleted",
       );
-    // TODO: Synchronize stores
+    purge();
   };
 
   const handleAccountDelete = async () => {
