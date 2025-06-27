@@ -52,6 +52,6 @@ export function listTypeGuard(obj: unknown): obj is List {
   return (
     typeof list.id === "string" &&
     typeof list.name === "string" &&
-    typeof list.userId === "string"
+    (typeof list.userId === undefined || typeof list.userId === "string")
   );
 }

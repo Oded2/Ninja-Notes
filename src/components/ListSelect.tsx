@@ -2,7 +2,8 @@ import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { defaultListName } from "@/lib/constants";
 import { List, SetValShortcut } from "@/lib/types";
 import { useId, useMemo } from "react";
-import { useListsStore } from "@/lib/stores/listsStore";
+import { useContentStore } from "@/lib/stores/contentStore";
+import { findDefaultListId } from "@/lib/helpers";
 
 type Props = {
   val: List | undefined;
@@ -12,11 +13,8 @@ type Props = {
 
 export default function ListSelect({ val, setVal, allowAll }: Props) {
   const allId = useId();
-  const lists = useListsStore((state) => state.lists);
-  const defaultListId = useMemo(
-    () => lists.find((list) => list.name === defaultListName)?.id,
-    [lists],
-  );
+  const lists = useContentStore((state) => state.lists);
+  const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
 
   return (
     <div className="relative grow">

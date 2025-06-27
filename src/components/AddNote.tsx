@@ -12,7 +12,12 @@ import {
 import { useUserStore } from "@/lib/stores/userStore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
 import { useEditStore } from "@/lib/stores/editStore";
-import { encryptWithKey, fullTrim, handleError } from "@/lib/helpers";
+import {
+  encryptWithKey,
+  findDefaultListId,
+  fullTrim,
+  handleError,
+} from "@/lib/helpers";
 import { useToastStore } from "@/lib/stores/toastStore";
 import ListSelect from "./ListSelect";
 import { decoyListId, maxLengths } from "@/lib/constants";
@@ -20,8 +25,7 @@ import { List } from "@/lib/types";
 import { useInputStore } from "@/lib/stores/inputStore";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { User } from "firebase/auth";
-import { useNotesStore } from "@/lib/stores/notesStore";
-import { useListsStore } from "@/lib/stores/listsStore";
+import { useContentStore } from "@/lib/stores/contentStore";
 
 export default function AddNote() {
   const labelId = useId();
@@ -35,14 +39,13 @@ export default function AddNote() {
   const resetEdit = useEditStore((state) => state.reset);
   const addToast = useToastStore((state) => state.add);
   const showInput = useInputStore((state) => state.showInput);
-  const addNote = useNotesStore((state) => state.add);
-  const editNote = useNotesStore((state) => state.edit);
-  const lists = useListsStore((state) => state.lists);
-  const addList = useListsStore((state) => state.add);
-  const removeList = useListsStore((state) => state.remove);
-  const renameList = useListsStore((state) => state.rename);
-  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
-  const defaultListId = useMemo(findDefaultListId, [findDefaultListId]);
+  const addNote = useContentStore((state) => state.addNote);
+  const editNote = useContentStore((state) => state.editNote);
+  const lists = useContentStore((state) => state.lists);
+  const renameList = useContentStore((state) => state.renameList);
+  const addDecoyList = useContentStore((state) => state.addDecoyList);
+  const removeDecoyList = useContentStore((state) => state.removeDecoyList);
+  const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
 
   const validate = (
     user: User | null,
@@ -76,6 +79,7 @@ export default function AddNote() {
       alert("Default list id not found");
       return;
     }
+    let newList: List | undefined;
     if (noteListId === decoyListId && currentList) {
       // User has created a new list
       console.log("Adding list");
@@ -85,14 +89,10 @@ export default function AddNote() {
       );
       const { id } = await addDoc(listsCollection, {
         name: encryptedName,
-        userId: currentList.userId,
+        userId: user.uid,
       });
-      const newList = { ...currentList, id };
-      // Add the actual list from the database to the store and set it
-      addList(newList);
+      newList = { ...currentList, id };
       setCurrentList(newList);
-      // Remove the decoy
-      removeList(decoyListId);
       noteListId = id;
     }
     const [encryptedTitle, encryptedContent] = await Promise.all([
@@ -110,24 +110,22 @@ export default function AddNote() {
       };
       const docRef = doc(notesCollection, id);
       promises.push(updateDoc(docRef, toEdit));
-      editNote(id, {
-        ...activeEditNote,
-        ...toEdit,
-        editedAt: Timestamp.now(),
-        title: titleTrim,
-        content: contentTrim,
-      });
-      if (
-        !useNotesStore.getState().notes.some((note) => note.listId === listId)
-      ) {
+      const deletedListId = editNote(
+        id,
+        {
+          ...activeEditNote,
+          ...toEdit,
+          editedAt: Timestamp.now(),
+          title: titleTrim,
+          content: contentTrim,
+        },
+        newList,
+      );
+      if (deletedListId) {
         // The user has changed the note's list, and the original list is now empty
-        const notDefaultList = findDefaultListId() !== listId;
-        if (notDefaultList) {
-          // The list that is now empty is not the default list
-          const listDocRef = doc(listsCollection, listId);
-          removeList(listId);
-          promises.push(deleteDoc(listDocRef));
-        }
+        // deletedList will remain undefined if the default list is the now empty list
+        const listDocRef = doc(listsCollection, listId);
+        promises.push(deleteDoc(listDocRef));
       }
       await Promise.all(promises);
       resetEdit();
@@ -140,13 +138,16 @@ export default function AddNote() {
         createdAt: serverTimestamp(),
       };
       const { id } = await addDoc(notesCollection, toAdd);
-      addNote({
-        ...toAdd,
-        id,
-        createdAt: Timestamp.now(),
-        title: titleTrim,
-        content: contentTrim,
-      });
+      addNote(
+        {
+          ...toAdd,
+          id,
+          createdAt: Timestamp.now(),
+          title: titleTrim,
+          content: contentTrim,
+        },
+        newList,
+      );
     }
   };
 
@@ -184,37 +185,31 @@ export default function AddNote() {
     }
     const existingDecoyList = lists.find((list) => list.id === decoyListId);
     if (existingDecoyList) {
-      console.log("here", existingDecoyList);
+      console.log("Editing decoy list");
       // The user already added a list, but is now adding a different one
-      renameList(decoyListId, listName);
+      renameList(decoyListId, listName); // Maybe: Introduce renameDecoyList function
       setCurrentList({ ...existingDecoyList, name: listName });
       return;
     }
-    const newList: List = {
-      userId: user.uid,
-      name: listName,
-      id: decoyListId,
-    };
-    addList(newList);
-    setCurrentList(newList);
-    console.log(newList);
+    const decoyList = addDecoyList(listName);
+    setCurrentList(decoyList);
   };
 
   useEffect(() => {
-    return () => removeList(decoyListId);
-  }, [removeList]);
+    return () => removeDecoyList();
+  }, [removeDecoyList]);
 
   useEffect(() => {
     if (activeEditNote) {
       setTitle(activeEditNote.title);
       setContent(activeEditNote.content);
-      const editListId = useListsStore
-        .getState()
-        .lists.find((list) => list.id === activeEditNote.listId);
+      const editListId = lists.find(
+        (list) => list.id === activeEditNote.listId,
+      );
       if (editListId) setCurrentList(editListId);
       else alert("Edit list id not found");
     }
-  }, [activeEditNote]);
+  }, [activeEditNote, lists]);
 
   return (
     <form

@@ -10,6 +10,7 @@ import {
   derivePasswordKey,
   encryptWithKey,
   exportKey,
+  findDefaultListId,
   generateSalt,
   handleError,
 } from "@/lib/helpers";
@@ -31,12 +32,11 @@ import {
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useConfirmStore } from "@/lib/stores/confirmStore";
 import InlineDivider from "./InlineDivider";
-import { useListsStore } from "@/lib/stores/listsStore";
+import { useContentStore } from "@/lib/stores/contentStore";
 
 export default function AccountSettings() {
   const user = useUserStore((state) => state.user);
   const userKey = useUserStore((state) => state.key);
-  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -44,6 +44,7 @@ export default function AccountSettings() {
   const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
   const addToast = useToastStore((state) => state.add);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
+  const lists = useContentStore((state) => state.lists);
 
   const handleEmailChange = async () => {
     if (!user) return;
@@ -103,7 +104,7 @@ export default function AccountSettings() {
     if (!userKey) return;
     setPurgeCompleted(interactive);
     const userId = user?.uid;
-    const defaultListId = findDefaultListId();
+    const defaultListId = findDefaultListId(lists);
     const documentIdFieldPath = documentId();
     const listsQueryConditions: QueryConstraint[] = [
       where("userId", "==", userId),

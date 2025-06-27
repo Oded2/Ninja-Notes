@@ -7,8 +7,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { clearUserKey } from "./indexDB";
-import { useListsStore } from "./stores/listsStore";
-import { useNotesStore } from "./stores/notesStore";
+import { useContentStore } from "./stores/contentStore";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -34,8 +33,7 @@ const authHandlers = {
     signInWithEmailAndPassword(auth, email, password),
   signout: async () => {
     await Promise.all([signOut(auth), clearUserKey()]);
-    useListsStore.getState().purge();
-    useNotesStore.getState().purge();
+    useContentStore.getState().purgeNotes();
   },
 };
 

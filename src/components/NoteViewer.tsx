@@ -14,7 +14,6 @@ import { defaultListName } from "@/lib/constants";
 import InlineDivider from "./InlineDivider";
 import { deleteDoc, doc, query, updateDoc, where } from "firebase/firestore";
 import { listsCollection, notesCollection } from "@/lib/firebase";
-import { useNotesStore } from "@/lib/stores/notesStore";
 import {
   ArrowsUpDownIcon,
   ChevronDoubleDownIcon,
@@ -25,21 +24,21 @@ import IconButton from "./IconButton";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { useUserStore } from "@/lib/stores/userStore";
-import { useListsStore } from "@/lib/stores/listsStore";
 import { useInputStore } from "@/lib/stores/inputStore";
+import { useContentStore } from "@/lib/stores/contentStore";
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
+  const userKey = useUserStore((state) => state.key);
   const setEditNote = useEditStore((state) => state.update);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
   const showInput = useInputStore((state) => state.showInput);
-  const notes = useNotesStore((state) => state.notes);
-  const purgeNotes = useNotesStore((state) => state.purge);
-  const reverseNotes = useNotesStore((state) => state.reverse);
-  const removeNote = useNotesStore((state) => state.remove);
-  const lists = useListsStore((state) => state.lists);
-  const removeList = useListsStore((state) => state.remove);
-  const findDefaultListId = useListsStore((state) => state.findDefaultListId);
+  const notes = useContentStore((state) => state.notes);
+  const reverseNotes = useContentStore((state) => state.reverseNotes);
+  const removeNote = useContentStore((state) => state.removeNote);
+  const lists = useContentStore((state) => state.lists);
+  const renameList = useContentStore((state) => state.renameList);
+  const removeList = useContentStore((state) => state.removeList);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const addToast = useToastStore((state) => state.add);
   // Undefined implies all lists
@@ -55,47 +54,43 @@ export default function NoteViewer() {
   );
 
   const deleteNote = async (note: Note) => {
-    const { id, listId } = note;
-    const isLastInList = notes.every(
-      (noteItem) => noteItem.id === id || noteItem.listId !== listId,
-    );
+    const { id } = note;
     const promises: Promise<void>[] = [];
     const docRef = doc(notesCollection, id);
     promises.push(deleteDoc(docRef));
-    if (isLastInList) {
-      // If the note is the last of its list, then the list needs to be deleted as well
-      console.log("Last in list");
-      // The list should only be deleted if it's not the default list
-      const notDefaultList = findDefaultListId() !== listId;
-      if (notDefaultList) {
-        const listRef = doc(listsCollection, listId);
-        console.log("Deleting list");
-        promises.push(deleteDoc(listRef));
-        removeList(listId);
-        setListFilter(undefined);
-      }
+    const removedListId = removeNote(id);
+    if (removedListId) {
+      console.log("Deleting list");
+      const listRef = doc(listsCollection, removedListId);
+      promises.push(deleteDoc(listRef));
+      setListFilter(undefined);
     }
     try {
       await Promise.all(promises);
     } catch (err) {
       handleError(err);
     }
-    removeNote(id);
     addToast("success", "Note removed", undefined, 2000);
   };
 
-  const renameList = async (list: List, newName: string) => {
-    const { key } = useUserStore.getState();
-    if (!key) return;
-    const { rename } = useListsStore.getState();
+  const handleRenameList = async (list: List, newName: string) => {
+    if (!userKey) return;
+    if (lists.some((listItem) => listItem.name === newName)) {
+      addToast(
+        "error",
+        "Duplicate list",
+        "A list with that name already exists",
+      );
+      return;
+    }
     const { id, userId, name } = list;
     const docRef = doc(listsCollection, id);
-    const encryptedName = await encryptWithKey(newName, key);
+    const encryptedName = await encryptWithKey(newName, userKey);
     await updateDoc(docRef, {
       name: encryptedName,
       userId,
     });
-    rename(id, newName);
+    renameList(id, newName);
     setListFilter({ ...list, name: newName });
     addToast(
       "success",
@@ -105,30 +100,28 @@ export default function NoteViewer() {
   };
 
   const deleteList = async (list: List) => {
-    const { id, name } = list;
+    const { id: listId, name } = list;
     const promises: Promise<void>[] = [];
     const q = query(
       notesCollection,
       where("userId", "==", user?.uid),
-      where("listId", "==", id),
+      where("listId", "==", listId),
     );
     // Delete every note in that list
     promises.push(deleteByQuery(q));
-    if (name !== defaultListName) {
+    const notDefault = removeList(listId);
+    if (notDefault) {
       // User isn't deleting the default collection
       // Delete the list
-      const docRef = doc(listsCollection, id);
+      const docRef = doc(listsCollection, listId);
       promises.push(deleteDoc(docRef));
-      // Set the collection filter back to all
-      setListFilter(undefined);
-      removeList(id);
     }
+    setListFilter(undefined);
     try {
       await Promise.all(promises);
     } catch (err) {
       handleError(err);
     }
-    purgeNotes(id);
     addToast(
       "success",
       "Collection delete",
@@ -172,7 +165,8 @@ export default function NoteViewer() {
                   const { name } = listFilter;
                   showInput(
                     `Rename collection: ${name}`,
-                    async (newName) => await renameList(listFilter, newName),
+                    async (newName) =>
+                      await handleRenameList(listFilter, newName),
                   );
                 }}
               >

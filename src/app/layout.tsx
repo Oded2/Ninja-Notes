@@ -13,8 +13,7 @@ import { loadUserKey } from "@/lib/indexDB";
 import { orderBy, query, where } from "firebase/firestore";
 import { getTypedDecryptedDocs } from "@/lib/helpers";
 import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
-import { useNotesStore } from "@/lib/stores/notesStore";
-import { useListsStore } from "@/lib/stores/listsStore";
+import { useContentStore } from "@/lib/stores/contentStore";
 
 const geistSans = Rubik({
   subsets: ["latin"],
@@ -33,8 +32,7 @@ export default function RootLayout({
   const userKey = useUserStore((state) => state.key);
   const setUser = useUserStore((state) => state.setUser);
   const setUserKey = useUserStore((state) => state.setKey);
-  const addNote = useNotesStore((state) => state.add);
-  const addList = useListsStore((state) => state.add);
+  const addList = useContentStore((state) => state.addList);
 
   useEffect(() => {
     if (!user || !userKey) return;
@@ -54,7 +52,6 @@ export default function RootLayout({
       "title",
       "content",
     );
-    notesPromise.then((notes) => notes.forEach((note) => addNote(note)));
     // Fetch lists
     const listsQuery = query(listsCollection, where("userId", "==", uid));
     const listsPromise = getTypedDecryptedDocs(
@@ -63,8 +60,15 @@ export default function RootLayout({
       userKey,
       "name",
     );
-    listsPromise.then((lists) => lists.forEach((list) => addList(list)));
-  }, [user, userKey, addNote, addList]);
+    Promise.all([notesPromise, listsPromise]).then(([notes, lists]) =>
+      lists.forEach((list) =>
+        addList(
+          list,
+          notes.filter((note) => note.listId === list.id),
+        ),
+      ),
+    );
+  }, [user, userKey, addList]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {

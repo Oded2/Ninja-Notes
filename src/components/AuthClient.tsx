@@ -14,7 +14,7 @@ import {
   handleError,
 } from "@/lib/helpers";
 import { saveUserKey } from "@/lib/indexDB";
-import { useListsStore } from "@/lib/stores/listsStore";
+import { useContentStore } from "@/lib/stores/contentStore";
 import { useToastStore } from "@/lib/stores/toastStore";
 import { userDataTypeGuard } from "@/lib/typeguards";
 import {
@@ -78,11 +78,13 @@ export default function AuthClient() {
         }),
       ]);
       // Since the default list was added to the user's lists, then it needs to be added locally as well
-      useListsStore.getState().add({
-        name: defaultListName,
-        userId: uid,
-        id,
-      });
+      useContentStore.getState().addList(
+        {
+          name: defaultListName,
+          id,
+        },
+        [],
+      );
     } else {
       // User is logging in
       const userDoc = await getDoc(userDocRef);
