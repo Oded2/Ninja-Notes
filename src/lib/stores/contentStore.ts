@@ -118,7 +118,7 @@ export const useContentStore = create<ContentStore>((set) => ({
     set((state) => {
       const { lists } = state;
       const toSet: Partial<ContentStore> = {
-        notes: state.notes.filter((note) => note.listId == id),
+        notes: state.notes.filter((note) => note.listId !== id),
       };
       notDefaultList = findDefaultListId(lists) !== id;
       if (notDefaultList) toSet.lists = lists.filter((list) => list.id !== id);
