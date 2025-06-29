@@ -127,7 +127,7 @@ _Note: in the project's code, collections are reffered to as lists. This is done
     - The date a note was created
     - The date a note was edited, if at all
     - The **ID** of the collection a note belongs to (meaning that an admin can see **how many** notes belong to a specific collection)
-    - The user a collection/note belongs to
+    - The user that a collection/note belongs to
 
     _Note: although some data isn't encrypted, it's still guarded using [Firestore rules](https://firebase.google.com/docs/firestore/security/get-started). This means that no other user can see the data that isn't encrypted, however an admin can. Local projects may have different Firestore rules._
 
