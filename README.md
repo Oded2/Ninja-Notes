@@ -125,7 +125,7 @@ _Note: in the project's code, collections are reffered to as lists. This is done
   - The following data _is not_ encrypted
 
     - The date a note was created
-    - The date a note was edited, if it all
+    - The date a note was edited, if at all
     - The **ID** of the collection a note belongs to (meaning that an admin can see **how many** notes belong to a specific collection)
     - The user a collection/note belongs to
 
