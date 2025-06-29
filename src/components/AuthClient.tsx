@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import FormInput from "@/components/FormInput";
-import FormInputContainer from "@/components/FormInputContainer";
-import { defaultListName } from "@/lib/constants";
-import { authHandlers, listsCollection, usersCollection } from "@/lib/firebase";
+import FormInput from '@/components/FormInput';
+import FormInputContainer from '@/components/FormInputContainer';
+import { defaultListName } from '@/lib/constants';
+import { authHandlers, listsCollection, usersCollection } from '@/lib/firebase';
 import {
   decryptWithKey,
   derivePasswordKey,
@@ -12,27 +12,27 @@ import {
   generateSalt,
   generateUserKey,
   handleError,
-} from "@/lib/helpers";
-import { saveUserKey } from "@/lib/indexDB";
-import { useContentStore } from "@/lib/stores/contentStore";
-import { useToastStore } from "@/lib/stores/toastStore";
-import { userDataTypeGuard } from "@/lib/typeguards";
+} from '@/lib/helpers';
+import { saveUserKey } from '@/lib/indexDB';
+import { useContentStore } from '@/lib/stores/contentStore';
+import { useToastStore } from '@/lib/stores/toastStore';
+import { userDataTypeGuard } from '@/lib/typeguards';
 import {
   EnvelopeIcon,
   KeyIcon,
   ShieldCheckIcon,
-} from "@heroicons/react/16/solid";
-import clsx from "clsx";
-import { addDoc, doc, getDoc, setDoc } from "firebase/firestore";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+} from '@heroicons/react/16/solid';
+import clsx from 'clsx';
+import { addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export default function AuthClient() {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [inProgress, setInProgress] = useState(false);
   const { signup, signin } = authHandlers;
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function AuthClient() {
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {
-      addToast("error", "Error", "Passwords must match");
+      addToast('error', 'Error', 'Passwords must match');
       return;
     }
     setInProgress(true);
@@ -107,16 +107,16 @@ export default function AuthClient() {
         await saveUserKey(decryptedUserKeyBase64);
       } else {
         // Keep alert
-        alert("Invalid user data");
+        alert('Invalid user data');
       }
     }
-    router.push("/");
+    router.push('/');
   };
 
   const handlePasswordReset = () => {
     // Keep alert
     alert(
-      "Ninja Notes operates with zero-knowledge encryption. This means that only you can recover your account.",
+      'Ninja Notes operates with zero-knowledge encryption. This means that only you can recover your account.',
     );
   };
 
@@ -131,8 +131,8 @@ export default function AuthClient() {
         priority
       />
       <FormInputContainer
-        title={isSignUp ? "Create an account" : "Sign in to your account"}
-        submitText={isSignUp ? "Create Account" : "Sign In"}
+        title={isSignUp ? 'Create an account' : 'Sign in to your account'}
+        submitText={isSignUp ? 'Create Account' : 'Sign In'}
         handleSubmit={handleSubmit}
       >
         <FormInput
@@ -164,7 +164,7 @@ export default function AuthClient() {
             >
               <ShieldCheckIcon
                 className={clsx({
-                  "text-emerald-600":
+                  'text-emerald-600':
                     password.length >= 8 && password === confirmPassword,
                 })}
               />
@@ -178,14 +178,14 @@ export default function AuthClient() {
         <div className="flex justify-between gap-2 text-sm text-slate-950/80">
           <span>
             {isSignUp
-              ? "Already have an account?"
-              : "Don't have an account yet?"}{" "}
+              ? 'Already have an account?'
+              : "Don't have an account yet?"}{' '}
             <button
               type="button"
               onClick={() => setIsSignUp((state) => !state)}
               className="cursor-pointer underline"
             >
-              {isSignUp ? "Sign In" : "Create an account"}
+              {isSignUp ? 'Sign In' : 'Create an account'}
             </button>
           </span>
           {!isSignUp && (

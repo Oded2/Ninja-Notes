@@ -1,14 +1,14 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { collection, getFirestore } from "firebase/firestore";
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { collection, getFirestore } from 'firebase/firestore';
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-} from "firebase/auth";
-import { clearUserKey } from "./indexDB";
-import { useContentStore } from "./stores/contentStore";
-import { useUserStore } from "./stores/userStore";
+} from 'firebase/auth';
+import { clearUserKey } from './indexDB';
+import { useContentStore } from './stores/contentStore';
+import { useUserStore } from './stores/userStore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -23,9 +23,9 @@ const firebaseConfig = {
 // Initialize Firebase app only once (for Next.js HMR safety)
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const usersCollection = collection(db, "users");
-const notesCollection = collection(db, "notes");
-const listsCollection = collection(db, "lists");
+const usersCollection = collection(db, 'users');
+const notesCollection = collection(db, 'notes');
+const listsCollection = collection(db, 'lists');
 const auth = getAuth(app);
 const authHandlers = {
   signup: (email: string, password: string) =>

@@ -1,7 +1,7 @@
-import { useId } from "react";
+import { useId } from 'react';
 
 type Props = {
-  type?: "email" | "password";
+  type?: 'email' | 'password';
   label: string;
   val: string;
   setVal: (newVal: string) => void;
@@ -31,8 +31,8 @@ export default function FormInput({
         onChange={(e) => setVal(e.target.value)}
         className="grow text-sm font-medium text-slate-950/80 outline-none"
         placeholder={label}
-        minLength={type === "password" ? 8 : undefined}
-        maxLength={type === "password" ? 4096 : undefined}
+        minLength={type === 'password' ? 8 : undefined}
+        maxLength={type === 'password' ? 4096 : undefined}
         required={required}
       />
     </div>

@@ -1,19 +1,19 @@
-import { useInputStore } from "@/lib/stores/inputStore";
-import Modal from "./Modal";
-import { useEffect, useRef, useState } from "react";
-import AccountInput from "./AccountInput";
-import ModalActions from "./ModalActions";
-import Button from "./Button";
+import { useInputStore } from '@/lib/stores/inputStore';
+import Modal from './Modal';
+import { useEffect, useRef, useState } from 'react';
+import AccountInput from './AccountInput';
+import ModalActions from './ModalActions';
+import Button from './Button';
 
 export default function InputModal() {
   const closeInput = useInputStore((state) => state.closeInput);
   const content = useInputStore((state) => state.content);
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClose = () => {
     closeInput();
-    setVal("");
+    setVal('');
   };
 
   const handleInput = () => {

@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { List, Note } from "../types";
-import { decoyListId, defaultListName } from "../constants";
-import { findDefaultListId } from "../helpers";
+import { create } from 'zustand';
+import { List, Note } from '../types';
+import { decoyListId, defaultListName } from '../constants';
+import { findDefaultListId } from '../helpers';
 
 type ContentStore = {
   notes: Note[];

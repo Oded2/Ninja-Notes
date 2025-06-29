@@ -1,9 +1,9 @@
-import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { defaultListName } from "@/lib/constants";
-import { List, SetValShortcut } from "@/lib/types";
-import { useId, useMemo } from "react";
-import { useContentStore } from "@/lib/stores/contentStore";
-import { findDefaultListId } from "@/lib/helpers";
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { defaultListName } from '@/lib/constants';
+import { List, SetValShortcut } from '@/lib/types';
+import { useId, useMemo } from 'react';
+import { useContentStore } from '@/lib/stores/contentStore';
+import { findDefaultListId } from '@/lib/helpers';
 
 type Props = {
   val: List | undefined;

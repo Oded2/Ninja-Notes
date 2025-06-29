@@ -1,8 +1,8 @@
-import { handleError } from "@/lib/helpers";
-import { useToastStore } from "@/lib/stores/toastStore";
-import { useUserStore } from "@/lib/stores/userStore";
-import { sendEmailVerification } from "firebase/auth";
-import { useState } from "react";
+import { handleError } from '@/lib/helpers';
+import { useToastStore } from '@/lib/stores/toastStore';
+import { useUserStore } from '@/lib/stores/userStore';
+import { sendEmailVerification } from 'firebase/auth';
+import { useState } from 'react';
 
 export default function VerifyEmail() {
   const [inProgress, setInProgress] = useState(false);
@@ -16,8 +16,8 @@ export default function VerifyEmail() {
       .then(() => {
         setInProgress(false);
         add(
-          "success",
-          "Email sent",
+          'success',
+          'Email sent',
           `An email has been sent to ${user.email}. If you do not see the email, please check your spam.`,
           10000,
         );
@@ -27,7 +27,7 @@ export default function VerifyEmail() {
 
   return (
     <span className="whitespace-nowrap">
-      Email unverified.{" "}
+      Email unverified.{' '}
       <button
         onClick={handleEmailVerification}
         disabled={inProgress}

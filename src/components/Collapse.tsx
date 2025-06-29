@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
+import { motion } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 
 type Props = {
   open: boolean;
@@ -18,15 +18,15 @@ export default function Collapse({ open, children }: Props) {
 
   useEffect(() => {
     const func = () => setResizeSwitch((state) => !state);
-    window.addEventListener("resize", func);
-    return () => window.removeEventListener("resize", func);
+    window.addEventListener('resize', func);
+    return () => window.removeEventListener('resize', func);
   }, []);
 
   return (
     <motion.div
       initial={open}
       animate={{ height: open ? contentHeight : 0 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
       className="overflow-hidden"
     >
       <div ref={innerRef}>{children}</div>

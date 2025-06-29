@@ -1,21 +1,21 @@
-import { useConfirmStore } from "@/lib/stores/confirmStore";
-import { useEffect, useRef, useState } from "react";
-import Button from "./Button";
-import Modal from "./Modal";
-import ModalActions from "./ModalActions";
-import AccountInput from "./AccountInput";
+import { useConfirmStore } from '@/lib/stores/confirmStore';
+import { useEffect, useRef, useState } from 'react';
+import Button from './Button';
+import Modal from './Modal';
+import ModalActions from './ModalActions';
+import AccountInput from './AccountInput';
 
 export default function ConfirmModal() {
   const closeConfirm = useConfirmStore((state) => state.closeConfirm);
   const content = useConfirmStore((state) => state.content);
   const [inProgress, setInProgress] = useState(false);
-  const [val, setVal] = useState("");
+  const [val, setVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const text = content?.text;
 
   const handleClose = () => {
     closeConfirm();
-    setVal("");
+    setVal('');
   };
 
   const handleConfirm = () => {

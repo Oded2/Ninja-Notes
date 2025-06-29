@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import AddNote from "@/components/AddNote";
-import Button from "@/components/Button";
-import NoteViewer from "@/components/NoteViewer";
-import { useEditStore } from "@/lib/stores/editStore";
-import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { authHandlers } from "@/lib/firebase";
-import { useUserStore } from "@/lib/stores/userStore";
-import Link from "next/link";
-import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
-import VerifyEmail from "./VerifyEmail";
-import InlineDivider from "./InlineDivider";
+import AddNote from '@/components/AddNote';
+import Button from '@/components/Button';
+import NoteViewer from '@/components/NoteViewer';
+import { useEditStore } from '@/lib/stores/editStore';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { authHandlers } from '@/lib/firebase';
+import { useUserStore } from '@/lib/stores/userStore';
+import Link from 'next/link';
+import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
+import VerifyEmail from './VerifyEmail';
+import InlineDivider from './InlineDivider';
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);

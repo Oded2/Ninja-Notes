@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import "./globals.css";
-import { useEffect, useRef } from "react";
-import { auth, listsCollection, notesCollection } from "@/lib/firebase";
-import { usePathname, useRouter } from "next/navigation";
-import { useUserStore } from "@/lib/stores/userStore";
-import { Rubik } from "next/font/google";
-import Toasts from "@/components/Toasts";
-import ConfirmModal from "@/components/ConfirmModal";
-import InputModal from "@/components/InputModal";
-import { loadUserKey } from "@/lib/indexDB";
-import { orderBy, query, where } from "firebase/firestore";
-import { getTypedDecryptedDocs } from "@/lib/helpers";
-import { listTypeGuard, noteTypeGuard } from "@/lib/typeguards";
-import { useContentStore } from "@/lib/stores/contentStore";
+import './globals.css';
+import { useEffect, useRef } from 'react';
+import { auth, listsCollection, notesCollection } from '@/lib/firebase';
+import { usePathname, useRouter } from 'next/navigation';
+import { useUserStore } from '@/lib/stores/userStore';
+import { Rubik } from 'next/font/google';
+import Toasts from '@/components/Toasts';
+import ConfirmModal from '@/components/ConfirmModal';
+import InputModal from '@/components/InputModal';
+import { loadUserKey } from '@/lib/indexDB';
+import { orderBy, query, where } from 'firebase/firestore';
+import { getTypedDecryptedDocs } from '@/lib/helpers';
+import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
+import { useContentStore } from '@/lib/stores/contentStore';
 
 const geistSans = Rubik({
-  subsets: ["latin"],
+  subsets: ['latin'],
 });
 
 export default function RootLayout({
@@ -36,29 +36,29 @@ export default function RootLayout({
 
   useEffect(() => {
     if (!user || !userKey) return;
-    console.log("Fetching docs");
+    console.log('Fetching docs');
 
     const { uid } = user;
     // Fetch notes
     const notesQuery = query(
       notesCollection,
-      where("userId", "==", uid),
-      orderBy("createdAt"),
+      where('userId', '==', uid),
+      orderBy('createdAt'),
     );
     const notesPromise = getTypedDecryptedDocs(
       notesQuery,
       noteTypeGuard,
       userKey,
-      "title",
-      "content",
+      'title',
+      'content',
     );
     // Fetch lists
-    const listsQuery = query(listsCollection, where("userId", "==", uid));
+    const listsQuery = query(listsCollection, where('userId', '==', uid));
     const listsPromise = getTypedDecryptedDocs(
       listsQuery,
       listTypeGuard,
       userKey,
-      "name",
+      'name',
     );
     Promise.all([notesPromise, listsPromise]).then(([notes, lists]) =>
       lists.forEach((list) =>
@@ -72,11 +72,11 @@ export default function RootLayout({
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      console.log("Auth state change");
+      console.log('Auth state change');
       setUser(user);
-      if (!user && pathnameRef.current !== "/auth") {
+      if (!user && pathnameRef.current !== '/auth') {
         // User isn't logged in and is trying to access a page that's not auth
-        routerRef.current.push("/auth");
+        routerRef.current.push('/auth');
       }
     });
     return unsubscribe;

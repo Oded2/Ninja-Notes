@@ -1,31 +1,31 @@
-import { Timestamp } from "firebase/firestore";
-import { List, Note, UserData } from "./types";
+import { Timestamp } from 'firebase/firestore';
+import { List, Note, UserData } from './types';
 
 export function firebaseErrorTypeGuard(
   error: unknown,
 ): error is { code: string; message: string } {
   return (
-    typeof error === "object" &&
+    typeof error === 'object' &&
     error !== null &&
-    "code" in error &&
-    typeof error.code === "string" &&
-    "message" in error &&
-    typeof error.message === "string"
+    'code' in error &&
+    typeof error.code === 'string' &&
+    'message' in error &&
+    typeof error.message === 'string'
   );
 }
 
 export function userDataTypeGuard(obj: unknown): obj is UserData {
   if (
-    typeof obj === "object" &&
+    typeof obj === 'object' &&
     obj !== null &&
-    "encryptedUserKey" in obj &&
-    "salt" in obj
+    'encryptedUserKey' in obj &&
+    'salt' in obj
   ) {
     const casted = obj as Record<string, unknown>;
     return (
-      typeof casted.encryptedUserKey === "string" &&
+      typeof casted.encryptedUserKey === 'string' &&
       Array.isArray(casted.salt) &&
-      casted.salt.every((item) => typeof item === "number")
+      casted.salt.every((item) => typeof item === 'number')
     );
   }
 
@@ -33,25 +33,25 @@ export function userDataTypeGuard(obj: unknown): obj is UserData {
 }
 
 export function noteTypeGuard(obj: unknown): obj is Note {
-  if (typeof obj !== "object" || obj === null) return false;
+  if (typeof obj !== 'object' || obj === null) return false;
   const note = obj as Record<string, unknown>;
   return (
-    typeof note.id === "string" &&
+    typeof note.id === 'string' &&
     note.createdAt instanceof Timestamp &&
     (note.editedAt === undefined || note.editedAt instanceof Timestamp) &&
-    typeof note.userId === "string" &&
-    typeof note.title === "string" &&
-    typeof note.content === "string" &&
-    typeof note.listId === "string"
+    typeof note.userId === 'string' &&
+    typeof note.title === 'string' &&
+    typeof note.content === 'string' &&
+    typeof note.listId === 'string'
   );
 }
 
 export function listTypeGuard(obj: unknown): obj is List {
-  if (typeof obj !== "object" || obj === null) return false;
+  if (typeof obj !== 'object' || obj === null) return false;
   const list = obj as Record<string, unknown>;
   return (
-    typeof list.id === "string" &&
-    typeof list.name === "string" &&
-    (typeof list.userId === undefined || typeof list.userId === "string")
+    typeof list.id === 'string' &&
+    typeof list.name === 'string' &&
+    (typeof list.userId === undefined || typeof list.userId === 'string')
   );
 }

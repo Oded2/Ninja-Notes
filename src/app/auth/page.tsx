@@ -1,8 +1,8 @@
-import AuthClient from "@/components/AuthClient";
-import { Metadata } from "next";
+import AuthClient from '@/components/AuthClient';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Authenticate",
+  title: 'Authenticate',
 };
 
 export default function Auth() {

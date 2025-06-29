@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { Note } from "../types";
+import { create } from 'zustand';
+import { Note } from '../types';
 
 type EditNoteStore = {
   note?: Note;

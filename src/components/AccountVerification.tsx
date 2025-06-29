@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import AccountInput from "./AccountInput";
-import AccountInputContainer from "./AccountInputContainer";
-import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
-import { useUserStore } from "@/lib/stores/userStore";
-import { handleError } from "@/lib/helpers";
+import { useState } from 'react';
+import AccountInput from './AccountInput';
+import AccountInputContainer from './AccountInputContainer';
+import { EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { useUserStore } from '@/lib/stores/userStore';
+import { handleError } from '@/lib/helpers';
 
 type Props = {
   onVerify: () => void;
 };
 
 export default function AccountVerification({ onVerify }: Props) {
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState('');
   const user = useUserStore((state) => state.user);
 
   const handleVerify = async () => {

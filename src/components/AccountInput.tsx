@@ -1,10 +1,10 @@
-import { RefObject, useId } from "react";
+import { RefObject, useId } from 'react';
 
 type Props = {
   label?: string;
   val: string;
   setVal: (newVal: string) => void;
-  type?: "email" | "password";
+  type?: 'email' | 'password';
   placeholder?: string;
   inputRef?: RefObject<HTMLInputElement | null>;
   maxLength?: number;
@@ -37,8 +37,8 @@ export default function AccountInput({
         className="rounded px-4 py-2 text-sm font-medium text-slate-950/80 ring ring-slate-950/70 transition-shadow outline-none focus:ring-2"
         placeholder={placeholder}
         required
-        minLength={type === "password" ? 8 : undefined}
-        maxLength={type === "password" ? 4096 : maxLength}
+        minLength={type === 'password' ? 8 : undefined}
+        maxLength={type === 'password' ? 4096 : maxLength}
       />
     </>
   );

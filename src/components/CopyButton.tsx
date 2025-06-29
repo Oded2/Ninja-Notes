@@ -1,10 +1,10 @@
 import {
   ClipboardDocumentCheckIcon,
   ClipboardDocumentIcon,
-} from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { useToastStore } from "@/lib/stores/toastStore";
+} from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useToastStore } from '@/lib/stores/toastStore';
 
 type Props = {
   text: string;
@@ -18,7 +18,7 @@ export default function CopyButton({ text }: Props) {
     setDisabled(true);
     navigator.clipboard
       .writeText(text)
-      .catch(() => add("error", "Error", "An unknown error has occurred"))
+      .catch(() => add('error', 'Error', 'An unknown error has occurred'))
       .then(() => {
         setTimeout(() => setDisabled(false), 2000);
       });
@@ -37,7 +37,7 @@ export default function CopyButton({ text }: Props) {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 400,
               damping: 15,
             }}
@@ -50,7 +50,7 @@ export default function CopyButton({ text }: Props) {
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               stiffness: 400,
               damping: 15,
             }}

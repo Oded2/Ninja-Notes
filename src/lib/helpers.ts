@@ -1,8 +1,8 @@
-import { deleteDoc, getDocs, Query, Timestamp } from "firebase/firestore";
-import { useToastStore } from "./stores/toastStore";
-import { firebaseErrorTypeGuard } from "./typeguards";
-import { List } from "./types";
-import { defaultListName } from "./constants";
+import { deleteDoc, getDocs, Query, Timestamp } from 'firebase/firestore';
+import { useToastStore } from './stores/toastStore';
+import { firebaseErrorTypeGuard } from './typeguards';
+import { List } from './types';
+import { defaultListName } from './constants';
 
 export const getTypedDecryptedDocs = async <
   T extends Record<string, unknown>,
@@ -25,7 +25,7 @@ export const getTypedDecryptedDocs = async <
       const newObj = { ...obj };
       for (const param of decryptParams) {
         const val = obj[param];
-        if (typeof val === "string") {
+        if (typeof val === 'string') {
           // Since val is of type T[K], it means that T[K] is a string, making it safe to cast
           newObj[param] = (await decryptWithKey(val, key)) as T[K];
         }
@@ -42,18 +42,18 @@ export const findDefaultListId = (lists: List[]) => {
 export const fullTrim = (s: string) => {
   return s
     .trim()
-    .split("\n")
+    .split('\n')
     .map((p) => p.trimEnd())
-    .join("\n");
+    .join('\n');
 };
 
 export const formatTimestamp = (timestamp: Timestamp) => {
   return timestamp.toDate().toLocaleString(undefined, {
-    minute: "numeric",
-    hour: "numeric",
-    day: "numeric",
-    month: "numeric",
-    year: "2-digit",
+    minute: 'numeric',
+    hour: 'numeric',
+    day: 'numeric',
+    month: 'numeric',
+    year: '2-digit',
   });
 };
 
@@ -65,14 +65,14 @@ export async function deleteByQuery(q: Query) {
 }
 
 export function generateUserKey() {
-  return crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
-    "encrypt",
-    "decrypt",
+  return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
+    'encrypt',
+    'decrypt',
   ]);
 }
 
 export async function exportKey(key: CryptoKey) {
-  const rawKey = await crypto.subtle.exportKey("raw", key);
+  const rawKey = await crypto.subtle.exportKey('raw', key);
   return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
 }
 
@@ -82,18 +82,18 @@ export async function derivePasswordKey(
 ): Promise<CryptoKey> {
   const encoder = new TextEncoder();
   const baseKey = await crypto.subtle.importKey(
-    "raw",
+    'raw',
     encoder.encode(password),
-    "PBKDF2",
+    'PBKDF2',
     false,
-    ["deriveKey"],
+    ['deriveKey'],
   );
   return crypto.subtle.deriveKey(
-    { name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" },
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
     baseKey,
-    { name: "AES-GCM", length: 256 },
+    { name: 'AES-GCM', length: 256 },
     true,
-    ["encrypt", "decrypt"],
+    ['encrypt', 'decrypt'],
   );
 }
 
@@ -104,7 +104,7 @@ export async function encryptWithKey(
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encoder = new TextEncoder();
   const encrypted = await crypto.subtle.encrypt(
-    { name: "AES-GCM", iv },
+    { name: 'AES-GCM', iv },
     key,
     encoder.encode(plainText),
   );
@@ -115,11 +115,11 @@ export async function decryptWithKey(
   encryptedText: string,
   key: CryptoKey,
 ): Promise<string> {
-  const [ivB64, dataB64] = encryptedText.split(":");
+  const [ivB64, dataB64] = encryptedText.split(':');
   const iv = base64ToUint8Array(ivB64);
   const data = base64ToUint8Array(dataB64);
   const decrypted = await crypto.subtle.decrypt(
-    { name: "AES-GCM", iv },
+    { name: 'AES-GCM', iv },
     key,
     data,
   );
@@ -135,11 +135,11 @@ export const getError = (err: unknown) => {
   if (firebaseErrorTypeGuard(err)) {
     const { code, message } = err;
     const errorCodeMap: Record<string, string> = {
-      "auth/invalid-credential": "Invalid credentials",
-      "auth/invalid-email": "Invalid email address",
-      "auth/user-not-found": "User not found",
-      "auth/wrong-password": "Wrong password",
-      "permission-denied": "Permission denied",
+      'auth/invalid-credential': 'Invalid credentials',
+      'auth/invalid-email': 'Invalid email address',
+      'auth/user-not-found': 'User not found',
+      'auth/wrong-password': 'Wrong password',
+      'permission-denied': 'Permission denied',
     };
     return errorCodeMap[code] ?? message;
   }
@@ -151,15 +151,15 @@ export const handleError = (err: unknown) => {
     const { code, message } = err;
     console.error(`Firebase error\nCode: ${code}\nMessage: ${message}`);
     const errorCodeMap: Record<string, string> = {
-      "auth/invalid-credential": "Invalid credentials",
-      "auth/invalid-email": "Invalid email address",
-      "auth/user-not-found": "User not found",
-      "auth/wrong-password": "Wrong password",
-      "permission-denied": "Permission denied",
+      'auth/invalid-credential': 'Invalid credentials',
+      'auth/invalid-email': 'Invalid email address',
+      'auth/user-not-found': 'User not found',
+      'auth/wrong-password': 'Wrong password',
+      'permission-denied': 'Permission denied',
     };
     useToastStore
       .getState()
-      .add("error", "Error", errorCodeMap[code] ?? message);
+      .add('error', 'Error', errorCodeMap[code] ?? message);
   } else console.error(err);
 };
 

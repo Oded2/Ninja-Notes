@@ -1,10 +1,10 @@
-import { useToastStore } from "@/lib/stores/toastStore";
-import { Toast } from "@/lib/types";
-import clsx from "clsx";
-import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { XCircleIcon } from "@heroicons/react/24/outline";
+import { useToastStore } from '@/lib/stores/toastStore';
+import { Toast } from '@/lib/types';
+import clsx from 'clsx';
+import { AnimatePresence } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { XCircleIcon } from '@heroicons/react/24/outline';
 
 export default function Toasts() {
   const toasts = useToastStore((state) => state.toasts);
@@ -27,7 +27,7 @@ function ToastComponent({ toast }: ToastProps) {
   const remove = useToastStore((state) => state.remove);
   const { id, description } = toast;
   useEffect(() => {
-    console.log("Toast mount");
+    console.log('Toast mount');
     if (duration) {
       const interval = setInterval(
         () => setDurationLeft((state) => state - 10),
@@ -45,12 +45,12 @@ function ToastComponent({ toast }: ToastProps) {
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
-      transition={{ type: "spring", duration: 0.3 }}
+      transition={{ type: 'spring', duration: 0.3 }}
       className={clsx(
-        "relative flex flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm",
+        'relative flex flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm',
         {
-          "bg-emerald-500": toast.type === "success",
-          "bg-rose-500": toast.type === "error",
+          'bg-emerald-500': toast.type === 'success',
+          'bg-rose-500': toast.type === 'error',
         },
       )}
     >

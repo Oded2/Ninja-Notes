@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { Toast, ToastTypes } from "../types";
+import { create } from 'zustand';
+import { Toast, ToastTypes } from '../types';
 
 type ToastStore = {
   toasts: Toast[];

@@ -1,8 +1,8 @@
-import NotFoundClient from "@/components/NotFoundClient";
-import { Metadata } from "next";
+import NotFoundClient from '@/components/NotFoundClient';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: "Not found",
+  title: 'Not found',
 };
 
 export default function NotFound() {

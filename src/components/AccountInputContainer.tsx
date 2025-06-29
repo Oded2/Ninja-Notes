@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Button from "./Button";
+import { useState } from 'react';
+import Button from './Button';
 
 type Props = {
   handleSubmit: () => Promise<void>;

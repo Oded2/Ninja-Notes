@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import AccountSettings from "./AccountSetttings";
-import AccountVerification from "./AccountVerification";
-import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeftIcon } from "@heroicons/react/20/solid";
+import { useState } from 'react';
+import AccountSettings from './AccountSetttings';
+import AccountVerification from './AccountVerification';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 export default function AccountClient() {
   const [verified, setVerified] = useState(false);

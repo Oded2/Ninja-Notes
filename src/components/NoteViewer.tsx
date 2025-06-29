@@ -1,31 +1,31 @@
-import { useEditStore } from "@/lib/stores/editStore";
-import { List, Note } from "@/lib/types";
-import { AnimatePresence, motion } from "framer-motion";
-import Collapse from "./Collapse";
+import { useEditStore } from '@/lib/stores/editStore';
+import { List, Note } from '@/lib/types';
+import { AnimatePresence, motion } from 'framer-motion';
+import Collapse from './Collapse';
 import {
   deleteByQuery,
   encryptWithKey,
   formatTimestamp,
   handleError,
-} from "@/lib/helpers";
-import CopyButton from "./CopyButton";
-import { useConfirmStore } from "@/lib/stores/confirmStore";
-import { defaultListName } from "@/lib/constants";
-import InlineDivider from "./InlineDivider";
-import { deleteDoc, doc, query, updateDoc, where } from "firebase/firestore";
-import { listsCollection, notesCollection } from "@/lib/firebase";
+} from '@/lib/helpers';
+import CopyButton from './CopyButton';
+import { useConfirmStore } from '@/lib/stores/confirmStore';
+import { defaultListName } from '@/lib/constants';
+import InlineDivider from './InlineDivider';
+import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
+import { listsCollection, notesCollection } from '@/lib/firebase';
 import {
   ArrowsUpDownIcon,
   ChevronDoubleDownIcon,
-} from "@heroicons/react/24/solid";
-import { useMemo, useState } from "react";
-import ListSelect from "./ListSelect";
-import IconButton from "./IconButton";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useToastStore } from "@/lib/stores/toastStore";
-import { useUserStore } from "@/lib/stores/userStore";
-import { useInputStore } from "@/lib/stores/inputStore";
-import { useContentStore } from "@/lib/stores/contentStore";
+} from '@heroicons/react/24/solid';
+import { useMemo, useState } from 'react';
+import ListSelect from './ListSelect';
+import IconButton from './IconButton';
+import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { useToastStore } from '@/lib/stores/toastStore';
+import { useUserStore } from '@/lib/stores/userStore';
+import { useInputStore } from '@/lib/stores/inputStore';
+import { useContentStore } from '@/lib/stores/contentStore';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -60,7 +60,7 @@ export default function NoteViewer() {
     promises.push(deleteDoc(docRef));
     const removedListId = removeNote(id);
     if (removedListId) {
-      console.log("Deleting list");
+      console.log('Deleting list');
       const listRef = doc(listsCollection, removedListId);
       promises.push(deleteDoc(listRef));
       setListFilter(undefined);
@@ -70,16 +70,16 @@ export default function NoteViewer() {
     } catch (err) {
       handleError(err);
     }
-    addToast("success", "Note removed", undefined, 2000);
+    addToast('success', 'Note removed', undefined, 2000);
   };
 
   const handleRenameList = async (list: List, newName: string) => {
     if (!userKey) return;
     if (lists.some((listItem) => listItem.name === newName)) {
       addToast(
-        "error",
-        "Duplicate list",
-        "A list with that name already exists",
+        'error',
+        'Duplicate list',
+        'A list with that name already exists',
       );
       return;
     }
@@ -93,8 +93,8 @@ export default function NoteViewer() {
     renameList(id, newName);
     setListFilter({ ...list, name: newName });
     addToast(
-      "success",
-      "Rename successful",
+      'success',
+      'Rename successful',
       `Renamed collection "${name}" to "${newName}"`,
     );
   };
@@ -104,8 +104,8 @@ export default function NoteViewer() {
     const promises: Promise<void>[] = [];
     const q = query(
       notesCollection,
-      where("userId", "==", user?.uid),
-      where("listId", "==", listId),
+      where('userId', '==', user?.uid),
+      where('listId', '==', listId),
     );
     // Delete every note in that list
     promises.push(deleteByQuery(q));
@@ -123,10 +123,10 @@ export default function NoteViewer() {
       handleError(err);
     }
     addToast(
-      "success",
-      "Collection delete",
+      'success',
+      'Collection delete',
       name === defaultListName
-        ? "The default collection has been successfully deleted"
+        ? 'The default collection has been successfully deleted'
         : `Collection '${name}' has been successfully deleted`,
     );
   };
@@ -142,7 +142,7 @@ export default function NoteViewer() {
             initial={false}
             animate={{ rotate: notesOpen ? 180 : 0 }}
             transition={{
-              type: "spring",
+              type: 'spring',
               duration: 0.5,
             }}
             onClick={() => {
@@ -179,12 +179,12 @@ export default function NoteViewer() {
                 const { name } = listFilter;
                 const isDefaultList = name === defaultListName;
                 showConfirm(
-                  "Delete collection?",
+                  'Delete collection?',
                   isDefaultList
-                    ? "All notes under the default collection will be deleted."
+                    ? 'All notes under the default collection will be deleted.'
                     : `All notes under the collection '${name}' will be deleted.`,
                   async () => await deleteList(listFilter),
-                  isDefaultList ? "Default collection" : name,
+                  isDefaultList ? 'Default collection' : name,
                 );
               }}
             >
@@ -211,7 +211,7 @@ export default function NoteViewer() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <h2 className="text-xl font-bold">{title || "Untitled"}</h2>
+                    <h2 className="text-xl font-bold">{title || 'Untitled'}</h2>
                     <div className="text-sm text-slate-950/80">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
@@ -221,7 +221,7 @@ export default function NoteViewer() {
                         {listName && (
                           <div>
                             {listName === defaultListName
-                              ? "Default collection"
+                              ? 'Default collection'
                               : listName}
                           </div>
                         )}
@@ -257,8 +257,8 @@ export default function NoteViewer() {
                   <button
                     onClick={() =>
                       showConfirm(
-                        "Delete note?",
-                        `This will delete "${note.title || "Untitled"}". Are you sure you want to continue?`,
+                        'Delete note?',
+                        `This will delete "${note.title || 'Untitled'}". Are you sure you want to continue?`,
                         async () => await deleteNote(note),
                       )
                     }
