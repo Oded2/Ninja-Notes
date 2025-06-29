@@ -191,10 +191,10 @@ npm run start
     - Stores utilizing [Zustand](https://zustand-demo.pmnd.rs) for state management
     - [`confirmStore.ts`](src/lib/stores/confirmStore.ts) - Open confirmation modal before executing dangerous functions
     - [`contentStore.ts`](src/lib/stores/contentStore.ts) - Store notes and collections locally
-      [`editStore.ts`](src/lib/stores/editStore.ts) - Stores the note currently being edited
-      [`inputStore.ts`](src/lib/stores/inputStore.ts) - Open input modal before executing functions that require an input
-      [`toastStore`](src/lib/stores/toastStore.ts) - Handle toasts
-      [`userStore.ts`](src/lib/stores/userStore.ts) - Store user data locally
+    - [`editStore.ts`](src/lib/stores/editStore.ts) - Stores the note currently being edited
+    - [`inputStore.ts`](src/lib/stores/inputStore.ts) - Open input modal before executing functions that require an input
+    - [`toastStore`](src/lib/stores/toastStore.ts) - Handle toasts
+    - [`userStore.ts`](src/lib/stores/userStore.ts) - Store user data locally
 
 ## License
 
