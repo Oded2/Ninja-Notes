@@ -13,6 +13,6 @@ export const useUserStore = create<UserStore>((set) => ({
   user: null,
   key: null,
   loading: true,
-  setUser: (user) => set({ user, loading: false }),
+  setUser: (user) => set({ user, loading: !user }),
   setKey: (key) => set({ key }),
 }));
