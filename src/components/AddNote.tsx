@@ -1,6 +1,6 @@
-import { useEffect, useId, useMemo, useState } from "react";
-import Button from "./Button";
-import InputContainer from "./InputContainer";
+import { useEffect, useId, useState } from 'react';
+import Button from './Button';
+import InputContainer from './InputContainer';
 import {
   addDoc,
   deleteDoc,
@@ -8,30 +8,30 @@ import {
   serverTimestamp,
   Timestamp,
   updateDoc,
-} from "firebase/firestore";
-import { useUserStore } from "@/lib/stores/userStore";
-import { listsCollection, notesCollection } from "@/lib/firebase";
-import { useEditStore } from "@/lib/stores/editStore";
+} from 'firebase/firestore';
+import { useUserStore } from '@/lib/stores/userStore';
+import { listsCollection, notesCollection } from '@/lib/firebase';
+import { useEditStore } from '@/lib/stores/editStore';
 import {
   encryptWithKey,
   findDefaultListId,
   fullTrim,
   handleError,
-} from "@/lib/helpers";
-import { useToastStore } from "@/lib/stores/toastStore";
-import ListSelect from "./ListSelect";
-import { decoyListId, maxLengths } from "@/lib/constants";
-import { List } from "@/lib/types";
-import { useInputStore } from "@/lib/stores/inputStore";
-import { PlusIcon } from "@heroicons/react/24/solid";
-import { User } from "firebase/auth";
-import { useContentStore } from "@/lib/stores/contentStore";
+} from '@/lib/helpers';
+import { useToastStore } from '@/lib/stores/toastStore';
+import ListSelect from './ListSelect';
+import { decoyListId, maxLengths } from '@/lib/constants';
+import { List } from '@/lib/types';
+import { useInputStore } from '@/lib/stores/inputStore';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { User } from 'firebase/auth';
+import { useContentStore } from '@/lib/stores/contentStore';
 
 export default function AddNote() {
   const labelId = useId();
   const [currentList, setCurrentList] = useState<List | undefined>(undefined);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
   const [inProgress, setInProgress] = useState(false);
   const user = useUserStore((state) => state.user);
   const userKey = useUserStore((state) => state.key);
@@ -45,7 +45,6 @@ export default function AddNote() {
   const renameList = useContentStore((state) => state.renameList);
   const addDecoyList = useContentStore((state) => state.addDecoyList);
   const removeDecoyList = useContentStore((state) => state.removeDecoyList);
-  const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
 
   const validate = (
     user: User | null,
@@ -55,16 +54,16 @@ export default function AddNote() {
     if (!user) return false;
     if (titleTrim.length > maxLengths.title) {
       addToast(
-        "error",
-        "Invalid title",
+        'error',
+        'Invalid title',
         `Title cannot exceed ${maxLengths.title.toLocaleString()} characters`,
       );
       return false;
     }
     if (!contentTrim || contentTrim.length > maxLengths.content) {
       addToast(
-        "error",
-        "Invalid content",
+        'error',
+        'Invalid content',
         `Content cannot empty or exceed ${maxLengths.content.toLocaleString()} characters`,
       );
       return false;
@@ -74,15 +73,17 @@ export default function AddNote() {
 
   const addNoteDoc = async (titleTrim: string, contentTrim: string) => {
     if (!userKey || !user) return;
-    let noteListId = currentList?.id ?? defaultListId;
+    // In a situation where the user has not picked a list, then currentList will remain undefined, but the user sees the default list as selected
+    let noteListId = currentList?.id ?? findDefaultListId(lists);
     if (!noteListId) {
-      alert("Default list id not found");
+      console.log(noteListId, currentList);
+      alert('Default list id not found');
       return;
     }
     let newList: List | undefined;
     if (noteListId === decoyListId && currentList) {
       // User has created a new list
-      console.log("Adding list");
+      console.log('Adding list');
       const encryptedName = await encryptWithKey(
         fullTrim(currentList.name),
         userKey,
@@ -92,7 +93,6 @@ export default function AddNote() {
         userId: user.uid,
       });
       newList = { ...currentList, id };
-      setCurrentList(newList);
       noteListId = id;
     }
     const [encryptedTitle, encryptedContent] = await Promise.all([
@@ -149,6 +149,12 @@ export default function AddNote() {
         newList,
       );
     }
+    if (newList) {
+      // Set the selected value in the list select to the new list
+      setCurrentList(newList);
+      // Remove the decoy list, since the new one that was just created is now there
+      removeDecoyList();
+    }
   };
 
   const handleSubmit = () => {
@@ -161,11 +167,11 @@ export default function AddNote() {
       .catch(handleError)
       .finally(() => {
         setInProgress(false);
-        setTitle("");
-        setContent("");
+        setTitle('');
+        setContent('');
         addToast(
-          "success",
-          activeEditNote ? "Note edited" : "Note added",
+          'success',
+          activeEditNote ? 'Note edited' : 'Note added',
           undefined,
           2000,
         );
@@ -177,15 +183,15 @@ export default function AddNote() {
     if (!user || !userKey) return;
     if (lists.some((list) => list.name === listName)) {
       addToast(
-        "error",
-        "Duplicate list",
+        'error',
+        'Duplicate list',
         `You already have a list with the name: ${listName}`,
       );
       return;
     }
     const existingDecoyList = lists.find((list) => list.id === decoyListId);
     if (existingDecoyList) {
-      console.log("Editing decoy list");
+      console.log('Editing decoy list');
       // The user already added a list, but is now adding a different one
       renameList(decoyListId, listName); // Maybe: Introduce renameDecoyList function
       setCurrentList({ ...existingDecoyList, name: listName });
@@ -201,15 +207,17 @@ export default function AddNote() {
 
   useEffect(() => {
     if (activeEditNote) {
+      // Lists need to be read from the state, otherwise this useEffect will have to run every time a list gets added
+      const { lists: stateLists } = useContentStore.getState();
       setTitle(activeEditNote.title);
       setContent(activeEditNote.content);
-      const editListId = lists.find(
+      const editListId = stateLists.find(
         (list) => list.id === activeEditNote.listId,
       );
       if (editListId) setCurrentList(editListId);
-      else alert("Edit list id not found");
+      else alert('Edit list id not found');
     }
-  }, [activeEditNote, lists]);
+  }, [activeEditNote]);
 
   return (
     <form
@@ -225,7 +233,7 @@ export default function AddNote() {
           type="button"
           onClick={() =>
             showInput(
-              "Enter collection name",
+              'Enter collection name',
               handleListAdd,
               maxLengths.collection,
             )
@@ -284,7 +292,7 @@ export default function AddNote() {
         <Button
           type="submit"
           disabled={inProgress}
-          label={activeEditNote ? "Edit" : "Add"}
+          label={activeEditNote ? 'Edit' : 'Add'}
           style="primary"
         />
       </div>
