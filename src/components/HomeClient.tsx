@@ -13,14 +13,16 @@ import Link from 'next/link';
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import VerifyEmail from './VerifyEmail';
 import InlineDivider from './InlineDivider';
+import { useContentStore } from '@/lib/stores/contentStore';
+import Spinner from './Spinner';
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
   const activeEditNote = useEditStore((state) => state.note);
   const user = useUserStore((state) => state.user);
-  const userKey = useUserStore((state) => state.key);
   const loading = useUserStore((state) => state.loading);
+  const lists = useContentStore((state) => state.lists);
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function ClientHome() {
             label="View Notes"
           />
         </div>
-        {userKey && (
+        {lists.length > 0 ? (
           <AnimatePresence initial={false} mode="wait">
             {viewNotes ? (
               <motion.div
@@ -102,6 +104,8 @@ export default function ClientHome() {
               </motion.div>
             )}
           </AnimatePresence>
+        ) : (
+          <Spinner />
         )}
       </div>
       {!loading && !user?.emailVerified && (
