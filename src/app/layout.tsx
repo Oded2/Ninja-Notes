@@ -51,6 +51,7 @@ export default function RootLayout({
       userKey,
       'title',
       'content',
+      'listId',
     );
     // Fetch lists
     const listsQuery = query(listsCollection, where('userId', '==', uid));

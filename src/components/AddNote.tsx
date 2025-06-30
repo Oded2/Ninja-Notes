@@ -76,6 +76,7 @@ export default function AddNote() {
     // In a situation where the user has not picked a list, then currentList will remain undefined, but the user sees the default list as selected
     let noteListId = currentList?.id ?? findDefaultListId(lists);
     if (!noteListId) {
+      // This if statement shouldn't be reachable if everything works as expected
       console.log(noteListId, currentList);
       alert('Default list id not found');
       return;
@@ -95,26 +96,29 @@ export default function AddNote() {
       newList = { ...currentList, id };
       noteListId = id;
     }
-    const [encryptedTitle, encryptedContent] = await Promise.all([
-      encryptWithKey(titleTrim, userKey),
-      encryptWithKey(contentTrim, userKey),
-    ]);
+    const [encryptedTitle, encryptedContent, encryptedListId] =
+      await Promise.all([
+        encryptWithKey(titleTrim, userKey),
+        encryptWithKey(contentTrim, userKey),
+        encryptWithKey(noteListId, userKey),
+      ]);
     if (activeEditNote) {
       const promises: Promise<void>[] = [];
       const { id, listId } = activeEditNote;
-      const toEdit = {
-        title: encryptedTitle,
-        content: encryptedContent,
-        listId: noteListId,
-        editedAt: serverTimestamp(),
-      };
       const docRef = doc(notesCollection, id);
-      promises.push(updateDoc(docRef, toEdit));
+      promises.push(
+        updateDoc(docRef, {
+          title: encryptedTitle,
+          content: encryptedContent,
+          listId: encryptedListId,
+          editedAt: serverTimestamp(),
+        }),
+      );
       const deletedListId = editNote(
         id,
         {
           ...activeEditNote,
-          ...toEdit,
+          listId: noteListId,
           editedAt: Timestamp.now(),
           title: titleTrim,
           content: contentTrim,
@@ -133,14 +137,14 @@ export default function AddNote() {
       const toAdd = {
         title: encryptedTitle,
         content: encryptedContent,
-        listId: noteListId,
+        listId: encryptedListId,
         userId: user.uid,
         createdAt: serverTimestamp(),
       };
       const { id } = await addDoc(notesCollection, toAdd);
       addNote(
         {
-          ...toAdd,
+          listId: noteListId,
           id,
           createdAt: Timestamp.now(),
           title: titleTrim,

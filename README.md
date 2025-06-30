@@ -128,11 +128,11 @@ Will delete the entire collection and _all_ notes under that collection
   - The name of a collection
   - The title of a note
   - The content of a note
+  - The ID of the collection that belongs to a note
 - The following data _is not_ encrypted
 
   - The date a note was created
   - The date a note was edited, if at all
-  - The **ID** of the collection a note belongs to (meaning that an admin can see **how many** notes belong to a specific collection)
   - The user that a collection/note belongs to
 
   _Note: although some data isn't encrypted, it's still guarded using [Firestore rules](https://firebase.google.com/docs/firestore/security/get-started). This means that no other user can see the data that isn't encrypted, however an admin can. Local projects may have different Firestore rules._

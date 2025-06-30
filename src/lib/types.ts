@@ -14,7 +14,7 @@ export type Note = {
   id: string;
   createdAt: Timestamp;
   editedAt?: Timestamp;
-  userId: string;
+  userId?: string;
   title: string;
   content: string;
   listId: string;

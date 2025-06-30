@@ -42,7 +42,7 @@ export function noteTypeGuard(obj: unknown): obj is Note {
     typeof note.userId === 'string' &&
     typeof note.title === 'string' &&
     typeof note.content === 'string' &&
-    typeof note.listId === 'string'
+    (typeof note.listId === undefined || typeof note.listId === 'string')
   );
 }
 
