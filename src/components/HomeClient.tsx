@@ -15,6 +15,7 @@ import VerifyEmail from './VerifyEmail';
 import InlineDivider from './InlineDivider';
 import { useContentStore } from '@/lib/stores/contentStore';
 import Spinner from './Spinner';
+import { censorEmail } from '@/lib/helpers';
 
 export default function ClientHome() {
   const [viewNotes, setViewNotes] = useState(false);
@@ -51,7 +52,7 @@ export default function ClientHome() {
               <span className="text-red-500">Ninja</span> Notes
             </h1>
             <InlineDivider>
-              {email && <div>{email}</div>}
+              {email && <div>{censorEmail(email)}</div>}
               <div>
                 <Link href="/account" className="hover:underline">
                   Account

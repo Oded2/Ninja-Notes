@@ -4,6 +4,14 @@ import { firebaseErrorTypeGuard } from './typeguards';
 import { List } from './types';
 import { defaultListName } from './constants';
 
+export const censorEmail = (email: string) => {
+  const [user, domain] = email.split('@');
+  const first = user.slice(0, 2);
+  const stars = '*'.repeat(user.length - 3);
+  const last = user[user.length - 1];
+  return `${first}${stars}${last}@${domain}`;
+};
+
 export const getTypedDecryptedDocs = async <
   T extends Record<string, unknown>,
   K extends keyof T,
