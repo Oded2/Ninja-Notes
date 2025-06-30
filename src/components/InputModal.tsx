@@ -47,7 +47,7 @@ export default function InputModal() {
           maxLength={maxLength}
         />
         {maxLength && (
-          <div className="text-sm text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
+          <div className="text-xs text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
         )}
         <ModalActions>
           <Button type="button" label="Cancel" small onClick={handleClose} />
