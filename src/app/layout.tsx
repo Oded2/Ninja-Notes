@@ -9,7 +9,7 @@ import { Rubik } from 'next/font/google';
 import Toasts from '@/components/Toasts';
 import ConfirmModal from '@/components/ConfirmModal';
 import InputModal from '@/components/InputModal';
-import { loadUserKey } from '@/lib/indexDB';
+import { clearUserKey, loadUserKey } from '@/lib/indexDB';
 import { orderBy, query, where } from 'firebase/firestore';
 import { getTypedDecryptedDocs } from '@/lib/helpers';
 import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
@@ -31,7 +31,6 @@ export default function RootLayout({
   const user = useUserStore((state) => state.user);
   const userKey = useUserStore((state) => state.key);
   const setUser = useUserStore((state) => state.setUser);
-  const setUserKey = useUserStore((state) => state.setKey);
   const addList = useContentStore((state) => state.addList);
 
   useEffect(() => {
@@ -72,20 +71,25 @@ export default function RootLayout({
   }, [user, userKey, addList]);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
       console.log('Auth state change');
       setUser(user);
-      if (!user && pathnameRef.current !== '/auth') {
-        // User isn't logged in and is trying to access a page that's not auth
-        routerRef.current.push('/auth');
+      if (!user) {
+        // Purge the note store completely
+        useContentStore.getState().purge(true);
+        await clearUserKey();
+        if (pathnameRef.current !== '/auth') {
+          // User isn't logged in and is trying to access a page that's not auth
+          routerRef.current.push('/auth');
+        }
       }
     });
     return unsubscribe;
   }, [setUser]);
 
   useEffect(() => {
-    loadUserKey().then((key) => setUserKey(key));
-  }, [setUserKey]);
+    loadUserKey();
+  }, []);
 
   useEffect(() => {
     routerRef.current = router;

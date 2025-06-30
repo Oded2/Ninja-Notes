@@ -1,6 +1,8 @@
 import { get, set, del } from 'idb-keyval';
 import { useUserStore } from './stores/userStore';
 
+// All logic here should synchronize between indexDB and the user store
+
 const keyName = 'userKey';
 
 function importKey(base64: string): Promise<CryptoKey> {
@@ -25,12 +27,14 @@ export async function loadUserKey() {
   console.log('Loading user key');
   const base64 = await get(keyName);
   if (typeof base64 !== 'string') {
-    return null;
+    return;
   }
-  return await importKey(base64);
+  const importedKey = await importKey(base64);
+  useUserStore.getState().setKey(importedKey);
 }
 
 export function clearUserKey() {
   console.log('Clearing user key');
+  useUserStore.getState().setKey(null);
   return del(keyName);
 }
