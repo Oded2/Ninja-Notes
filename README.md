@@ -60,7 +60,7 @@ A note-taking app with end-to-end encryption that allows for storing notes onlin
 
 ### Collections
 
-_Note: in the project's code, collections are reffered to as lists. This is done in order to avoid any confusion regarding Firebase collections and note collections_
+_Note: in the project's code, collections are referred to as lists. This is done in order to avoid any confusion regarding Firebase collections and note collections_
 
 ### Creating a collection
 
