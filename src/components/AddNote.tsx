@@ -104,7 +104,7 @@ export default function AddNote() {
       ]);
     if (activeEditNote) {
       const promises: Promise<void>[] = [];
-      const { id, listId } = activeEditNote;
+      const { id } = activeEditNote;
       const docRef = doc(notesCollection, id);
       promises.push(
         updateDoc(docRef, {
@@ -128,7 +128,7 @@ export default function AddNote() {
       if (deletedListId) {
         // The user has changed the note's list, and the original list is now empty
         // deletedList will remain undefined if the default list is the now empty list
-        const listDocRef = doc(listsCollection, listId);
+        const listDocRef = doc(listsCollection, deletedListId);
         promises.push(deleteDoc(listDocRef));
       }
       await Promise.all(promises);

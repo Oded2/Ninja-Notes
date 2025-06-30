@@ -43,6 +43,7 @@ export const useContentStore = create<ContentStore>((set) => ({
         oldListId = note.listId;
         return newNote;
       });
+      toSet.lists = [...state.lists];
       const defaultListId = findDefaultListId(state.lists);
       if (
         oldListId !== defaultListId &&
@@ -54,7 +55,7 @@ export const useContentStore = create<ContentStore>((set) => ({
       }
       if (list) {
         // The user has added a new list
-        toSet.lists = [list, ...state.lists];
+        toSet.lists = [list, ...toSet.lists];
       }
       return toSet;
     });
