@@ -12,6 +12,7 @@ import {
   generateSalt,
   generateUserKey,
   handleError,
+  importKey,
 } from '@/lib/helpers';
 import { saveUserKey } from '@/lib/indexDB';
 import { useContentStore } from '@/lib/stores/contentStore';
@@ -71,7 +72,7 @@ export default function AuthClient() {
           name: encryptedDefaultListName,
           userId: uid,
         }),
-        saveUserKey(userKeyBase64),
+        saveUserKey(userKey),
         setDoc(userDocRef, {
           encryptedUserKey,
           salt: Array.from(salt),
@@ -99,12 +100,12 @@ export default function AuthClient() {
           new Uint8Array(salt),
         );
         // Decrypt the encrypted key
-        const decryptedUserKeyBase64 = await decryptWithKey(
+        const decryptedUserKey = await decryptWithKey(
           encryptedUserKey,
           passwordKey,
-        );
+        ).then(importKey);
         // Save to indexDB
-        await saveUserKey(decryptedUserKeyBase64);
+        await saveUserKey(decryptedUserKey);
       } else {
         // Keep alert
         alert('Invalid user data');

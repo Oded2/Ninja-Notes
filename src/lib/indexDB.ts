@@ -5,32 +5,18 @@ import { useUserStore } from './stores/userStore';
 
 const keyName = 'userKey';
 
-function importKey(base64: string): Promise<CryptoKey> {
-  // Moved from helpers.ts
-  const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  return crypto.subtle.importKey('raw', buffer, 'AES-GCM', true, [
-    'encrypt',
-    'decrypt',
-  ]);
-}
-
 // Store base64-encoded raw key
-export function saveUserKey(base64Key: string) {
+export async function saveUserKey(key: CryptoKey) {
   console.log('Saving user key');
-  const saveUserKeyToStore = importKey(base64Key).then((key) =>
-    useUserStore.getState().setKey(key),
-  );
-  return Promise.all([set(keyName, base64Key), saveUserKeyToStore]);
+  useUserStore.getState().setKey(key);
+  return set(keyName, key);
 }
 
 export async function loadUserKey() {
   console.log('Loading user key');
-  const base64 = await get(keyName);
-  if (typeof base64 !== 'string') {
-    return;
-  }
-  const importedKey = await importKey(base64);
-  useUserStore.getState().setKey(importedKey);
+  const key = await get(keyName);
+  if (!(key instanceof CryptoKey)) return;
+  useUserStore.getState().setKey(key);
 }
 
 export function clearUserKey() {

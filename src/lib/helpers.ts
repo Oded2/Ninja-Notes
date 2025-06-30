@@ -72,6 +72,14 @@ export async function deleteByQuery(q: Query) {
   await Promise.all(promises);
 }
 
+export function importKey(base64: string) {
+  const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+  return crypto.subtle.importKey('raw', buffer, 'AES-GCM', true, [
+    'encrypt',
+    'decrypt',
+  ]);
+}
+
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
     'encrypt',
