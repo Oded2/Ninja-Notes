@@ -1,5 +1,7 @@
 # Ninja Notes
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/70fe98b5-a31e-4582-bd9a-af388ddd9a47/deploy-status)](https://app.netlify.com/projects/stealthnotes/deploys)
+
 A note-taking app with end-to-end encryption that allows for storing notes online. Bult with **NextJS** and utilizes **TailwindCSS** for clean, modern, and responsive user interfaces.
 
 ## Features
