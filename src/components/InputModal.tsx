@@ -6,8 +6,8 @@ import ModalActions from './ModalActions';
 import Button from './Button';
 
 export default function InputModal() {
-  const { closeInput } = useInputStore();
-  const { content } = useInputStore();
+  const closeInput = useInputStore((state) => state.closeInput);
+  const content = useInputStore((state) => state.content);
   const [val, setVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const maxLength = useMemo(() => content?.maxLength, [content]);
