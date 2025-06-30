@@ -1,15 +1,16 @@
 import { useInputStore } from '@/lib/stores/inputStore';
 import Modal from './Modal';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import AccountInput from './AccountInput';
 import ModalActions from './ModalActions';
 import Button from './Button';
 
 export default function InputModal() {
-  const closeInput = useInputStore((state) => state.closeInput);
-  const content = useInputStore((state) => state.content);
+  const { closeInput } = useInputStore();
+  const { content } = useInputStore();
   const [val, setVal] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const maxLength = useMemo(() => content?.maxLength, [content]);
 
   const handleClose = () => {
     closeInput();
@@ -21,7 +22,7 @@ export default function InputModal() {
     if (val.length == 0) {
       return;
     }
-    content.callback(val);
+    content.callback(val.trim());
     handleClose();
   };
 
@@ -43,9 +44,11 @@ export default function InputModal() {
           placeholder="Enter text here"
           val={val}
           setVal={setVal}
-          maxLength={content?.maxLength}
+          maxLength={maxLength}
         />
-
+        {maxLength && (
+          <div className="text-sm text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
+        )}
         <ModalActions>
           <Button type="button" label="Cancel" small onClick={handleClose} />
           <Button type="submit" label="Confirm" style="primary" small />
