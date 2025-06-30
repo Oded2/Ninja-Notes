@@ -29,7 +29,7 @@ export default function Modal({ visible, closeFn, title, children }: Props) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.1 }}
-            className="fixed inset-0 z-10 bg-black/40"
+            className="fixed inset-0 bg-black/40"
           />
           <motion.div
             key="modal"
@@ -37,9 +37,9 @@ export default function Modal({ visible, closeFn, title, children }: Props) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed inset-0 z-20 flex items-center justify-center"
+            className="fixed inset-0 flex items-center justify-center"
           >
-            <div className="flex min-h-40 flex-col rounded-lg bg-gray-50 p-5 shadow-lg sm:min-w-sm">
+            <div className="mx-5 flex min-h-40 flex-col rounded-lg bg-gray-50 p-5 shadow-lg sm:mx-0 sm:min-w-sm">
               <h2 className="text-2xl font-bold">{title}</h2>
               {children}
             </div>
