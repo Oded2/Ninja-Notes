@@ -80,16 +80,16 @@ export function importKey(base64: string) {
   ]);
 }
 
+export async function exportKey(key: CryptoKey) {
+  const rawKey = await crypto.subtle.exportKey('raw', key);
+  return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
+}
+
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
     'encrypt',
     'decrypt',
   ]);
-}
-
-export async function exportKey(key: CryptoKey) {
-  const rawKey = await crypto.subtle.exportKey('raw', key);
-  return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
 }
 
 export async function derivePasswordKey(
