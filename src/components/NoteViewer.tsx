@@ -26,6 +26,7 @@ import { useToastStore } from '@/lib/stores/toastStore';
 import { useUserStore } from '@/lib/stores/userStore';
 import { useInputStore } from '@/lib/stores/inputStore';
 import { useContentStore } from '@/lib/stores/contentStore';
+import AutoLink from './AutoLink';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -235,9 +236,7 @@ export default function NoteViewer() {
                   </div>
                 </div>
                 <Collapse open={isOpen}>
-                  <p dir="auto" className="whitespace-pre-wrap">
-                    {content}
-                  </p>
+                  <AutoLink text={content} />
                 </Collapse>
                 <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (
