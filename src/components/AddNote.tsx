@@ -254,6 +254,7 @@ export default function AddNote() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          dir="auto"
           type="text"
           id={`title-${labelId}`}
           placeholder="Could Bruce Wayne be the Batman?"

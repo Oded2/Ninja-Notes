@@ -27,6 +27,7 @@ export default function FormInput({
       <input
         type={type}
         id={id}
+        dir="auto"
         value={val}
         onChange={(e) => setVal(e.target.value)}
         className="grow text-sm font-medium text-slate-950/80 outline-none"

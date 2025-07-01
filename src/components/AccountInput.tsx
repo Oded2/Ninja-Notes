@@ -30,6 +30,7 @@ export default function AccountInput({
       )}
       <input
         type={type}
+        dir="auto"
         ref={inputRef}
         id={id}
         value={val}
