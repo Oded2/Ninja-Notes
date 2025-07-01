@@ -27,6 +27,8 @@ import { useUserStore } from '@/lib/stores/userStore';
 import { useInputStore } from '@/lib/stores/inputStore';
 import { useContentStore } from '@/lib/stores/contentStore';
 import AutoLink from './AutoLink';
+import FormInput from './FormInput';
+import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -44,15 +46,22 @@ export default function NoteViewer() {
   const addToast = useToastStore((state) => state.add);
   // Undefined implies all lists
   const [listFilter, setListFilter] = useState<List | undefined>(undefined);
+  const [searchFilter, setSearchFilter] = useState('');
   // At least one of the notes are closed
-  const notesOpen = useMemo(() => closedNotes.length > 0, [closedNotes]);
-  const filteredNotes = useMemo(
-    () =>
-      listFilter
-        ? notes.filter((note) => note.listId === listFilter.id)
-        : notes,
-    [notes, listFilter],
-  );
+  const notesOpen = useMemo(() => !!closedNotes.length, [closedNotes]);
+  const filteredNotes = useMemo(() => {
+    let result = notes;
+    const lowerCaseFilter = searchFilter.trim().toLowerCase();
+    if (lowerCaseFilter.length)
+      result = result.filter(
+        (note) =>
+          note.title.toLowerCase().includes(lowerCaseFilter) ||
+          note.content.toLowerCase().includes(lowerCaseFilter),
+      );
+    if (listFilter)
+      result = result.filter((note) => note.listId === listFilter.id);
+    return result;
+  }, [notes, searchFilter, listFilter]);
 
   const deleteNote = async (note: Note) => {
     const { id } = note;
@@ -154,7 +163,12 @@ export default function NoteViewer() {
             <ChevronDoubleDownIcon className="size-6" />
           </motion.button>
         </div>
-        <div className="max-w-sm grow">
+        <div>
+          <FormInput label="Search" val={searchFilter} setVal={setSearchFilter}>
+            <MagnifyingGlassIcon />
+          </FormInput>
+        </div>
+        <div className="max-w-3xs grow">
           <ListSelect allowAll val={listFilter} setVal={setListFilter} />
         </div>
         {listFilter && (
