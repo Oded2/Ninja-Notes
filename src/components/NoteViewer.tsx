@@ -211,7 +211,9 @@ export default function NoteViewer() {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
-                    <h2 className="text-xl font-bold">{title || 'Untitled'}</h2>
+                    <h2 dir="auto" className="text-xl font-bold">
+                      {title || 'Untitled'}
+                    </h2>
                     <div className="text-sm text-slate-950/80">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
@@ -233,7 +235,9 @@ export default function NoteViewer() {
                   </div>
                 </div>
                 <Collapse open={isOpen}>
-                  <p className="whitespace-pre-wrap">{content}</p>
+                  <p dir="auto" className="whitespace-pre-wrap">
+                    {content}
+                  </p>
                 </Collapse>
                 <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (
