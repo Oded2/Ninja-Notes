@@ -17,7 +17,7 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import Spinner from './Spinner';
 import { censorEmail } from '@/lib/helpers';
 
-export default function ClientHome() {
+export default function HomeClient() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
   const activeEditNote = useEditStore((state) => state.note);
