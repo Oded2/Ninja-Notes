@@ -171,45 +171,55 @@ export default function NoteViewer() {
         <div className="max-w-3xs grow">
           <ListSelect allowAll val={listFilter} setVal={setListFilter} />
         </div>
-        {listFilter && (
-          <div>
-            {listFilter.name !== defaultListName && (
+        <AnimatePresence>
+          {listFilter && (
+            <motion.div
+              key="collectionActions"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 100, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ type: 'spring', duration: 0.5 }}
+            >
               <IconButton
                 style="neutral"
+                disabled={listFilter.name === defaultListName}
                 onClick={() => {
                   const { name } = listFilter;
-                  showInput(
-                    `Rename collection: ${name}`,
-                    async (newName) =>
-                      await handleRenameList(listFilter, newName),
+                  if (name === defaultListName) {
+                    // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would comporomise end-to-end encryption
+                    // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
+                    return;
+                  }
+                  showInput(`Rename collection: ${name}`, (newName) =>
+                    handleRenameList(listFilter, newName),
                   );
                 }}
               >
                 <PencilIcon />
               </IconButton>
-            )}
-            <IconButton
-              style="error"
-              onClick={() => {
-                const { name } = listFilter;
-                const isDefaultList = name === defaultListName;
-                showConfirm(
-                  'Delete collection?',
-                  isDefaultList
-                    ? 'All notes under the default collection will be deleted.'
-                    : `All notes under the collection '${name}' will be deleted.`,
-                  async () => await deleteList(listFilter),
-                  isDefaultList ? 'Default collection' : name,
-                );
-              }}
-            >
-              <TrashIcon />
-            </IconButton>
-          </div>
-        )}
+              <IconButton
+                style="error"
+                onClick={() => {
+                  const { name } = listFilter;
+                  const isDefaultList = name === defaultListName;
+                  showConfirm(
+                    'Delete collection?',
+                    isDefaultList
+                      ? 'All notes under the default collection will be deleted.'
+                      : `All notes under the collection '${name}' will be deleted.`,
+                    async () => await deleteList(listFilter),
+                    isDefaultList ? 'Default collection' : name,
+                  );
+                }}
+              >
+                <TrashIcon />
+              </IconButton>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
       <div className="flex flex-col rounded-lg border border-slate-950/20">
-        <AnimatePresence>
+        <AnimatePresence initial={false}>
           {filteredNotes.map((note) => {
             const { id, listId, title, content } = note;
             const isOpen = !closedNotes.includes(id);
@@ -219,6 +229,7 @@ export default function NoteViewer() {
               <motion.div
                 key={id}
                 layout
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
