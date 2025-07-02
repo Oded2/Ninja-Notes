@@ -20,7 +20,7 @@ export default function FormInput({
   const id = useId();
 
   return (
-    <div className="flex items-center gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
+    <div className="flex grow items-center gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
       <label htmlFor={id} className="*:size-5">
         {icon}
       </label>

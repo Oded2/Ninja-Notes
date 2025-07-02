@@ -143,7 +143,7 @@ export default function NoteViewer() {
 
   return (
     <>
-      <div className="mb-4 flex gap-2 *:flex *:gap-2">
+      <div className="mb-4 flex flex-wrap gap-2 *:flex *:gap-2">
         <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
           <button onClick={() => reverseNotes()}>
             <ArrowsUpDownIcon className="size-6" />
@@ -163,7 +163,7 @@ export default function NoteViewer() {
             <ChevronDoubleDownIcon className="size-6" />
           </motion.button>
         </div>
-        <div>
+        <div className="grow sm:max-w-3xs">
           <FormInput label="Search" val={searchFilter} setVal={setSearchFilter}>
             <MagnifyingGlassIcon />
           </FormInput>
@@ -186,7 +186,7 @@ export default function NoteViewer() {
                 onClick={() => {
                   const { name } = listFilter;
                   if (name === defaultListName) {
-                    // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would comporomise end-to-end encryption
+                    // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would compromise end-to-end encryption
                     // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
                     return;
                   }
