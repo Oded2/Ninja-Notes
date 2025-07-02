@@ -28,7 +28,7 @@ export default function CopyButton({ text }: Props) {
     <button
       onClick={handleCopy}
       disabled={disabled}
-      className="cursor-pointer rounded-2xl *:size-6"
+      className="cursor-pointer rounded-2xl"
     >
       <AnimatePresence mode="wait" initial={false}>
         {disabled ? (
@@ -42,7 +42,7 @@ export default function CopyButton({ text }: Props) {
               damping: 15,
             }}
           >
-            <ClipboardDocumentCheckIcon />
+            <ClipboardDocumentCheckIcon className="size-6" />
           </motion.div>
         ) : (
           <motion.div
@@ -55,7 +55,7 @@ export default function CopyButton({ text }: Props) {
               damping: 15,
             }}
           >
-            <ClipboardDocumentIcon />
+            <ClipboardDocumentIcon className="size-6" />
           </motion.div>
         )}
       </AnimatePresence>
