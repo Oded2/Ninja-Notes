@@ -3,6 +3,7 @@ import { List, Note } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import Collapse from './Collapse';
 import {
+  cleanSearch,
   deleteByQuery,
   encryptWithKey,
   formatTimestamp,
@@ -51,13 +52,16 @@ export default function NoteViewer() {
   const notesOpen = useMemo(() => !!closedNotes.length, [closedNotes]);
   const filteredNotes = useMemo(() => {
     let result = notes;
-    const lowerCaseFilter = searchFilter.trim().toLowerCase();
-    if (lowerCaseFilter.length)
+    const trimmedSearchFilter = searchFilter.trim();
+    if (trimmedSearchFilter) {
+      const lowerCaseFilter = cleanSearch(trimmedSearchFilter);
+      // Title and content don't need to be trimmed as they are trimmed when inserted into the database
       result = result.filter(
         (note) =>
-          note.title.toLowerCase().includes(lowerCaseFilter) ||
-          note.content.toLowerCase().includes(lowerCaseFilter),
+          cleanSearch(note.title).includes(lowerCaseFilter) ||
+          cleanSearch(note.content).includes(lowerCaseFilter),
       );
+    }
     if (listFilter)
       result = result.filter((note) => note.listId === listFilter.id);
     return result;
