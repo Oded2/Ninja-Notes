@@ -4,7 +4,7 @@ export const maxLengths = {
   collection: 50,
 };
 
-// Random value to allow the user to create any collection name
+// Randomly-assigned value in order to identify the default list from the name
 export const defaultListName = '2a030440-0f91-455b-a8ee-41dc8dbd3e75';
 
 export const decoyListId = 'decoy';
