@@ -88,7 +88,7 @@ export default function NoteViewer() {
   };
 
   const handleRenameList = async (list: List, newName: string) => {
-    if (!userKey) return;
+    if (!user || !userKey) return;
     if (lists.some((listItem) => listItem.name === newName)) {
       addToast(
         'error',
@@ -97,12 +97,12 @@ export default function NoteViewer() {
       );
       return;
     }
-    const { id, userId, name } = list;
+    const { id, name } = list;
     const docRef = doc(listsCollection, id);
     const encryptedName = await encryptWithKey(newName, userKey);
     await updateDoc(docRef, {
       name: encryptedName,
-      userId,
+      userId: user.uid,
     });
     renameList(id, newName);
     setListFilter({ ...list, name: newName });
