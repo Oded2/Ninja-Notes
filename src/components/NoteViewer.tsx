@@ -147,7 +147,7 @@ export default function NoteViewer() {
 
   return (
     <>
-      <div className="mb-4 flex flex-wrap gap-2 *:flex *:gap-2">
+      <div className="mb-4 flex flex-wrap gap-4 *:flex *:gap-2">
         <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
           <button onClick={() => reverseNotes()}>
             <ArrowsUpDownIcon className="size-6" />
@@ -172,55 +172,58 @@ export default function NoteViewer() {
             <MagnifyingGlassIcon />
           </FormInput>
         </div>
-        <div className="max-w-3xs grow">
-          <ListSelect allowAll val={listFilter} setVal={setListFilter} />
+        <div className="grow">
+          <div className="flex max-w-3xs grow">
+            <ListSelect allowAll val={listFilter} setVal={setListFilter} />
+          </div>
+          <AnimatePresence>
+            {listFilter && (
+              <motion.div
+                className="flex gap-2"
+                key="collectionActions"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 100, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ type: 'spring', duration: 0.5 }}
+              >
+                <IconButton
+                  style="neutral"
+                  disabled={listFilter.name === defaultListName}
+                  onClick={() => {
+                    const { name } = listFilter;
+                    if (name === defaultListName) {
+                      // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would compromise end-to-end encryption
+                      // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
+                      return;
+                    }
+                    showInput(`Rename collection: ${name}`, (newName) =>
+                      handleRenameList(listFilter, newName),
+                    );
+                  }}
+                >
+                  <PencilIcon />
+                </IconButton>
+                <IconButton
+                  style="error"
+                  onClick={() => {
+                    const { name } = listFilter;
+                    const isDefaultList = name === defaultListName;
+                    showConfirm(
+                      'Delete collection?',
+                      isDefaultList
+                        ? 'All notes under the default collection will be deleted.'
+                        : `All notes under the collection '${name}' will be deleted.`,
+                      async () => await deleteList(listFilter),
+                      isDefaultList ? 'Default collection' : name,
+                    );
+                  }}
+                >
+                  <TrashIcon />
+                </IconButton>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <AnimatePresence>
-          {listFilter && (
-            <motion.div
-              key="collectionActions"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 100, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ type: 'spring', duration: 0.5 }}
-            >
-              <IconButton
-                style="neutral"
-                disabled={listFilter.name === defaultListName}
-                onClick={() => {
-                  const { name } = listFilter;
-                  if (name === defaultListName) {
-                    // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would compromise end-to-end encryption
-                    // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
-                    return;
-                  }
-                  showInput(`Rename collection: ${name}`, (newName) =>
-                    handleRenameList(listFilter, newName),
-                  );
-                }}
-              >
-                <PencilIcon />
-              </IconButton>
-              <IconButton
-                style="error"
-                onClick={() => {
-                  const { name } = listFilter;
-                  const isDefaultList = name === defaultListName;
-                  showConfirm(
-                    'Delete collection?',
-                    isDefaultList
-                      ? 'All notes under the default collection will be deleted.'
-                      : `All notes under the collection '${name}' will be deleted.`,
-                    async () => await deleteList(listFilter),
-                    isDefaultList ? 'Default collection' : name,
-                  );
-                }}
-              >
-                <TrashIcon />
-              </IconButton>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
       <div className="flex flex-col rounded-lg border border-slate-950/20">
         <AnimatePresence initial={false}>
