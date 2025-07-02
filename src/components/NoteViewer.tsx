@@ -242,7 +242,7 @@ export default function NoteViewer() {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
-                      {title || 'Untitled'}
+                      {title}
                     </h2>
                     <div className="text-sm text-slate-950/80">
                       <InlineDivider>
@@ -290,7 +290,7 @@ export default function NoteViewer() {
                     onClick={() =>
                       showConfirm(
                         'Delete note?',
-                        `This will delete "${note.title || 'Untitled'}". Are you sure you want to continue?`,
+                        `This will delete "${note.title}". Are you sure you want to continue?`,
                         async () => await deleteNote(note),
                       )
                     }
