@@ -25,6 +25,7 @@ export default function HomeClient() {
   const loading = useUserStore((state) => state.loading);
   const lists = useContentStore((state) => state.lists);
   const [email, setEmail] = useState<string | null>(null);
+  const repoUrl = process.env.NEXT_PUBLIC_REPO_URL;
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
@@ -43,9 +44,9 @@ export default function HomeClient() {
           <Image
             src="/logo.png"
             alt="Logo"
-            width={1024}
-            height={1024}
-            className="mx-auto my-auto hidden size-24 max-h-full rounded-2xl sm:inline-block"
+            width={96}
+            height={96}
+            className="mx-auto my-auto hidden max-h-full rounded-2xl sm:inline-block"
           />
           <div className="my-auto flex flex-col items-center gap-2 text-center">
             <h1 className="text-6xl font-bold text-slate-950">
@@ -121,6 +122,19 @@ export default function HomeClient() {
             </div>
           </div>
         </>
+      )}
+      {repoUrl && (
+        <a
+          href={repoUrl}
+          className="absolute top-5 right-5 cursor-pointer rounded-full bg-white transition-colors"
+        >
+          <Image
+            src="/github-logo.png"
+            alt="Github Logo"
+            width={40}
+            height={40}
+          />
+        </a>
       )}
     </>
   );

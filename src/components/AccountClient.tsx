@@ -16,9 +16,9 @@ export default function AccountClient() {
         <Image
           src="/logo.png"
           alt="Logo"
-          height={1024}
-          width={1024}
-          className="my-auto size-92 rounded-2xl"
+          height={368}
+          width={368}
+          className="my-auto rounded-2xl"
           priority
         />
       </div>
