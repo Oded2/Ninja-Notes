@@ -11,7 +11,7 @@ import {
 } from '@/lib/helpers';
 import CopyButton from './CopyButton';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
-import { defaultListName } from '@/lib/constants';
+import { defaultListName, notesPerPage } from '@/lib/constants';
 import InlineDivider from './InlineDivider';
 import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
@@ -30,6 +30,7 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import AutoLink from './AutoLink';
 import FormInput from './FormInput';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
+import Pagination from './Pagination';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -45,6 +46,7 @@ export default function NoteViewer() {
   const removeList = useContentStore((state) => state.removeList);
   const [closedNotes, setClosedNotes] = useState<string[]>([]);
   const addToast = useToastStore((state) => state.add);
+  const [page, setPage] = useState(0);
   // Undefined implies all lists
   const [listFilter, setListFilter] = useState<List | undefined>(undefined);
   const [searchFilter, setSearchFilter] = useState('');
@@ -66,6 +68,10 @@ export default function NoteViewer() {
       result = result.filter((note) => note.listId === listFilter.id);
     return result;
   }, [notes, searchFilter, listFilter]);
+  const paginatedNotes = useMemo(
+    () => filteredNotes.slice(page * notesPerPage, (page + 1) * notesPerPage),
+    [filteredNotes, page],
+  );
 
   const deleteNote = async (note: Note) => {
     const { id } = note;
@@ -224,10 +230,17 @@ export default function NoteViewer() {
             )}
           </AnimatePresence>
         </div>
+        <div>
+          <Pagination
+            val={page}
+            setVal={setPage}
+            maxIndex={Math.ceil(filteredNotes.length / notesPerPage) - 1}
+          />
+        </div>
       </div>
       <div className="flex flex-col rounded-lg border border-slate-950/20">
         <AnimatePresence initial={false}>
-          {filteredNotes.map((note) => {
+          {paginatedNotes.map((note) => {
             const { id, listId, title, content } = note;
             const isOpen = !closedNotes.includes(id);
             const { editedAt } = note;
