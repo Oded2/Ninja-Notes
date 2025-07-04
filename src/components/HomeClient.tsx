@@ -17,6 +17,8 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import Spinner from './Spinner';
 import { censorEmail } from '@/lib/helpers';
 
+const repoUrl = process.env.NEXT_PUBLIC_REPO_URL;
+
 export default function HomeClient() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
@@ -25,7 +27,6 @@ export default function HomeClient() {
   const loading = useUserStore((state) => state.loading);
   const listsLength = useContentStore((state) => state.lists.length);
   const [email, setEmail] = useState<string | null>(null);
-  const repoUrl = process.env.NEXT_PUBLIC_REPO_URL;
 
   useEffect(() => {
     // Prevent the email from disappearing when signing out
