@@ -19,7 +19,7 @@ import {
   ArrowsUpDownIcon,
   ChevronDoubleDownIcon,
 } from '@heroicons/react/24/solid';
-import { useMemo, useState } from 'react';
+import { useId, useMemo, useState } from 'react';
 import ListSelect from './ListSelect';
 import IconButton from './IconButton';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -51,7 +51,7 @@ export default function NoteViewer() {
   const [listFilter, setListFilter] = useState<List | undefined>(undefined);
   const [searchFilter, setSearchFilter] = useState('');
   // At least one of the notes are closed
-  const notesOpen = useMemo(() => !!closedNotes.length, [closedNotes]);
+  const notesClosed = useMemo(() => !!closedNotes.length, [closedNotes]);
   const filteredNotes = useMemo(() => {
     let result = notes;
     const trimmedSearchFilter = searchFilter.trim();
@@ -154,24 +154,28 @@ export default function NoteViewer() {
   return (
     <>
       <div className="mb-4 flex flex-wrap gap-4 *:flex *:gap-2">
-        <div className="*:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60">
-          <button onClick={() => reverseNotes()}>
-            <ArrowsUpDownIcon className="size-6" />
-          </button>
-          <motion.button
-            initial={false}
-            animate={{ rotate: notesOpen ? 180 : 0 }}
-            transition={{
-              type: 'spring',
-              duration: 0.5,
-            }}
-            onClick={() => {
-              if (notesOpen) setClosedNotes([]);
-              else setClosedNotes(notes.map((note) => note.id));
-            }}
-          >
-            <ChevronDoubleDownIcon className="size-6" />
-          </motion.button>
+        <div>
+          <Tooltip text="Reverse">
+            <button onClick={() => reverseNotes()}>
+              <ArrowsUpDownIcon className="size-6" />
+            </button>
+          </Tooltip>
+          <Tooltip text={notesClosed ? 'Open notes' : 'Close notes'}>
+            <motion.button
+              initial={false}
+              animate={{ rotate: notesClosed ? 180 : 0 }}
+              transition={{
+                type: 'spring',
+                duration: 0.5,
+              }}
+              onClick={() => {
+                if (notesClosed) setClosedNotes([]);
+                else setClosedNotes(notes.map((note) => note.id));
+              }}
+            >
+              <ChevronDoubleDownIcon className="size-6" />
+            </motion.button>
+          </Tooltip>
         </div>
         <div className="grow sm:max-w-3xs">
           <FormInput label="Search" val={searchFilter} setVal={setSearchFilter}>
@@ -321,5 +325,32 @@ export default function NoteViewer() {
         </AnimatePresence>
       </div>
     </>
+  );
+}
+
+type TooltipProps = {
+  text: string;
+  children: React.ReactNode;
+};
+
+function Tooltip({ text, children }: TooltipProps) {
+  const tooltipId = useId();
+
+  return (
+    <div className="relative my-auto flex items-center xl:justify-center">
+      <div
+        aria-describedby={tooltipId}
+        className="peer flex *:cursor-pointer *:transition-opacity *:hover:opacity-70 *:active:opacity-60"
+      >
+        {children}
+      </div>
+      <div
+        id={tooltipId}
+        role="tooltip"
+        className="pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded bg-gray-950 p-2 text-sm whitespace-nowrap text-slate-50 opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:bottom-full xl:ms-0 xl:mb-2"
+      >
+        {text}
+      </div>
+    </div>
   );
 }
