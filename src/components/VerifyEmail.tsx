@@ -27,7 +27,7 @@ export default function VerifyEmail() {
 
   return (
     <span className="whitespace-nowrap">
-      Email unverified.
+      Email unverified.{' '}
       <button
         onClick={handleEmailVerification}
         disabled={inProgress}
