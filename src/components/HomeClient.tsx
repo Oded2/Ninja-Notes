@@ -23,7 +23,7 @@ export default function HomeClient() {
   const activeEditNote = useEditStore((state) => state.note);
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
-  const lists = useContentStore((state) => state.lists);
+  const listsLength = useContentStore((state) => state.lists.length);
   const [email, setEmail] = useState<string | null>(null);
   const repoUrl = process.env.NEXT_PUBLIC_REPO_URL;
 
@@ -82,7 +82,7 @@ export default function HomeClient() {
             label="View Notes"
           />
         </div>
-        {lists.length > 0 ? (
+        {listsLength ? (
           <AnimatePresence initial={false} mode="wait">
             {viewNotes ? (
               <motion.div
