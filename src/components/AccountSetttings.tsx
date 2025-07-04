@@ -111,7 +111,7 @@ export default function AccountSettings() {
       where('userId', '==', userId),
     ];
     if (interactive) {
-      // The user is not deleting the account, therefore the default list must be not be deleted
+      // The user is not deleting the account, therefore the default list must not be deleted
       listsQueryConditions.push(
         where(documentIdFieldPath, '!=', defaultListId),
       );
