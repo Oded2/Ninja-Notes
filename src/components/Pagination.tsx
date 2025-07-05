@@ -104,10 +104,11 @@ function PageButton({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'cursor-pointer py-2 transition-colors first:rounded-l-sm last:rounded-r-sm',
+        'cursor-pointer border-y py-2 not-first:border-e first:rounded-s first:border-s last:rounded-e',
         {
-          'bg-red-400 text-white': isPrimary,
-          'hover:bg-red-300 hover:text-white active:bg-red-400': !isPrimary,
+          'border-red-400 bg-red-400 text-white': isPrimary,
+          'border-slate-300 hover:border-red-300 hover:bg-red-300 hover:text-white active:border-red-400 active:bg-red-400':
+            !isPrimary,
           'px-2 *:size-5': isIcon,
           'px-3': !isIcon,
         },
