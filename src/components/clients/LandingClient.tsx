@@ -5,7 +5,6 @@ import {
   FolderIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
-import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
@@ -17,12 +16,7 @@ export default function LandingClient() {
     <div className="flex flex-col px-2">
       <div className="flex gap-4">
         <div className="my-auto flex flex-col gap-2">
-          <motion.div
-            initial={{ opacity: 0, x: '-50%', scale: 0.7 }}
-            animate={{ opacity: 1, x: '0%', scale: 1 }}
-            transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="flex flex-col sm:px-8"
-          >
+          <div className="flex flex-col sm:px-8">
             <h1 className="text-6xl font-medium">
               Welcome to{' '}
               <span className="bg-gradient-to-r from-red-400 to-rose-500 bg-clip-text text-transparent">
@@ -33,7 +27,7 @@ export default function LandingClient() {
               Take secure notes using Ninja Notes with end-to-end encryption and
               effortless organization.
             </p>
-          </motion.div>
+          </div>
           <div className="flex justify-center gap-2">
             <Button
               href="https://github.com/Oded2/Ninja-Notes/blob/main/README.md"
