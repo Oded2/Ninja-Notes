@@ -7,7 +7,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import Button from './Button';
+import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
 
 export default function LandingClient() {

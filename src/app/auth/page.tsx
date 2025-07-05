@@ -1,4 +1,4 @@
-import AuthClient from '@/components/AuthClient';
+import AuthClient from '@/components/clients/AuthClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

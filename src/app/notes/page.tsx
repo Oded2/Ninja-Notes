@@ -1,4 +1,4 @@
-import HomeClient from '@/components/HomeClient';
+import HomeClient from '@/components/clients/HomeClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

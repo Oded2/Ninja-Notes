@@ -11,10 +11,10 @@ import { authHandlers } from '@/lib/firebase';
 import { useUserStore } from '@/lib/stores/userStore';
 import Link from 'next/link';
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
-import VerifyEmail from './VerifyEmail';
-import InlineDivider from './InlineDivider';
+import VerifyEmail from '@/components/VerifyEmail';
+import InlineDivider from '@/components/InlineDivider';
 import { useContentStore } from '@/lib/stores/contentStore';
-import Spinner from './Spinner';
+import Spinner from '@/components/Spinner';
 import { censorEmail } from '@/lib/helpers';
 
 export default function HomeClient() {

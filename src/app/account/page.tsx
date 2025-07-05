@@ -1,4 +1,4 @@
-import AccountClient from '@/components/AccountClient';
+import AccountClient from '@/components/clients/AccountClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

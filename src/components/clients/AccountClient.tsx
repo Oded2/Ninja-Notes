@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import AccountSettings from './AccountSetttings';
-import AccountVerification from './AccountVerification';
+import AccountSettings from '@/components/AccountSetttings';
+import AccountVerification from '@/components/AccountVerification';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronLeftIcon } from '@heroicons/react/20/solid';
