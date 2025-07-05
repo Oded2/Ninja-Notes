@@ -7,9 +7,7 @@ import { useEditStore } from '@/lib/stores/editStore';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
-import { authHandlers } from '@/lib/firebase';
 import { useUserStore } from '@/lib/stores/userStore';
-import Link from 'next/link';
 import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import VerifyEmail from '@/components/VerifyEmail';
 import InlineDivider from '@/components/InlineDivider';
@@ -23,6 +21,7 @@ export default function HomeClient() {
   const activeEditNote = useEditStore((state) => state.note);
   const user = useUserStore((state) => state.user);
   const loading = useUserStore((state) => state.loading);
+  const notesLength = useContentStore((state) => state.notes.length);
   const listsLength = useContentStore((state) => state.lists.length);
   const [email, setEmail] = useState<string | null>(null);
 
@@ -54,17 +53,10 @@ export default function HomeClient() {
             <InlineDivider>
               {email && <div>{censorEmail(email)}</div>}
               <div>
-                <Link href="/account" className="hover:underline">
-                  Account
-                </Link>
+                {`${notesLength.toLocaleString()} ${notesLength == 1 ? 'Note' : 'Notes'}`}
               </div>
               <div>
-                <button
-                  onClick={authHandlers.signout}
-                  className="cursor-pointer hover:underline"
-                >
-                  Sign out
-                </button>
+                {`${listsLength.toLocaleString()} ${listsLength == 1 ? 'Collection' : 'Collections'}`}
               </div>
             </InlineDivider>
           </div>
