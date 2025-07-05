@@ -1,7 +1,7 @@
 'use client';
 
 import './globals.css';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { auth, listsCollection, notesCollection } from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
@@ -19,6 +19,8 @@ const geistSans = Rubik({
   subsets: ['latin'],
 });
 
+const protectedRoutes = ['/notes', '/account'];
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,17 +28,16 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const router = useRouter();
-  const routerRef = useRef(router);
-  const pathnameRef = useRef(pathname);
   const user = useUserStore((state) => state.user);
   const userKey = useUserStore((state) => state.key);
+  const loading = useUserStore((state) => state.loading);
   const setUser = useUserStore((state) => state.setUser);
   const addList = useContentStore((state) => state.addList);
+  const purge = useContentStore((state) => state.purge);
 
   useEffect(() => {
     if (!user || !userKey) return;
     console.log('Fetching docs');
-
     const { uid } = user;
     // Fetch notes
     const notesQuery = query(
@@ -71,18 +72,26 @@ export default function RootLayout({
   }, [user, userKey, addList]);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    if (loading) return;
+    if (!user) {
+      purge(true);
+      clearUserKey().then(() => {
+        if (protectedRoutes.includes(pathname)) {
+          console.log('here');
+          // User isn't logged in and is trying to access a protected page
+          router.push('/auth');
+        }
+      });
+    } else if (pathname === '/auth') {
+      // User is trying to authenticate although he's already authenticated
+      router.push('/');
+    }
+  }, [user, loading, purge, pathname, router]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log('Auth state change');
       setUser(user);
-      if (!user) {
-        // Purge the note store completely
-        useContentStore.getState().purge(true);
-        await clearUserKey();
-        if (pathnameRef.current !== '/auth') {
-          // User isn't logged in and is trying to access a page that's not auth
-          routerRef.current.push('/auth');
-        }
-      }
     });
     return unsubscribe;
   }, [setUser]);
@@ -90,14 +99,6 @@ export default function RootLayout({
   useEffect(() => {
     loadUserKey();
   }, []);
-
-  useEffect(() => {
-    routerRef.current = router;
-  }, [router]);
-
-  useEffect(() => {
-    pathnameRef.current = pathname;
-  }, [pathname]);
 
   return (
     <html lang="en">

@@ -17,8 +17,6 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import Spinner from './Spinner';
 import { censorEmail } from '@/lib/helpers';
 
-const repoUrl = process.env.NEXT_PUBLIC_REPO_URL;
-
 export default function HomeClient() {
   const [viewNotes, setViewNotes] = useState(false);
   const first = useRef(false);
@@ -124,19 +122,17 @@ export default function HomeClient() {
           </div>
         </>
       )}
-      {repoUrl && (
-        <a
-          href={repoUrl}
-          className="absolute top-5 right-5 cursor-pointer rounded-full bg-white transition-colors"
-        >
-          <Image
-            src="/github-logo.png"
-            alt="Github Logo"
-            width={40}
-            height={40}
-          />
-        </a>
-      )}
+      <Link
+        href="https://github.com/Oded2/Ninja-Notes"
+        className="absolute top-5 right-5 cursor-pointer rounded-full bg-white transition-colors"
+      >
+        <Image
+          src="/github-logo.png"
+          alt="Github Logo"
+          width={40}
+          height={40}
+        />
+      </Link>
     </>
   );
 }
