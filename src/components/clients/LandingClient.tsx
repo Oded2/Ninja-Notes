@@ -16,12 +16,12 @@ export default function LandingClient() {
   return (
     <div className="flex flex-col px-2">
       <div className="flex gap-4">
-        <div className="flex flex-col p-8">
+        <div className="my-auto flex flex-col gap-2">
           <motion.div
             initial={{ opacity: 0, x: '-50%', scale: 0.7 }}
             animate={{ opacity: 1, x: '0%', scale: 1 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="flex flex-col p-8"
+            className="flex flex-col sm:px-8"
           >
             <h1 className="text-6xl font-medium">
               Welcome to{' '}
@@ -34,7 +34,7 @@ export default function LandingClient() {
               effortless organization.
             </p>
           </motion.div>
-          <div className="mt-auto flex justify-center gap-2">
+          <div className="flex justify-center gap-2">
             <Button
               href="https://github.com/Oded2/Ninja-Notes/blob/main/README.md"
               newTab
@@ -54,7 +54,8 @@ export default function LandingClient() {
             alt="Banner of Ninja Notes"
             width={450}
             height={300}
-            className="hidden rounded-lg lg:inline-block"
+            className="hidden rounded-lg object-contain lg:inline-block"
+            priority
           />
         </div>
       </div>

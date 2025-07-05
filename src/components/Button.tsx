@@ -1,10 +1,11 @@
 import clsx from 'clsx';
+import { Url } from 'next/dist/shared/lib/router/router';
 import Link from 'next/link';
 
 type Props = {
   style?: 'primary' | 'secondary' | 'neutral' | 'black';
   onClick?: () => void;
-  href?: string;
+  href?: Url;
   newTab?: boolean;
   label?: string;
   type?: 'button' | 'submit';
@@ -27,7 +28,7 @@ export default function Button({
   small,
 }: Props) {
   const className = clsx(
-    'cursor-pointer border-4 px-5 font-semibold text-slate-50 shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
+    'cursor-pointer flex items-center justify-center border-4 px-5 font-semibold text-slate-50 shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
     {
       'border-red-500 bg-red-500 hover:bg-red-500/90 active:bg-red-500/80':
         style === 'primary',
@@ -40,7 +41,7 @@ export default function Button({
       'rounded-xl': rounded,
       'w-full': fullWidth,
       'py-1.5': !small,
-      'py-1': small,
+      'py-1 text-sm': small,
     },
   );
 

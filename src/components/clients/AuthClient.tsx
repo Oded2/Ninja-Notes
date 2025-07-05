@@ -26,10 +26,11 @@ import {
 import clsx from 'clsx';
 import { addDoc, doc, getDoc, setDoc } from 'firebase/firestore';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function AuthClient() {
+  const params = useSearchParams();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,6 +39,10 @@ export default function AuthClient() {
   const { signup, signin } = authHandlers;
   const router = useRouter();
   const addToast = useToastStore((state) => state.add);
+
+  useEffect(() => {
+    setIsSignUp(params.get('display') === 'signup');
+  }, [params]);
 
   const handleSubmit = async () => {
     if (isSignUp && password !== confirmPassword) {

@@ -2,7 +2,12 @@
 
 import './globals.css';
 import { useEffect } from 'react';
-import { auth, listsCollection, notesCollection } from '@/lib/firebase';
+import {
+  auth,
+  authHandlers,
+  listsCollection,
+  notesCollection,
+} from '@/lib/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { useUserStore } from '@/lib/stores/userStore';
 import { Rubik } from 'next/font/google';
@@ -14,6 +19,10 @@ import { orderBy, query, where } from 'firebase/firestore';
 import { getTypedDecryptedDocs } from '@/lib/helpers';
 import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
 import { useContentStore } from '@/lib/stores/contentStore';
+import { HomeIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
+import Button from '@/components/Button';
+import Image from 'next/image';
 
 const geistSans = Rubik({
   subsets: ['latin'],
@@ -77,14 +86,13 @@ export default function RootLayout({
       purge(true);
       clearUserKey().then(() => {
         if (protectedRoutes.includes(pathname)) {
-          console.log('here');
           // User isn't logged in and is trying to access a protected page
           router.push('/auth');
         }
       });
     } else if (pathname === '/auth') {
       // User is trying to authenticate although he's already authenticated
-      router.push('/');
+      router.push('/notes');
     }
   }, [user, loading, purge, pathname, router]);
 
@@ -104,7 +112,8 @@ export default function RootLayout({
     <html lang="en">
       <body className={geistSans.className}>
         <div className="flex min-h-screen flex-col bg-gray-50">
-          <div className="container mx-auto flex grow flex-col px-5 pt-20 pb-10 text-slate-950 sm:px-0">
+          <Navbar />
+          <div className="container mx-auto flex grow flex-col px-5 pt-15 pb-10 text-slate-950 sm:px-0">
             {children}
           </div>
         </div>
@@ -113,5 +122,51 @@ export default function RootLayout({
         <InputModal />
       </body>
     </html>
+  );
+}
+
+function Navbar() {
+  const user = useUserStore((state) => state.user);
+
+  return (
+    <nav className="flex w-full items-center justify-between px-8 py-3">
+      <Link href="/">
+        <HomeIcon className="size-6" />
+      </Link>
+      <div className="flex gap-2">
+        <Link
+          href="https://github.com/Oded2/Ninja-Notes"
+          className="cursor-pointer"
+        >
+          <Image
+            src="/github-logo.png"
+            alt="Github logo"
+            width={36}
+            height={36}
+          />
+        </Link>
+        {user ? (
+          <>
+            <Button label="Account" small style="black" href="/account" />
+            <Button
+              label="Sign out"
+              small
+              style="primary"
+              onClick={authHandlers.signout}
+            />
+          </>
+        ) : (
+          <>
+            <Button label="Login" small style="black" href="/auth" />
+            <Button
+              label="Sign Up"
+              small
+              style="primary"
+              href={{ pathname: '/auth', query: { display: 'signup' } }}
+            />
+          </>
+        )}
+      </div>
+    </nav>
   );
 }

@@ -122,17 +122,6 @@ export default function HomeClient() {
           </div>
         </>
       )}
-      <Link
-        href="https://github.com/Oded2/Ninja-Notes"
-        className="absolute top-5 right-5 cursor-pointer rounded-full bg-white transition-colors"
-      >
-        <Image
-          src="/github-logo.png"
-          alt="Github Logo"
-          width={40}
-          height={40}
-        />
-      </Link>
     </>
   );
 }
