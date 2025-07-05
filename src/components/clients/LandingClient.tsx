@@ -5,9 +5,16 @@ import {
   FolderIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
+import { motion, Transition } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
+
+const springTransition: Transition = {
+  type: 'spring',
+  stiffness: 500,
+  damping: 30,
+};
 
 export default function LandingClient() {
   const user = useUserStore((state) => state.user);
@@ -42,7 +49,10 @@ export default function LandingClient() {
             />
           </div>
         </div>
-        <div>
+        <motion.div
+          whileHover={{ rotate: 5, scale: 1.05 }}
+          transition={springTransition}
+        >
           <Image
             src="/banner.png"
             alt="Banner of Ninja Notes"
@@ -51,7 +61,7 @@ export default function LandingClient() {
             className="hidden rounded-lg object-contain lg:inline-block"
             priority
           />
-        </div>
+        </motion.div>
       </div>
       <h1 className="my-10 text-center text-4xl font-medium">
         Lots of features, zero complexity
@@ -88,12 +98,18 @@ type CardProps = {
 
 function Card({ title, description, children: icon }: CardProps) {
   return (
-    <div className="flex flex-col gap-2 rounded border border-slate-950/10 bg-linear-to-br from-gray-50 to-gray-200 p-4 shadow-lg transition-shadow hover:shadow-xl">
+    <motion.div
+      whileHover={{
+        y: -10,
+      }}
+      transition={springTransition}
+      className="flex flex-col gap-2 rounded border border-slate-950/10 bg-linear-to-br from-gray-50 to-gray-200 p-4 shadow"
+    >
       <div className="flex items-center justify-center gap-2">
         <div className="*:size-7">{icon}</div>
         <h2 className="text-xl">{title}</h2>
       </div>
       <p>{description}</p>
-    </div>
+    </motion.div>
   );
 }
