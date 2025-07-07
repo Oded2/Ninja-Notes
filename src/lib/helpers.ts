@@ -6,8 +6,8 @@ import { defaultListName } from './constants';
 
 export const cleanSearch = (text: string) => {
   // The purpose of this function is to "forgive" the user for any punctuation while searching
-  // Removes: hyphen, period, single quote, double quote, curly apostrophe
-  const forgivingRegex = /[-.'"\u2019]/g;
+  // Removes: hyphen, period, single quote, double quote, space, and curly apostrophe
+  const forgivingRegex = /[-.'" \u2019]/g;
   return text.replace(forgivingRegex, '').toLowerCase();
 };
 
