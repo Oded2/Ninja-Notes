@@ -104,7 +104,7 @@ function PageButton({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'cursor-pointer border-y py-2 not-first:border-e first:rounded-s first:border-s last:rounded-e',
+        'cursor-pointer border-y py-2 first:rounded-s first:border-s last:rounded-e last:border-e',
         {
           'border-red-400 bg-red-400 text-white': isPrimary,
           'border-slate-300 hover:border-red-300 hover:bg-red-300 hover:text-white active:border-red-400 active:bg-red-400':
