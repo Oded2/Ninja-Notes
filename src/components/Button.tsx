@@ -28,7 +28,7 @@ export default function Button({
   small,
 }: Props) {
   const className = clsx(
-    'cursor-pointer flex items-center justify-center border-4 px-5 font-semibold text-slate-50 shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
+    'cursor-pointer flex items-center justify-center border-4 font-semibold text-slate-50 shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
     {
       'border-red-500 bg-red-500 hover:bg-red-500/90 active:bg-red-500/80':
         style === 'primary',
@@ -40,8 +40,8 @@ export default function Button({
         style === 'black',
       'rounded-xl': rounded,
       'w-full': fullWidth,
-      'py-1.5': !small,
-      'py-1 text-sm': small,
+      'px-5 py-1.5': !small,
+      'px-2 py-1 text-sm': small,
     },
   );
 
