@@ -50,8 +50,7 @@ export default function LandingClient({ commit }: Props) {
           </div>
           <div className="flex justify-center gap-2">
             <Button
-              href={repoUrl + '/blob/main/README.md'}
-              newTab
+              externalLink={repoUrl + '/blob/main/README.md'}
               label="Read the docs"
               style="black"
             />

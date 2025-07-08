@@ -6,7 +6,7 @@ type Props = {
   style?: 'primary' | 'secondary' | 'neutral' | 'black';
   onClick?: () => void;
   href?: Url;
-  newTab?: boolean;
+  externalLink?: string;
   label?: string;
   type?: 'button' | 'submit';
   disabled?: boolean;
@@ -19,7 +19,7 @@ export default function Button({
   style = 'neutral',
   onClick,
   href,
-  newTab,
+  externalLink,
   label,
   type,
   disabled,
@@ -45,26 +45,27 @@ export default function Button({
     },
   );
 
-  return (
-    <>
-      {href ? (
-        <Link
-          href={href}
-          target={newTab ? '_blank' : undefined}
-          className={className}
-        >
-          {label}
-        </Link>
-      ) : (
-        <button
-          type={type}
-          onClick={onClick}
-          disabled={disabled}
-          className={className}
-        >
-          {label}
-        </button>
-      )}
-    </>
-  );
+  if (href)
+    return (
+      <Link href={href} className={className}>
+        {label}
+      </Link>
+    );
+  else if (externalLink)
+    return (
+      <a href={externalLink} target="_blank" className={className}>
+        {label}
+      </a>
+    );
+  else
+    return (
+      <button
+        type={type}
+        onClick={onClick}
+        disabled={disabled}
+        className={className}
+      >
+        {label}
+      </button>
+    );
 }
