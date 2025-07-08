@@ -9,6 +9,15 @@ import { motion, Transition } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
+import { CommitInfo } from '@/lib/types';
+import InlineDivider from '@/components/InlineDivider';
+import { repoUrl } from '@/lib/constants';
+import { useEffect, useState } from 'react';
+import {
+  BoltIcon,
+  CommandLineIcon,
+  CodeBracketSquareIcon,
+} from '@heroicons/react/24/solid';
 
 const springTransition: Transition = {
   type: 'spring',
@@ -16,7 +25,11 @@ const springTransition: Transition = {
   damping: 30,
 };
 
-export default function LandingClient() {
+type Props = {
+  commit: CommitInfo | undefined;
+};
+
+export default function LandingClient({ commit }: Props) {
   const user = useUserStore((state) => state.user);
 
   return (
@@ -37,7 +50,7 @@ export default function LandingClient() {
           </div>
           <div className="flex justify-center gap-2">
             <Button
-              href="https://github.com/Oded2/Ninja-Notes/blob/main/README.md"
+              href={repoUrl + '/blob/main/README.md'}
               newTab
               label="Read the docs"
               style="black"
@@ -63,9 +76,9 @@ export default function LandingClient() {
           />
         </motion.div>
       </div>
-      <h1 className="my-10 text-center text-4xl font-medium">
-        Lots of features, zero complexity
-      </h1>
+      <Header text="Lots of features - Zero complexity">
+        <BoltIcon />
+      </Header>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card
           title="End-to-End Encryption"
@@ -86,6 +99,38 @@ export default function LandingClient() {
           <CloudIcon />
         </Card>
       </div>
+      <Header text="Free & Open Source">
+        <CommandLineIcon />
+      </Header>
+      <div className="flex gap-4">
+        <p>
+          Ninja Notes is completely free to use — no subscriptions, no hidden
+          costs. Its entire source code is publicly available on{' '}
+          <a href={repoUrl} className="underline">
+            GitHub
+          </a>
+          , encouraging developers to inspect, contribute, or customize the
+          project to fit their needs. Built with transparency and community in
+          mind, Ninja Notes is licensed under the permissive MIT license,
+          allowing anyone to use, modify, and distribute the software with
+          minimal restrictions.
+        </p>
+        <CommitDisplay commit={commit} />
+      </div>
+    </div>
+  );
+}
+
+type HeaderProps = {
+  text: string;
+  children: React.ReactNode;
+};
+
+function Header({ text, children: icon }: HeaderProps) {
+  return (
+    <div className="mx-auto my-10 flex items-center gap-2 text-center">
+      <div className="*:size-9">{icon}</div>
+      <h1 className="text-4xl font-medium">{text}</h1>
     </div>
   );
 }
@@ -111,5 +156,55 @@ function Card({ title, description, children: icon }: CardProps) {
       </div>
       <p>{description}</p>
     </motion.div>
+  );
+}
+
+type CommitDisplayProps = {
+  commit?: CommitInfo;
+};
+
+function CommitDisplay({ commit }: CommitDisplayProps) {
+  const [formattedDate, setFormattedDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (commit) {
+      const formatted = commit.date.toLocaleDateString(undefined, {
+        minute: 'numeric',
+        hour: 'numeric',
+        day: 'numeric',
+        month: 'numeric',
+        year: '2-digit',
+      });
+      setFormattedDate(formatted);
+    }
+  }, [commit]);
+
+  if (!commit) return null;
+
+  return (
+    <div className="flex flex-col">
+      <h1 className="mb-1 text-center text-lg font-medium italic">
+        Latest Commit
+      </h1>
+      <div className="flex items-center gap-2 rounded bg-black px-4 py-2">
+        <CodeBracketSquareIcon className="size-10 text-gray-50" />
+        <div className="flex flex-col gap-1">
+          <div className="text-sm text-gray-400">
+            <InlineDivider>
+              <div>{formattedDate}</div>
+              <div>
+                <a
+                  href={repoUrl + `commit/${commit.hash}`}
+                  className="hover:underline"
+                >
+                  {commit.hash}
+                </a>
+              </div>
+            </InlineDivider>
+          </div>
+          <span className="text-gray-50">{commit.message}</span>
+        </div>
+      </div>
+    </div>
   );
 }

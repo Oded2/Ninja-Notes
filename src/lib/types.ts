@@ -33,3 +33,9 @@ export type Toast = {
   id: string;
   duration?: number;
 };
+
+export type CommitInfo = {
+  hash: string;
+  message: string;
+  date: Date;
+};

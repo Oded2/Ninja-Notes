@@ -23,6 +23,7 @@ import { HomeIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
+import { repoUrl } from '@/lib/constants';
 
 const geistSans = Rubik({
   subsets: ['latin'],
@@ -134,17 +135,14 @@ function Navbar() {
         <HomeIcon className="size-6" />
       </Link>
       <div className="flex gap-2">
-        <Link
-          href="https://github.com/Oded2/Ninja-Notes"
-          className="cursor-pointer"
-        >
+        <a href={repoUrl} className="cursor-pointer">
           <Image
             src="/github-logo.png"
             alt="Github logo"
             width={36}
             height={36}
           />
-        </Link>
+        </a>
         {user ? (
           <>
             <Button label="Account" small style="black" href="/account" />

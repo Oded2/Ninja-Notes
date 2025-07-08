@@ -10,3 +10,5 @@ export const defaultListName = '2a030440-0f91-455b-a8ee-41dc8dbd3e75';
 export const decoyListId = 'decoy';
 
 export const notesPerPage = 12;
+
+export const repoUrl = 'https://github.com/Oded2/Ninja-Notes/';
