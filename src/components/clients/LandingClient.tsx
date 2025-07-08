@@ -129,8 +129,8 @@ type HeaderProps = {
 function Header({ text, children: icon }: HeaderProps) {
   return (
     <div className="mx-auto my-10 flex items-center gap-2 text-center">
-      <div className="*:size-9">{icon}</div>
-      <h1 className="text-4xl font-medium">{text}</h1>
+      <div className="*:size-6 *:sm:size-9">{icon}</div>
+      <h1 className="text-lg font-medium sm:text-4xl">{text}</h1>
     </div>
   );
 }
