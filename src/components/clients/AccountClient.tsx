@@ -4,8 +4,6 @@ import { useState } from 'react';
 import AccountSettings from '@/components/AccountSetttings';
 import AccountVerification from '@/components/AccountVerification';
 import Image from 'next/image';
-import Link from 'next/link';
-import { ChevronLeftIcon } from '@heroicons/react/20/solid';
 
 export default function AccountClient() {
   const [verified, setVerified] = useState(false);
@@ -32,12 +30,6 @@ export default function AccountClient() {
           <AccountVerification onVerify={() => setVerified(true)} />
         )}
       </div>
-      <Link
-        href="/"
-        className="absolute top-2 left-2 opacity-90 transition-opacity hover:opacity-70"
-      >
-        <ChevronLeftIcon className="size-8" />
-      </Link>
     </div>
   );
 }
