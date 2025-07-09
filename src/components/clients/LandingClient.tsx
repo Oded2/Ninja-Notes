@@ -11,19 +11,13 @@ import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
 import { CommitInfo } from '@/lib/types';
 import InlineDivider from '@/components/InlineDivider';
-import { repoUrl } from '@/lib/constants';
+import { repoUrl, springTransition } from '@/lib/constants';
 import { useEffect, useState } from 'react';
 import {
   BoltIcon,
   CommandLineIcon,
   CodeBracketSquareIcon,
 } from '@heroicons/react/24/solid';
-
-const springTransition: Transition = {
-  type: 'spring',
-  stiffness: 500,
-  damping: 30,
-};
 
 type Props = {
   commit: CommitInfo | undefined;

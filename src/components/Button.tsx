@@ -38,7 +38,7 @@ export default function Button({
         style === 'neutral',
       'border-slate-900 bg-slate-900 hover:bg-slate-900/90 active:bg-slate-900/80':
         style === 'black',
-      'rounded-xl': rounded,
+      'rounded-md': rounded,
       'w-full': fullWidth,
       'px-5 py-1.5': !small,
       'px-2 py-1 text-sm': small,

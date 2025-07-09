@@ -1,3 +1,5 @@
+import { Transition } from 'framer-motion';
+
 export const maxLengths = {
   title: 100,
   content: 5000,
@@ -12,3 +14,9 @@ export const decoyListId = 'decoy';
 export const notesPerPage = 12;
 
 export const repoUrl = 'https://github.com/Oded2/Ninja-Notes/';
+
+export const springTransition: Transition = {
+  type: 'spring',
+  stiffness: 500,
+  damping: 30,
+};
