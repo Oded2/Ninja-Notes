@@ -152,8 +152,8 @@ export default function NoteViewer() {
   };
 
   return (
-    <>
-      <div className="mb-4 flex flex-wrap gap-4 *:flex *:gap-2">
+    <div className="relative">
+      <div className="bg-base/50 sticky top-0 z-20 mb-4 flex flex-wrap gap-4 py-4 backdrop-blur *:flex *:gap-2">
         <div>
           <Tooltip text="Reverse">
             <button onClick={() => reverseNotes()}>
@@ -213,7 +213,7 @@ export default function NoteViewer() {
                     );
                   }}
                 >
-                  <PencilIcon />
+                  <PencilIcon className="size-4" />
                 </IconButton>
                 <IconButton
                   style="error"
@@ -230,7 +230,7 @@ export default function NoteViewer() {
                     );
                   }}
                 >
-                  <TrashIcon />
+                  <TrashIcon className="size-4" />
                 </IconButton>
               </motion.div>
             )}
@@ -244,7 +244,7 @@ export default function NoteViewer() {
           />
         </div>
       </div>
-      <div className="flex flex-col rounded-lg border border-slate-950/20">
+      <div className="flex flex-col">
         <AnimatePresence initial={false}>
           {paginatedNotes.map((note) => {
             const { id, listId, title, content } = note;
@@ -259,14 +259,14 @@ export default function NoteViewer() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
-                className="group flex flex-col gap-2 border-slate-950/20 px-5 py-4 not-last:border-b"
+                className="group border-neutral/40 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
                       {title}
                     </h2>
-                    <div className="text-sm text-slate-950/80">
+                    <div className="text-neutral/80 text-sm">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
                         {editedAt && (
@@ -316,7 +316,7 @@ export default function NoteViewer() {
                         async () => await deleteNote(note),
                       )
                     }
-                    className="text-red-400"
+                    className="text-rose-400"
                   >
                     Delete
                   </button>
@@ -326,7 +326,7 @@ export default function NoteViewer() {
           })}
         </AnimatePresence>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -349,7 +349,7 @@ function Tooltip({ text, children }: TooltipProps) {
       <div
         id={tooltipId}
         role="tooltip"
-        className="pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded bg-gray-950 p-2 text-sm whitespace-nowrap text-slate-50 opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:bottom-full xl:ms-0 xl:mb-2"
+        className="bg-base-content pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded p-2 text-base text-sm whitespace-nowrap opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:bottom-full xl:ms-0 xl:mb-2"
       >
         {text}
       </div>

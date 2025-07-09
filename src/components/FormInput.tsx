@@ -26,7 +26,7 @@ export default function FormInput({
   const id = useId();
 
   return (
-    <div className="flex grow items-center gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
+    <div className="ring-base-content flex grow items-center gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
       {icon && (
         <label htmlFor={id} className="*:size-5">
           {icon}
@@ -39,7 +39,7 @@ export default function FormInput({
         dir="auto"
         value={val}
         onChange={(e) => setVal(e.target.value)}
-        className="grow text-sm font-medium text-slate-950/80 outline-none"
+        className="text-base-content/80 placeholder:text-base-content/50 grow text-sm font-medium outline-none"
         placeholder={label}
         minLength={type === 'password' ? 8 : maxLength}
         maxLength={type === 'password' ? 4096 : maxLength}

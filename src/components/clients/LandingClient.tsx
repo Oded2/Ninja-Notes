@@ -72,25 +72,28 @@ export default function LandingClient({ commit }: Props) {
       <Header text="Lots of features - Zero complexity">
         <BoltIcon />
       </Header>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <Card
-          title="End-to-End Encryption"
-          description="Take security to the next level by using Ninja Notes. Every note is encrypted on the client side before being sent to the cloud. This means that no one, not even an admin of the database, except you can see your notes."
-        >
-          <LockClosedIcon />
-        </Card>
-        <Card
-          title="Collections"
-          description="Easily keep track of your notes by sorting them into different collections."
-        >
-          <FolderIcon />
-        </Card>
-        <Card
-          title="Cloud-Saving"
-          description="Access your secure notes on any device."
-        >
-          <CloudIcon />
-        </Card>
+      <div className="relative">
+        <div className="from-base to-base-100 pointer-events-none absolute inset-0 bg-gradient-to-br"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-3">
+          <Card
+            title="End-to-End Encryption"
+            description="Take security to the next level by using Ninja Notes. Every note is encrypted on the client side before being sent to the cloud. This means that no one, not even an admin of the database, except you can see your notes."
+          >
+            <LockClosedIcon />
+          </Card>
+          <Card
+            title="Collections"
+            description="Easily keep track of your notes by sorting them into different collections."
+          >
+            <FolderIcon />
+          </Card>
+          <Card
+            title="Cloud-Saving"
+            description="Access your secure notes on any device."
+          >
+            <CloudIcon />
+          </Card>
+        </div>
       </div>
       <Header text="Free & Open Source">
         <CommandLineIcon />
@@ -136,19 +139,20 @@ type CardProps = {
 
 function Card({ title, description, children: icon }: CardProps) {
   return (
-    <motion.div
-      whileHover={{
-        y: -10,
-      }}
-      transition={springTransition}
-      className="flex flex-col gap-2 rounded border border-slate-950/10 bg-linear-to-br from-gray-50 to-gray-200 p-4 shadow"
-    >
-      <div className="flex items-center justify-center gap-2">
-        <div className="*:size-7">{icon}</div>
-        <h2 className="text-xl">{title}</h2>
-      </div>
-      <p>{description}</p>
-    </motion.div>
+    <div className="group relative flex w-full">
+      <motion.div
+        whileHover={{}}
+        transition={springTransition}
+        className="relative flex w-full flex-col gap-2 rounded border border-gray-800 bg-transparent p-4 shadow"
+      >
+        <div className="flex items-center justify-center gap-2">
+          <div className="*:size-7">{icon}</div>
+          <h2 className="text-xl">{title}</h2>
+        </div>
+        <p>{description}</p>
+      </motion.div>
+      <div className="bg-base min-w-4 group-last:hidden" />
+    </div>
   );
 }
 
@@ -180,9 +184,9 @@ function CommitDisplay({ commit }: CommitDisplayProps) {
         Latest Commit
       </h1>
       <div className="flex items-center gap-2 rounded bg-black px-4 py-2">
-        <CodeBracketSquareIcon className="size-10 text-gray-50" />
+        <CodeBracketSquareIcon className="text-base-content size-10" />
         <div className="flex flex-col gap-1">
-          <div className="text-sm text-gray-400">
+          <div className="text-neutral text-sm">
             <InlineDivider>
               <div>{formattedDate}</div>
               <div>
@@ -195,7 +199,7 @@ function CommitDisplay({ commit }: CommitDisplayProps) {
               </div>
             </InlineDivider>
           </div>
-          <span className="text-gray-50">{commit.message}</span>
+          <span className="text-base-content">{commit.message}</span>
         </div>
       </div>
     </div>

@@ -28,7 +28,7 @@ export default function Pagination({ val, setVal, maxIndex }: Props) {
 
   useEffect(() => {
     if (val > maxIndex) {
-      // The user has filtered the notes and now the amount of pages have changed
+      // The user has filteindigo the notes and now the amount of pages have changed
       setVal(0);
     }
   }, [val, setVal, maxIndex]);
@@ -106,8 +106,8 @@ function PageButton({
       className={clsx(
         'cursor-pointer border-y py-2 first:rounded-s first:border-s last:rounded-e last:border-e',
         {
-          'border-red-400 bg-red-400 text-white': isPrimary,
-          'border-slate-300 hover:border-red-300 hover:bg-red-300 hover:text-white active:border-red-400 active:bg-red-400':
+          'border-indigo-500 bg-indigo-500 text-white': isPrimary,
+          'border-neutral hover:border-indigo-400 hover:bg-indigo-400 hover:text-white active:border-indigo-500 active:bg-indigo-500':
             !isPrimary,
           'px-2 *:size-5': isIcon,
           'px-3': !isIcon,

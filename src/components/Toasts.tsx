@@ -52,7 +52,7 @@ function ToastComponent({ toast }: ToastProps) {
       {duration && (
         <div className="mt-2 h-3 w-full overflow-hidden rounded-2xl border">
           <motion.div
-            className="h-full bg-gray-50"
+            className="bg-base-content h-full"
             initial={{ width: '100%' }}
             animate={{ width: '0%' }}
             transition={{ duration: duration / 1000, ease: 'linear' }}

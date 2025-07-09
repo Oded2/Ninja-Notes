@@ -44,7 +44,7 @@ export default function InputModal() {
           required
         />
         {maxLength && (
-          <div className="text-xs text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
+          <div className="text-base-content/80 text-xs">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
         )}
       </div>
       <ModalActions>

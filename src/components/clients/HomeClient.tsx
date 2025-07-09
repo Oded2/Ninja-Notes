@@ -44,11 +44,11 @@ export default function HomeClient() {
             alt="Logo"
             width={96}
             height={96}
-            className="mx-auto my-auto hidden max-h-full rounded-2xl sm:inline-block"
+            className="ring-base-content mx-auto my-auto hidden max-h-full rounded-2xl ring-2 sm:inline-block"
           />
           <div className="my-auto flex flex-col items-center gap-2 text-center">
-            <h1 className="text-6xl font-bold text-slate-950">
-              <span className="text-red-500">Ninja</span> Notes
+            <h1 className="text-6xl font-bold">
+              <span className="text-primary">Ninja</span> Notes
             </h1>
             <InlineDivider>
               {email && <div>{censorEmail(email)}</div>}
@@ -61,7 +61,7 @@ export default function HomeClient() {
             </InlineDivider>
           </div>
         </div>
-        <div className="mt-5 flex justify-center gap-4 border-b-2 border-slate-200/50 pb-10">
+        <div className="border-base-100 mt-5 flex justify-center gap-4 border-b-2 pb-10">
           <Button
             onClick={() => setViewNotes(false)}
             label="Add Note"
@@ -103,12 +103,12 @@ export default function HomeClient() {
       </div>
       {!loading && !user?.emailVerified && (
         <>
-          <div className="fixed bottom-2 left-1/2 -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-slate-50 pointer-fine:hidden">
+          <div className="text-base-content bg-base-100 fixed bottom-2 left-1/2 -translate-x-1/2 rounded-lg p-3 pointer-fine:hidden">
             <VerifyEmail />
           </div>
           <div className="fixed end-5 bottom-5 hidden items-center pointer-fine:flex">
-            <ExclamationCircleIcon className="peer size-12 text-red-500" />
-            <div className="pointer-events-none absolute end-full rounded-lg bg-gray-900 p-3 text-slate-50 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
+            <ExclamationCircleIcon className="peer text-primary size-12" />
+            <div className="text-base-content bg-base-100 pointer-events-none absolute end-full rounded-lg p-3 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
               <VerifyEmail />
             </div>
           </div>

@@ -46,7 +46,7 @@ export default function ConfirmModal() {
       closeFn={handleClose}
       title={content?.title}
     >
-      <span className="text-slate-950/80">{content?.description}</span>
+      <span className="text-base-content/80">{content?.description}</span>
       {text && (
         <div className="my-3 flex flex-col gap-1">
           <div className="text-sm">

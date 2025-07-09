@@ -25,6 +25,7 @@ import { useInputStore } from '@/lib/stores/inputStore';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { User } from 'firebase/auth';
 import { useContentStore } from '@/lib/stores/contentStore';
+import IconButton from './IconButton';
 
 export default function AddNote() {
   const labelId = useId();
@@ -232,15 +233,15 @@ export default function AddNote() {
     >
       <div className="flex gap-2">
         <ListSelect val={currentList} setVal={setCurrentList} />
-        <button
-          type="button"
+        <IconButton
           onClick={() =>
             showInput('Enter collection name', handleListAdd, maxLengths.list)
           }
-          className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
+          style="white"
+          circle
         >
-          <PlusIcon className="size-6" />
-        </button>
+          <PlusIcon className="size-5.5" />
+        </IconButton>
       </div>
       <InputContainer>
         <label className="font-medium" htmlFor={`title-${labelId}`}>
@@ -306,7 +307,7 @@ type InputContainerProps = {
 
 function InputContainer({ children }: InputContainerProps) {
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-gray-100 px-4 py-3 ring ring-slate-950/20 transition-all focus-within:ring-2 focus-within:ring-slate-950">
+    <div className="bg-base-100 ring-neutral/50 focus-within:ring-neutral flex flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
       {children}
     </div>
   );

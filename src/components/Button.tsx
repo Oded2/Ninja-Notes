@@ -26,15 +26,15 @@ export default function Button({
   small,
 }: Props) {
   const className = clsx(
-    'cursor-pointer flex items-center justify-center border-4 font-semibold text-slate-50 shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
+    'cursor-pointer relative flex items-center justify-center border-4 font-semibold text-base-content shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
     {
-      'border-red-500 bg-red-500 hover:bg-red-500/90 active:bg-red-500/80':
+      'border-primary bg-primary hover:bg-primary/90 active:bg-primary/80':
         style === 'primary',
-      'border-teal-600 bg-teal-600 hover:bg-teal-600/90 active:bg-teal-600/80':
+      'border-secondary bg-secondary hover:bg-secondary/90 active:bg-secondary/80':
         style === 'secondary',
-      'border-gray-500 bg-gray-500 hover:bg-gray-500/90 active:bg-gray-500/80':
+      'border-neutral bg-neutral hover:bg-neutral/90 active:bg-neutral/80':
         style === 'neutral',
-      'border-slate-900 bg-slate-900 hover:bg-slate-900/90 active:bg-slate-900/80':
+      'border-almost-black bg-almost-black hover:bg-almost-black/90 active:bg-almost-black/80':
         style === 'black',
       'w-full': fullWidth,
       'px-5 py-1.5 rounded-xl': !small,

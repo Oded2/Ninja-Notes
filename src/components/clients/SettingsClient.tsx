@@ -53,8 +53,10 @@ export default function SettingsClient() {
 
   return (
     <div className="flex flex-col sm:flex-row">
-      <div className="flex w-full flex-col border-b border-gray-300 pb-10 sm:me-10 sm:max-w-50 sm:border-e sm:border-b-0 sm:pe-10">
-        <h1 className="mb-4 text-4xl font-medium text-gray-700">Settings</h1>
+      <div className="border-base-200-content flex w-full flex-col border-b pb-10 sm:me-10 sm:max-w-50 sm:border-e sm:border-b-0 sm:pe-10">
+        <h1 className="text-base-200-content mb-4 text-4xl font-medium">
+          Settings
+        </h1>
         <div className="flex sm:flex-col">
           <TabSelector title="Notes" tab={tab} setTab={setTab} activeTab={0}>
             <DocumentIcon />
@@ -119,8 +121,8 @@ function TabSelector({
       className={clsx(
         'flex grow cursor-pointer justify-center border-y p-2 first:rounded-s first:border-s last:rounded-e last:border-e sm:justify-start sm:border-x sm:text-start sm:not-first:not-last:border-y-0 sm:first:rounded-s-none sm:first:rounded-t sm:first:border-t sm:last:rounded-e-none sm:last:rounded-b sm:last:border-b',
         {
-          'border-red-400 bg-red-400 text-slate-50': active,
-          'border-gray-300 text-red-300 transition-colors hover:border-red-300 hover:bg-red-300 hover:text-slate-50 active:border-red-400 active:bg-red-400':
+          'text-base-content border-indigo-500 bg-indigo-500': active,
+          'hover:text-base-content border-gray-700 text-indigo-400 transition-colors hover:border-indigo-400 hover:bg-indigo-400 active:border-indigo-500 active:bg-indigo-500':
             !active,
         },
       )}
@@ -139,7 +141,7 @@ function TabLayout({ header, children }: TabLayoutProps) {
   return (
     <div className="flex flex-col">
       <div className="mb-10">
-        <h2 className="text-3xl font-medium text-gray-800">{header}</h2>
+        <h2 className="text-base-100-content text-3xl font-medium">{header}</h2>
       </div>
       {children}
     </div>
@@ -153,9 +155,9 @@ type FieldSectorProps = {
 
 function FieldSector({ header, children }: FieldSectorProps) {
   return (
-    <div className="flex flex-col border-gray-300 not-last:mb-4 not-last:border-b not-last:pb-2 sm:me-auto">
+    <div className="border-neutral flex flex-col not-last:mb-4 not-last:border-b not-last:pb-2 sm:me-auto">
       <div className="mb-4 text-xl">
-        <h3 className="font-medium text-gray-800">{header}</h3>
+        <h3 className="text-base-100-content font-medium">{header}</h3>
       </div>
       {children}
     </div>
@@ -329,7 +331,7 @@ function AccountSettings() {
             onClick={() =>
               showInput('Enter your new email address', handleEmailChange)
             }
-            className="me-auto cursor-pointer text-indigo-600 hover:underline sm:ms-auto sm:me-auto"
+            className="text-secondary me-auto cursor-pointer hover:underline sm:ms-auto sm:me-auto"
           >
             Change
           </button>

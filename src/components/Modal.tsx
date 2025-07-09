@@ -44,16 +44,18 @@ export default function Modal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: 'spring', duration: 0.5 }}
-            className="fixed inset-0 flex items-center justify-center"
+            className="fixed inset-0 z-20 flex items-center justify-center"
           >
             <form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
               }}
-              className="mx-5 flex min-h-40 max-w-lg flex-col rounded-lg bg-gray-50 p-5 shadow-lg sm:mx-0 sm:min-w-sm"
+              className="bg-base mx-5 flex min-h-40 max-w-lg flex-col rounded-lg p-5 shadow-lg sm:mx-0 sm:min-w-sm"
             >
-              <h2 className="mb-2 text-xl font-semibold">{title}</h2>
+              <h2 className="text-base-content mb-2 text-xl font-semibold">
+                {title}
+              </h2>
               {children}
             </form>
           </motion.div>

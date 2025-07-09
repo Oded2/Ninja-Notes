@@ -121,9 +121,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={geistSans.className}>
-        <div className="flex min-h-screen flex-col bg-gray-50">
+        <div className="bg-base text-base-content flex min-h-screen flex-col">
           <Navbar />
-          <div className="container mx-auto flex grow flex-col px-5 py-10 text-slate-950 sm:px-0">
+          <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
             {children}
           </div>
         </div>
@@ -139,7 +139,7 @@ function Navbar() {
   const user = useUserStore((state) => state.user);
 
   return (
-    <nav className="flex w-full items-center justify-between px-8 py-3">
+    <nav className="flex items-center justify-between px-8 py-3">
       <Link href="/">
         <HomeIcon className="size-6" />
       </Link>

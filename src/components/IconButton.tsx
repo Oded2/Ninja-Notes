@@ -1,9 +1,10 @@
 import clsx from 'clsx';
 
 type Props = {
-  style: 'neutral' | 'error';
+  style: 'neutral' | 'error' | 'white';
   onClick?: () => void;
   disabled?: boolean;
+  circle?: boolean;
   children: React.ReactNode;
 };
 
@@ -11,20 +12,25 @@ export default function IconButton({
   style,
   onClick,
   disabled,
+  circle,
   children,
 }: Props) {
   return (
     <button
+      type="button"
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'flex aspect-square h-full items-center justify-center rounded-lg border-2 p-2 transition-all *:size-4 enabled:cursor-pointer enabled:hover:text-slate-50 disabled:opacity-50',
+        'flex aspect-square h-full items-center justify-center self-center border-2 p-2 transition-all enabled:cursor-pointer enabled:hover:text-base disabled:opacity-50',
         {
-          'border-rose-500 text-rose-500 enabled:hover:bg-rose-500':
+          'border-primary text-primary enabled:hover:bg-primary':
             style === 'error',
-          'border-cyan-700 text-cyan-700 enabled:hover:bg-cyan-700':
+          'border-secondary text-secondary enabled:hover:bg-secondary':
             style === 'neutral',
+          'border-neutral text-neutral enabled:hover:bg-neutral brightness-125':
+            style === 'white',
         },
+        circle ? 'rounded-full' : 'rounded-lg',
       )}
     >
       {children}
