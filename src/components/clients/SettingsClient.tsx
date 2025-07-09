@@ -48,7 +48,7 @@ import {
 } from 'firebase/firestore';
 import { useInputStore } from '@/lib/stores/inputStore';
 
-export default function AccountClient() {
+export default function SettingsClient() {
   const [tab, setTab] = useState(1);
 
   return (
@@ -176,20 +176,20 @@ function AccountManager() {
         {verified ? (
           <motion.div
             key="settings"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
           >
             <AccountSettings />
           </motion.div>
         ) : (
           <motion.div
             key="verify"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.1 }}
           >
             <VerifyAccount onVerify={() => setVerified(true)} />
           </motion.div>

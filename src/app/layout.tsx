@@ -154,7 +154,7 @@ function Navbar() {
         </a>
         {user ? (
           <>
-            <Button label="Account" small style="black" href="/account" />
+            <Button label="Settings" small style="black" href="/settings" />
             <Button
               label="Sign out"
               small
