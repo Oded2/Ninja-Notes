@@ -9,7 +9,7 @@ export default function AccountClient() {
   const [verified, setVerified] = useState(false);
 
   return (
-    <div className="relative mx-auto flex w-full max-w-5xl gap-10 rounded-2xl bg-white py-10 shadow-lg lg:my-auto lg:px-10">
+    <div className="relative mx-auto flex w-full max-w-5xl gap-10 rounded-2xl bg-white shadow-lg lg:my-auto lg:px-10">
       <div className="hidden py-5 lg:inline-block">
         <Image
           src="/logo.png"

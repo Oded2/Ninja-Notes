@@ -123,7 +123,7 @@ export default function RootLayout({
       <body className={geistSans.className}>
         <div className="flex min-h-screen flex-col bg-gray-50">
           <Navbar />
-          <div className="container mx-auto flex grow flex-col px-5 pt-15 pb-10 text-slate-950 sm:px-0">
+          <div className="container mx-auto flex grow flex-col px-5 py-10 text-slate-950 sm:px-0">
             {children}
           </div>
         </div>
