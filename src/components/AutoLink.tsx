@@ -18,7 +18,7 @@ export default function AutoLink({ text }: Props) {
   return (
     <p
       dir="auto"
-      className="whitespace-pre-wrap"
+      className="break-all whitespace-pre-wrap"
       dangerouslySetInnerHTML={{ __html: linkedHtml }}
     />
   );
