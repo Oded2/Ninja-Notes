@@ -31,14 +31,13 @@ export default function InputModal() {
   }, [content]);
 
   return (
-    <Modal visible={!!content} closeFn={handleClose} title={content?.label}>
-      <form
-        className="mt-3 flex grow flex-col gap-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleInput();
-        }}
-      >
+    <Modal
+      handleSubmit={handleInput}
+      visible={!!content}
+      closeFn={handleClose}
+      title={content?.label}
+    >
+      <div className="flex flex-col gap-2">
         <FormInput
           inputRef={inputRef}
           label="Enter text here"
@@ -49,11 +48,11 @@ export default function InputModal() {
         {maxLength && (
           <div className="text-xs text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>
         )}
-        <ModalActions>
-          <Button type="button" label="Cancel" small onClick={handleClose} />
-          <Button type="submit" label="Confirm" style="primary" small />
-        </ModalActions>
-      </form>
+      </div>
+      <ModalActions>
+        <Button type="button" label="Cancel" small onClick={handleClose} />
+        <Button type="submit" label="Confirm" style="primary" small />
+      </ModalActions>
     </Modal>
   );
 }

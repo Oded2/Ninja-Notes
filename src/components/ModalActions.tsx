@@ -4,6 +4,6 @@ type Props = {
 
 export default function ModalActions({ children }: Props) {
   return (
-    <div className="flex grow items-end justify-end gap-2">{children}</div>
+    <div className="mt-2 flex grow items-end justify-end gap-2">{children}</div>
   );
 }

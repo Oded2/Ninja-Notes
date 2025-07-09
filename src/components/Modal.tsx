@@ -5,10 +5,17 @@ type Props = {
   visible: boolean;
   closeFn: () => void;
   title?: string;
+  handleSubmit: () => void;
   children: React.ReactNode;
 };
 
-export default function Modal({ visible, closeFn, title, children }: Props) {
+export default function Modal({
+  visible,
+  closeFn,
+  title,
+  handleSubmit,
+  children,
+}: Props) {
   useEffect(() => {
     const escapeKey = (e: KeyboardEvent) => {
       if (visible && e.key === 'Escape') {
@@ -39,10 +46,16 @@ export default function Modal({ visible, closeFn, title, children }: Props) {
             transition={{ type: 'spring', duration: 0.5 }}
             className="fixed inset-0 flex items-center justify-center"
           >
-            <div className="mx-5 flex min-h-40 flex-col rounded-lg bg-gray-50 p-5 shadow-lg sm:mx-0 sm:min-w-sm">
-              <h2 className="text-xl font-semibold">{title}</h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              className="mx-5 flex min-h-40 flex-col rounded-lg bg-gray-50 p-5 shadow-lg sm:mx-0 sm:min-w-sm"
+            >
+              <h2 className="mb-2 text-xl font-semibold">{title}</h2>
               {children}
-            </div>
+            </form>
           </motion.div>
         </>
       )}

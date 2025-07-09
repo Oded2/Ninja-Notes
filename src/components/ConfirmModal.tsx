@@ -40,40 +40,38 @@ export default function ConfirmModal() {
   }, [content]);
 
   return (
-    <Modal visible={!!content} closeFn={handleClose} title={content?.title}>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleConfirm();
-        }}
-      >
-        <span className="text-slate-950/80">{content?.description}</span>
-        {text && (
-          <div className="my-3 flex flex-col gap-1">
-            <div className="text-sm">
-              To confirm, type: <span className="font-semibold">{text}</span>
-            </div>
-            <FormInput
-              inputRef={inputRef}
-              required
-              pattern={stringToPattern(text)}
-              label={text}
-              val={val}
-              setVal={setVal}
-            />
+    <Modal
+      handleSubmit={handleConfirm}
+      visible={!!content}
+      closeFn={handleClose}
+      title={content?.title}
+    >
+      <span className="text-slate-950/80">{content?.description}</span>
+      {text && (
+        <div className="my-3 flex flex-col gap-1">
+          <div className="text-sm">
+            To confirm, type: <span className="font-semibold">{text}</span>
           </div>
-        )}
-        <ModalActions>
-          <Button type="button" label="Cancel" small onClick={handleClose} />
-          <Button
-            type="submit"
-            label="Confirm"
-            small
-            style="primary"
-            disabled={inProgress || (!!text && val !== text)}
+          <FormInput
+            inputRef={inputRef}
+            required
+            pattern={stringToPattern(text)}
+            label={text}
+            val={val}
+            setVal={setVal}
           />
-        </ModalActions>
-      </form>
+        </div>
+      )}
+      <ModalActions>
+        <Button type="button" label="Cancel" small onClick={handleClose} />
+        <Button
+          type="submit"
+          label="Confirm"
+          small
+          style="primary"
+          disabled={inProgress || (!!text && val !== text)}
+        />
+      </ModalActions>
     </Modal>
   );
 }
