@@ -1,6 +1,5 @@
 import { useEffect, useId, useState } from 'react';
-import Button from './Button';
-import InputContainer from './InputContainer';
+import Button from '@/components/Button';
 import {
   addDoc,
   deleteDoc,
@@ -19,7 +18,7 @@ import {
   handleError,
 } from '@/lib/helpers';
 import { useToastStore } from '@/lib/stores/toastStore';
-import ListSelect from './ListSelect';
+import ListSelect from '@/components/ListSelect';
 import { decoyListId, maxLengths } from '@/lib/constants';
 import { List } from '@/lib/types';
 import { useInputStore } from '@/lib/stores/inputStore';
@@ -298,5 +297,17 @@ export default function AddNote() {
         />
       </div>
     </form>
+  );
+}
+
+type InputContainerProps = {
+  children: React.ReactNode;
+};
+
+function InputContainer({ children }: InputContainerProps) {
+  return (
+    <div className="flex flex-wrap items-center gap-2 rounded-2xl bg-gray-100 px-4 py-3 ring ring-slate-950/20 transition-all focus-within:ring-2 focus-within:ring-slate-950">
+      {children}
+    </div>
   );
 }
