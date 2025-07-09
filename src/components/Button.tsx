@@ -10,7 +10,6 @@ type Props = {
   label?: string;
   type?: 'button' | 'submit';
   disabled?: boolean;
-  rounded?: boolean;
   fullWidth?: boolean;
   small?: boolean;
 };
@@ -23,7 +22,6 @@ export default function Button({
   label,
   type,
   disabled,
-  rounded = true,
   fullWidth,
   small,
 }: Props) {
@@ -38,10 +36,9 @@ export default function Button({
         style === 'neutral',
       'border-slate-900 bg-slate-900 hover:bg-slate-900/90 active:bg-slate-900/80':
         style === 'black',
-      'rounded-md': rounded,
       'w-full': fullWidth,
-      'px-5 py-1.5': !small,
-      'px-2 py-1 text-sm': small,
+      'px-5 py-1.5 rounded-xl': !small,
+      'px-2 py-1 text-sm rounded': small,
     },
   );
 
