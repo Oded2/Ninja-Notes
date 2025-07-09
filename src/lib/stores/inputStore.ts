@@ -4,7 +4,7 @@ type InputStore = {
   showInput: (
     label: string,
     callback: (val: string) => void,
-    maxLlength?: number,
+    maxLength?: number,
   ) => void;
   closeInput: () => void;
   content?: {
