@@ -140,17 +140,13 @@ type CardProps = {
 function Card({ title, description, children: icon }: CardProps) {
   return (
     <div className="group relative flex w-full">
-      <motion.div
-        whileHover={{}}
-        transition={springTransition}
-        className="relative flex w-full flex-col gap-2 rounded border border-gray-800 bg-transparent p-4 shadow"
-      >
+      <div className="relative flex w-full flex-col gap-2 rounded border border-gray-800 bg-transparent p-4 shadow">
         <div className="flex items-center justify-center gap-2">
           <div className="*:size-7">{icon}</div>
           <h2 className="text-xl">{title}</h2>
         </div>
         <p>{description}</p>
-      </motion.div>
+      </div>
       <div className="bg-base min-w-4 group-last:hidden" />
     </div>
   );
