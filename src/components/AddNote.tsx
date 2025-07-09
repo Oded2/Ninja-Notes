@@ -236,11 +236,7 @@ export default function AddNote() {
         <button
           type="button"
           onClick={() =>
-            showInput(
-              'Enter collection name',
-              handleListAdd,
-              maxLengths.collection,
-            )
+            showInput('Enter collection name', handleListAdd, maxLengths.list)
           }
           className="my-auto cursor-pointer rounded-full bg-gray-300 p-1.5 text-slate-900 transition-opacity hover:bg-gray-300/90 active:bg-gray-300/80"
         >

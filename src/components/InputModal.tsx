@@ -18,10 +18,7 @@ export default function InputModal() {
   };
 
   const handleInput = () => {
-    if (!content) return;
-    if (val.length == 0) {
-      return;
-    }
+    if (!content || !val.length) return;
     content.callback(val.trim());
     handleClose();
   };
@@ -37,13 +34,14 @@ export default function InputModal() {
       closeFn={handleClose}
       title={content?.label}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex grow flex-col gap-2">
         <FormInput
           inputRef={inputRef}
           label="Enter text here"
           val={val}
           setVal={setVal}
           maxLength={maxLength}
+          required
         />
         {maxLength && (
           <div className="text-xs text-slate-950/80">{`${val.length.toLocaleString()}/${maxLength.toLocaleString()}`}</div>

@@ -11,7 +11,7 @@ import {
 } from '@/lib/helpers';
 import CopyButton from './CopyButton';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
-import { defaultListName, notesPerPage } from '@/lib/constants';
+import { defaultListName, maxLengths, notesPerPage } from '@/lib/constants';
 import InlineDivider from './InlineDivider';
 import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
@@ -206,8 +206,10 @@ export default function NoteViewer() {
                       // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
                       return;
                     }
-                    showInput(`Rename collection: ${name}`, (newName) =>
-                      handleRenameList(listFilter, newName),
+                    showInput(
+                      `Rename collection: ${name}`,
+                      (newName) => handleRenameList(listFilter, newName),
+                      maxLengths.list,
                     );
                   }}
                 >

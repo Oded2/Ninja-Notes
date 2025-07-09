@@ -3,7 +3,7 @@ import { Transition } from 'framer-motion';
 export const maxLengths = {
   title: 100,
   content: 5000,
-  collection: 50,
+  list: 50,
 };
 
 // Randomly-assigned value in order to identify the default list from the name
