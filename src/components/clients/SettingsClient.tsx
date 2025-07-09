@@ -52,12 +52,10 @@ export default function SettingsClient() {
   const [tab, setTab] = useState(1);
 
   return (
-    <div className="flex">
-      <div className="me-10 flex flex-col border-e border-gray-300 pe-10">
-        <div className="mb-4 border-b border-gray-300 px-2 pb-2">
-          <h1 className="text-4xl font-medium text-gray-700">Settings</h1>
-        </div>
-        <div className="flex flex-col">
+    <div className="flex flex-col sm:flex-row">
+      <div className="flex w-full flex-col border-b border-gray-300 pb-10 sm:me-10 sm:max-w-50 sm:border-e sm:border-b-0 sm:pe-10">
+        <h1 className="mb-4 text-4xl font-medium text-gray-700">Settings</h1>
+        <div className="flex sm:flex-col">
           <TabSelector title="Notes" tab={tab} setTab={setTab} activeTab={0}>
             <DocumentIcon />
           </TabSelector>
@@ -119,7 +117,7 @@ function TabSelector({
     <button
       onClick={() => setTab(activeTab)}
       className={clsx(
-        'cursor-pointer border-x p-2 first:rounded-t first:border-t last:rounded-b last:border-b',
+        'flex grow cursor-pointer justify-center border-y p-2 first:rounded-s first:border-s last:rounded-e last:border-e sm:justify-start sm:border-x sm:text-start sm:not-first:not-last:border-y-0 sm:first:rounded-s-none sm:first:rounded-t sm:first:border-t sm:last:rounded-e-none sm:last:rounded-b sm:last:border-b',
         {
           'border-red-400 bg-red-400 text-slate-50': active,
           'border-gray-300 text-red-300 transition-colors hover:border-red-300 hover:bg-red-300 hover:text-slate-50 active:border-red-400 active:bg-red-400':
@@ -155,7 +153,7 @@ type FieldSectorProps = {
 
 function FieldSector({ header, children }: FieldSectorProps) {
   return (
-    <div className="me-auto flex flex-col border-gray-300 not-last:mb-4 not-last:border-b not-last:pb-2">
+    <div className="flex flex-col border-gray-300 not-last:mb-4 not-last:border-b not-last:pb-2 sm:me-auto">
       <div className="mb-4 text-xl">
         <h3 className="font-medium text-gray-800">{header}</h3>
       </div>
@@ -322,7 +320,7 @@ function AccountSettings() {
   return (
     <div className="flex flex-col">
       <FieldSector header="Email Address">
-        <div className="flex flex-wrap gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row">
           <div>
             Your current email address is{' '}
             <span className="font-bold">{user?.email}</span>
@@ -331,7 +329,7 @@ function AccountSettings() {
             onClick={() =>
               showInput('Enter your new email address', handleEmailChange)
             }
-            className="ms-auto cursor-pointer text-indigo-600 hover:underline"
+            className="me-auto cursor-pointer text-indigo-600 hover:underline sm:ms-auto sm:me-auto"
           >
             Change
           </button>
@@ -344,7 +342,7 @@ function AccountSettings() {
             handlePasswordChange();
           }}
         >
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <FormInput
               type="password"
               label="New Password"
