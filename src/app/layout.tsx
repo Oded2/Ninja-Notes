@@ -42,11 +42,20 @@ export default function RootLayout({
   const userKey = useUserStore((state) => state.key);
   const loading = useUserStore((state) => state.loading);
   const setUser = useUserStore((state) => state.setUser);
+  const listsLength = useContentStore((state) => state.lists.length);
   const addList = useContentStore((state) => state.addList);
   const purge = useContentStore((state) => state.purge);
 
   useEffect(() => {
-    if (!user || !userKey) return;
+    if (
+      !user ||
+      !userKey ||
+      !protectedRoutes.includes(
+        pathname,
+      ) /* Only the protected routes need to fetch */ ||
+      listsLength /* Lists were already fetched */
+    )
+      return;
     console.log('Fetching docs');
     const { uid } = user;
     // Fetch notes
@@ -79,7 +88,7 @@ export default function RootLayout({
         ),
       ),
     );
-  }, [user, userKey, addList]);
+  }, [user, userKey, addList, pathname, listsLength]);
 
   useEffect(() => {
     if (loading) return;
