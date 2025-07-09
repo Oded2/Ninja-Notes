@@ -1,9 +1,9 @@
 import { useInputStore } from '@/lib/stores/inputStore';
 import Modal from './Modal';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import AccountInput from './AccountInput';
 import ModalActions from './ModalActions';
 import Button from './Button';
+import FormInput from './FormInput';
 
 export default function InputModal() {
   const closeInput = useInputStore((state) => state.closeInput);
@@ -39,9 +39,9 @@ export default function InputModal() {
           handleInput();
         }}
       >
-        <AccountInput
+        <FormInput
           inputRef={inputRef}
-          placeholder="Enter text here"
+          label="Enter text here"
           val={val}
           setVal={setVal}
           maxLength={maxLength}

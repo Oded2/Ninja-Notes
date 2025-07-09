@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { RefObject, useId } from 'react';
 
 type Props = {
   type?: 'email' | 'password';
@@ -6,6 +6,9 @@ type Props = {
   val: string;
   setVal: (newVal: string) => void;
   required?: boolean;
+  maxLength?: number;
+  pattern?: string;
+  inputRef?: RefObject<HTMLInputElement | null>;
   children?: React.ReactNode;
 };
 
@@ -15,6 +18,9 @@ export default function FormInput({
   val,
   setVal,
   required,
+  maxLength,
+  pattern,
+  inputRef,
   children: icon,
 }: Props) {
   const id = useId();
@@ -27,6 +33,7 @@ export default function FormInput({
         </label>
       )}
       <input
+        ref={inputRef}
         type={type}
         id={id}
         dir="auto"
@@ -34,9 +41,10 @@ export default function FormInput({
         onChange={(e) => setVal(e.target.value)}
         className="grow text-sm font-medium text-slate-950/80 outline-none"
         placeholder={label}
-        minLength={type === 'password' ? 8 : undefined}
-        maxLength={type === 'password' ? 4096 : undefined}
+        minLength={type === 'password' ? 8 : maxLength}
+        maxLength={type === 'password' ? 4096 : maxLength}
         required={required}
+        pattern={pattern}
       />
     </div>
   );

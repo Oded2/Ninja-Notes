@@ -5,7 +5,7 @@ import {
   FolderIcon,
   LockClosedIcon,
 } from '@heroicons/react/24/outline';
-import { motion, Transition } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Button from '@/components/Button';
 import { useUserStore } from '@/lib/stores/userStore';
