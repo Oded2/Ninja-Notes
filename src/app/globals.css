@@ -10,6 +10,7 @@
   --color-primary: ;
   --color-primary-content: ;
   --color-secondary: ;
+  --color-secondary-light: ;
   --color-neutral: ;
 }
 
@@ -23,6 +24,7 @@
     --color-primary: var(--color-rose-500);
     --color-primary-content: var(--color-gray-50);
     --color-secondary: var(--color-indigo-500);
+    --color-secondary-light: var(--color-indigo-400);
     --color-neutral: var(--color-gray-500);
   }
   .theme-dark {
@@ -34,6 +36,7 @@
     --color-primary: var(--color-rose-600);
     --color-primary-content: var(--color-gray-50);
     --color-secondary: var(--color-indigo-600);
+    --color-secondary-light: var(--color-indigo-500);
     --color-neutral: var(--color-gray-600);
   }
 }

@@ -106,8 +106,8 @@ function PageButton({
       className={clsx(
         'cursor-pointer border-y py-2 first:rounded-s first:border-s last:rounded-e last:border-e',
         {
-          'border-indigo-500 bg-indigo-500 text-white': isPrimary,
-          'border-neutral hover:border-indigo-400 hover:bg-indigo-400 hover:text-white active:border-indigo-500 active:bg-indigo-500':
+          'border-secondary bg-secondary text-primary-content': isPrimary,
+          'border-neutral bg-base hover:text-primary-content active:border-secondary active:bg-secondary active:text-primary-content hover:border-secondary-light hover:bg-secondary-light':
             !isPrimary,
           'px-2 *:size-5': isIcon,
           'px-3': !isIcon,
