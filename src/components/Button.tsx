@@ -34,7 +34,7 @@ export default function Button({
         style === 'secondary',
       'border-neutral bg-neutral hover:bg-neutral/90 active:bg-neutral/80':
         style === 'neutral',
-      'border-almost-black bg-almost-black hover:bg-almost-black/90 active:bg-almost-black/80':
+      'border-black bg-black hover:bg-black/90 active:bg-black/80':
         style === 'black',
       'w-full': fullWidth,
       'px-5 py-1.5 rounded-xl': !small,
