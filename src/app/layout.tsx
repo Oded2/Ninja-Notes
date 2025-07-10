@@ -93,20 +93,23 @@ export default function RootLayout({
   }, [user, userKey, addList, pathname, listsLength]);
 
   useEffect(() => {
+    if (loading || user) return;
+    purge(true);
+    clearUserKey();
+  }, [user, loading, purge]);
+
+  useEffect(() => {
     if (loading) return;
     if (!user) {
-      purge(true);
-      clearUserKey().then(() => {
-        if (protectedRoutes.includes(pathname)) {
-          // User isn't logged in and is trying to access a protected page
-          router.push('/auth');
-        }
-      });
+      if (protectedRoutes.includes(pathname)) {
+        // User isn't logged in and is trying to access a protected page
+        router.push('/auth');
+      }
     } else if (pathname === '/auth') {
       // User is trying to authenticate although he's already authenticated
       router.push('/notes');
     }
-  }, [user, loading, purge, pathname, router]);
+  }, [user, loading, pathname, router]);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
