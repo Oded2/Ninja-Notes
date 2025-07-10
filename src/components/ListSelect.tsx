@@ -1,10 +1,12 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import { defaultListName } from '@/lib/constants';
 import { List, SetValShortcut } from '@/lib/types';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useContentStore } from '@/lib/stores/contentStore';
 import { findDefaultListId } from '@/lib/helpers';
+import React from 'react';
 
+const defaultCollectionLabel = 'Default Collection';
 const allListsLabel = 'All Collections';
 
 type Props = {
@@ -18,35 +20,52 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
   const defaultListId = useMemo(() => findDefaultListId(lists), [lists]);
   const [showDropdown, setShowDropdown] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [dropdownLabel, setDropdownLabel] = useState('');
 
-  const setValWithId = (id?: string) => {
-    if (id) {
-      const list = lists.find((list) => list.id === id);
-      setVal(list);
-    } else {
-      // User is filtering to all lists
-      setVal(undefined);
-    }
-    setShowDropdown(false);
-  };
+  const sortedLists = useMemo(() => {
+    return lists
+      .filter((list) => list.name !== defaultListName)
+      .toSorted((a, b) => {
+        const al = a.name.toLowerCase();
+        const bl = b.name.toLowerCase();
+        if (al === bl) return a < b ? -1 : 1;
+        return al < bl ? -1 : 1;
+      });
+  }, [lists]);
 
-  useEffect(() => {
-    const name =
-      val?.name === defaultListName ? 'Default collection' : val?.name;
-    setDropdownLabel(name ?? (allowAll ? allListsLabel : 'Default collection'));
+  const dropdownLabel = useMemo(() => {
+    if (!val) return allowAll ? allListsLabel : defaultCollectionLabel;
+    return val.name === defaultListName ? defaultCollectionLabel : val.name;
   }, [val, allowAll]);
 
-  const handleClickOutside = (e: MouseEvent) => {
-    const { target } = e;
-    if (target instanceof Node && !containerRef.current?.contains(target))
+  const setValWithId = useCallback(
+    (id?: string) => {
+      if (id) {
+        const list = lists.find((list) => list.id === id);
+        setVal(list);
+      } else {
+        setVal(undefined);
+      }
       setShowDropdown(false);
-  };
+    },
+    [lists, setVal],
+  );
+
+  const handleClickOutside = useCallback((e: MouseEvent) => {
+    if (e.target instanceof Node && !containerRef.current?.contains(e.target)) {
+      setShowDropdown(false);
+    }
+  }, []);
 
   useEffect(() => {
     window.addEventListener('click', handleClickOutside);
     return () => window.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [handleClickOutside]);
+
+  const onDefaultClick = useCallback(
+    () => setValWithId(defaultListId),
+    [defaultListId, setValWithId],
+  );
+  const onAllClick = useCallback(() => setValWithId(), [setValWithId]);
 
   return (
     <div ref={containerRef} className="relative grow">
@@ -56,37 +75,27 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
         className="bg-base-100 ring-neutral/50 flex h-full w-full cursor-pointer items-center rounded-2xl px-4 py-2 ring select-none"
       >
         <span>{dropdownLabel}</span>
+        <ChevronDownIcon className="pointer-events-none ml-auto size-4" />
       </button>
-      <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-2.5 size-4 -translate-y-1/2" />
+
       {showDropdown && (
-        <div className="ring-neutral/50 absolute top-full mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl ring md:max-h-100">
+        <div className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl ring md:max-h-100">
           {allowAll && (
-            <OptionButton
-              title="All collections"
-              onClick={() => setValWithId()}
-            />
+            <MemoizedOptionButton title={allListsLabel} onClick={onAllClick} />
           )}
           {defaultListId && (
-            <OptionButton
-              title="Default collection"
-              onClick={() => setValWithId(defaultListId)}
+            <MemoizedOptionButton
+              title={defaultCollectionLabel}
+              onClick={onDefaultClick}
             />
           )}
-          {lists
-            .filter((value) => value.name !== defaultListName)
-            .toSorted((a, b) => {
-              const al = a.name.toLowerCase();
-              const bl = b.name.toLowerCase();
-              if (al === bl) return a < b ? -1 : 1; // Uppercase first if same letter
-              return al < bl ? -1 : 1;
-            })
-            .map((value) => (
-              <OptionButton
-                key={value.id}
-                title={value.name}
-                onClick={() => setValWithId(value.id)}
-              />
-            ))}
+          {sortedLists.map((list) => (
+            <MemoizedOptionButton
+              key={list.id}
+              title={list.name}
+              onClick={() => setValWithId(list.id)}
+            />
+          ))}
         </div>
       )}
     </div>
@@ -98,14 +107,14 @@ type OptionButtonProps = {
   onClick: () => void;
 };
 
-function OptionButton({ title, onClick }: OptionButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="hover:bg-secondary hover:text-primary-content bg-base-200 cursor-pointer px-8 py-2 text-start brightness-95 transition-colors duration-75 hover:brightness-100"
-    >
-      {title}
-    </button>
-  );
-}
+const OptionButton = ({ title, onClick }: OptionButtonProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="hover:bg-secondary hover:text-primary-content bg-base-200 cursor-pointer px-8 py-2 text-start brightness-95 transition-colors duration-75 hover:brightness-100"
+  >
+    {title}
+  </button>
+);
+
+const MemoizedOptionButton = React.memo(OptionButton);
