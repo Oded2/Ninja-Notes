@@ -11,7 +11,12 @@ import {
 } from '@/lib/helpers';
 import CopyButton from './CopyButton';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
-import { defaultListName, maxLengths, notesPerPage } from '@/lib/constants';
+import {
+  defaultListLabel,
+  defaultListName,
+  maxLengths,
+  notesPerPage,
+} from '@/lib/constants';
 import InlineDivider from './InlineDivider';
 import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
@@ -275,7 +280,7 @@ export default function NoteViewer() {
                         {listName && (
                           <div>
                             {listName === defaultListName
-                              ? 'Default collection'
+                              ? defaultListLabel
                               : listName}
                           </div>
                         )}

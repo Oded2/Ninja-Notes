@@ -8,6 +8,7 @@ export const maxLengths = {
 
 // Randomly-assigned value in order to identify the default list from the name
 export const defaultListName = '2a030440-0f91-455b-a8ee-41dc8dbd3e75';
+export const defaultListLabel = 'Default Collection';
 
 export const decoyListId = 'decoy';
 

@@ -1,12 +1,11 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { defaultListName } from '@/lib/constants';
+import { defaultListLabel, defaultListName } from '@/lib/constants';
 import { List, SetValShortcut } from '@/lib/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useContentStore } from '@/lib/stores/contentStore';
 import { findDefaultListId } from '@/lib/helpers';
 import React from 'react';
 
-const defaultCollectionLabel = 'Default Collection';
 const allListsLabel = 'All Collections';
 
 type Props = {
@@ -33,8 +32,8 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
   }, [lists]);
 
   const dropdownLabel = useMemo(() => {
-    if (!val) return allowAll ? allListsLabel : defaultCollectionLabel;
-    return val.name === defaultListName ? defaultCollectionLabel : val.name;
+    if (!val) return allowAll ? allListsLabel : defaultListLabel;
+    return val.name === defaultListName ? defaultListLabel : val.name;
   }, [val, allowAll]);
 
   const setValWithId = useCallback(
@@ -85,7 +84,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
           )}
           {defaultListId && (
             <MemoizedOptionButton
-              title={defaultCollectionLabel}
+              title={defaultListLabel}
               onClick={onDefaultClick}
             />
           )}
