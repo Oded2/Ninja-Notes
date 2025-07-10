@@ -44,7 +44,7 @@ export default function HomeClient() {
             alt="Logo"
             width={96}
             height={96}
-            className="ring-base-content mx-auto my-auto hidden max-h-full rounded-2xl ring-2 sm:inline-block"
+            className="mx-auto my-auto hidden max-h-full rounded-2xl ring-2 ring-gray-50 sm:inline-block"
           />
           <div className="my-auto flex flex-col items-center gap-2 text-center">
             <h1 className="text-6xl font-bold">
