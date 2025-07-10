@@ -24,7 +24,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
           const selectedList = lists.find((list) => list.id === listRefId);
           setVal(selectedList);
         }}
-        className="bg-base-100 border-neutral/0 ring-neutral/20 focus:border-neutral w-full appearance-none rounded-2xl border-2 px-4 py-2 ring transition-all outline-none focus:ring-0"
+        className="bg-base-100 border-neutral/0 ring-neutral/50 focus:border-neutral w-full appearance-none rounded-2xl border-2 px-4 py-2 ring transition-all outline-none focus:ring-0"
       >
         {/* All values are the id of the collection */}
         {allowAll && <option value={allId}>All collections</option>}
