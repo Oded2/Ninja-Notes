@@ -179,8 +179,8 @@ function CommitDisplay({ commit }: CommitDisplayProps) {
       <h1 className="mb-1 text-center text-lg font-medium italic">
         Latest Commit
       </h1>
-      <div className="flex items-center gap-2 rounded bg-black px-4 py-2">
-        <CodeBracketSquareIcon className="text-base-content size-10" />
+      <div className="flex items-center gap-2 rounded bg-black px-4 py-2 text-white">
+        <CodeBracketSquareIcon className="size-10" />
         <div className="flex flex-col gap-1">
           <div className="text-neutral text-sm">
             <InlineDivider>
@@ -195,7 +195,7 @@ function CommitDisplay({ commit }: CommitDisplayProps) {
               </div>
             </InlineDivider>
           </div>
-          <span className="text-base-content">{commit.message}</span>
+          <span>{commit.message}</span>
         </div>
       </div>
     </div>
