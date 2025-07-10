@@ -116,7 +116,7 @@ export default function AuthClient() {
         alert('Invalid user data');
       }
     }
-    router.push('/');
+    router.push('/notes');
   };
 
   const handlePasswordReset = () => {
