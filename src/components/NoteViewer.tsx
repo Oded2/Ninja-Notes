@@ -259,14 +259,14 @@ export default function NoteViewer() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
-                className="group border-neutral/40 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
+                className="group border-neutral/40 bg-base-100/60 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
                       {title}
                     </h2>
-                    <div className="text-neutral/80 text-sm">
+                    <div className="text-base-200-content/70 text-sm">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
                         {editedAt && (

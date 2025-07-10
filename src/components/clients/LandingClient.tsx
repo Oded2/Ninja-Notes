@@ -98,7 +98,7 @@ export default function LandingClient({ commit }: Props) {
       <Header text="Free & Open Source">
         <CommandLineIcon />
       </Header>
-      <div className="flex gap-4">
+      <div className="flex flex-wrap gap-4">
         <p>
           Ninja Notes is completely free to use — no subscriptions, no hidden
           costs. Its entire source code is publicly available on{' '}
@@ -139,7 +139,7 @@ type CardProps = {
 
 function Card({ title, description, children: icon }: CardProps) {
   return (
-    <div className="group relative flex w-full">
+    <div className="group relative flex w-full flex-col lg:flex-row">
       <div className="relative flex w-full flex-col gap-2 rounded border border-gray-800 bg-transparent p-4 shadow">
         <div className="flex items-center justify-center gap-2">
           <div className="*:size-7">{icon}</div>
@@ -147,7 +147,8 @@ function Card({ title, description, children: icon }: CardProps) {
         </div>
         <p>{description}</p>
       </div>
-      <div className="bg-base min-w-4 group-last:hidden" />
+      <div className="bg-base hidden min-w-4 group-last:hidden lg:inline-block" />
+      <div className="bg-base min-h-4 group-last:hidden lg:hidden" />
     </div>
   );
 }
@@ -175,20 +176,20 @@ function CommitDisplay({ commit }: CommitDisplayProps) {
   if (!commit) return null;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex max-w-full flex-col">
       <h1 className="mb-1 text-center text-lg font-medium italic">
         Latest Commit
       </h1>
       <div className="flex items-center gap-2 rounded bg-black px-4 py-2 text-white">
         <CodeBracketSquareIcon className="size-10" />
-        <div className="flex flex-col gap-1">
+        <div className="flex max-w-full flex-col gap-1">
           <div className="text-neutral text-sm">
             <InlineDivider>
               <div>{formattedDate}</div>
-              <div>
+              <div className="overflow-hidden">
                 <a
                   href={repoUrl + `commit/${commit.hash}`}
-                  className="hover:underline"
+                  className="overflow-hidden overflow-ellipsis hover:underline"
                 >
                   {commit.hash}
                 </a>
