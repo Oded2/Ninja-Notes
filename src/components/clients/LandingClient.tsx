@@ -98,7 +98,7 @@ export default function LandingClient({ commit }: Props) {
       <Header text="Free & Open Source">
         <CommandLineIcon />
       </Header>
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-col gap-4 lg:flex-row">
         <p>
           Ninja Notes is completely free to use — no subscriptions, no hidden
           costs. Its entire source code is publicly available on{' '}
