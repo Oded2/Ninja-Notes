@@ -26,7 +26,7 @@ export default function Button({
   small,
 }: Props) {
   const className = clsx(
-    'cursor-pointer relative flex items-center justify-center border-4 font-semibold text-base-content shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
+    'cursor-pointer relative flex items-center justify-center border-4 font-semibold text-primary-content shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
     {
       'border-primary bg-primary hover:bg-primary/90 active:bg-primary/80':
         style === 'primary',

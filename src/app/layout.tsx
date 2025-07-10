@@ -1,7 +1,7 @@
 'use client';
 
 import './globals.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   auth,
   authHandlers,
@@ -24,6 +24,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
 import { repoUrl } from '@/lib/constants';
+import clsx from 'clsx';
 
 const geistSans = Rubik({
   subsets: ['latin'],
@@ -45,6 +46,7 @@ export default function RootLayout({
   const listsLength = useContentStore((state) => state.lists.length);
   const addList = useContentStore((state) => state.addList);
   const purge = useContentStore((state) => state.purge);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     if (
@@ -115,14 +117,26 @@ export default function RootLayout({
   }, [setUser]);
 
   useEffect(() => {
+    const isDarkTheme = localStorage.getItem('theme') === 'dark';
+    setIsDark(isDarkTheme);
     loadUserKey();
   }, []);
 
+  useEffect(() => {
+    if (isDark) localStorage.setItem('theme', 'dark');
+    else localStorage.removeItem('theme');
+  }, [isDark]);
+
   return (
     <html lang="en">
-      <body className={geistSans.className}>
+      <body
+        className={clsx(
+          geistSans.className,
+          isDark ? 'theme-dark' : 'theme-light',
+        )}
+      >
         <div className="bg-base text-base-content flex min-h-screen flex-col">
-          <Navbar />
+          <Navbar onThemeToggle={() => setIsDark((prev) => !prev)} />
           <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
             {children}
           </div>
@@ -135,7 +149,11 @@ export default function RootLayout({
   );
 }
 
-function Navbar() {
+type NavbarProps = {
+  onThemeToggle: () => void;
+};
+
+function Navbar({ onThemeToggle }: NavbarProps) {
   const user = useUserStore((state) => state.user);
 
   return (
@@ -152,6 +170,12 @@ function Navbar() {
             height={36}
           />
         </a>
+        <Button
+          label="Toggle Theme"
+          small
+          style="secondary"
+          onClick={onThemeToggle}
+        />
         {user ? (
           <>
             <Button label="Settings" small style="black" href="/settings" />
