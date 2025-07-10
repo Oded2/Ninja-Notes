@@ -77,7 +77,7 @@ export default function AddNote() {
     let noteListId = currentList?.id ?? findDefaultListId(lists);
     if (!noteListId) {
       // This if statement shouldn't be reachable if everything works as expected
-      console.log(noteListId, currentList);
+      console.error('Default list not found', noteListId, currentList);
       alert('Default list id not found');
       return;
     }
