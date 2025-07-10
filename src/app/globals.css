@@ -24,7 +24,7 @@
     --color-primary: var(--color-rose-500);
     --color-primary-content: var(--color-gray-50);
     --color-secondary: var(--color-indigo-500);
-    --color-neutral: var(--color-gray-400);
+    --color-neutral: var(--color-gray-500);
     --color-almost-black: var(--color-slate-950);
   }
   .theme-dark {

@@ -237,7 +237,7 @@ export default function AddNote() {
           onClick={() =>
             showInput('Enter collection name', handleListAdd, maxLengths.list)
           }
-          style="white"
+          style="neutral"
           circle
         >
           <PlusIcon className="size-5.5" />

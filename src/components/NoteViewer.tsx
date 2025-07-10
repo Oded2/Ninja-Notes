@@ -197,7 +197,7 @@ export default function NoteViewer() {
                 transition={{ type: 'spring', duration: 0.5 }}
               >
                 <IconButton
-                  style="neutral"
+                  style="secondary"
                   disabled={listFilter.name === defaultListName}
                   onClick={() => {
                     const { name } = listFilter;
@@ -216,7 +216,7 @@ export default function NoteViewer() {
                   <PencilIcon className="size-4" />
                 </IconButton>
                 <IconButton
-                  style="error"
+                  style="primary"
                   onClick={() => {
                     const { name } = listFilter;
                     const isDefaultList = name === defaultListName;

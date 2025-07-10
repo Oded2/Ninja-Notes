@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 
 type Props = {
-  style: 'neutral' | 'error' | 'white';
+  style: 'primary' | 'secondary' | 'neutral';
   onClick?: () => void;
   disabled?: boolean;
   circle?: boolean;
@@ -24,11 +24,11 @@ export default function IconButton({
         'flex aspect-square h-full items-center justify-center self-center border-2 p-2 transition-all enabled:cursor-pointer enabled:hover:text-base disabled:opacity-50',
         {
           'border-primary text-primary enabled:hover:bg-primary':
-            style === 'error',
+            style === 'primary',
           'border-secondary text-secondary enabled:hover:bg-secondary':
+            style === 'secondary',
+          'border-base-200-content enabled:hover:bg-base-200-content text-base-200-content':
             style === 'neutral',
-          'border-neutral text-neutral enabled:hover:bg-neutral brightness-125':
-            style === 'white',
         },
         circle ? 'rounded-full' : 'rounded-lg',
       )}
