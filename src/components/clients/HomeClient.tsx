@@ -40,7 +40,7 @@ export default function HomeClient() {
       <div className="flex flex-col gap-5">
         <div className="mx-auto flex gap-5">
           <Image
-            src="/logo.png"
+            src="/apple-icon.png"
             alt="Logo"
             width={96}
             height={96}
