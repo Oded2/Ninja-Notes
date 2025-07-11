@@ -95,6 +95,8 @@ export default function AuthClient() {
         if (userDataTypeGuard(data)) {
           // Extract the encrypted key and the salt
           const { encryptedUserKey, salt } = data;
+          if (typeof encryptedUserKey === 'string')
+            throw Error('Invalid encrypted user key');
           // Get the password-derived key to decrypt the extracted encrypted key
           const passwordKey = await derivePasswordKey(
             password,

@@ -7,6 +7,7 @@ import {
   encryptWithKey,
   formatTimestamp,
   handleError,
+  possiblyEncryptedToString,
 } from '@/lib/helpers';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
 import {
@@ -68,8 +69,12 @@ export default function NoteViewer() {
       // Title and content don't need to be trimmed as they are trimmed when inserted into the database
       result = result.filter(
         (note) =>
-          cleanSearch(note.title).includes(lowerCaseFilter) ||
-          cleanSearch(note.content).includes(lowerCaseFilter),
+          cleanSearch(possiblyEncryptedToString(note.title)).includes(
+            lowerCaseFilter,
+          ) ||
+          cleanSearch(possiblyEncryptedToString(note.content)).includes(
+            lowerCaseFilter,
+          ),
       );
     }
     if (listFilter)
@@ -234,7 +239,9 @@ export default function NoteViewer() {
                         ? 'All notes under the default collection will be deleted.'
                         : `All notes under the collection '${name}' will be deleted.`,
                       async () => await deleteList(listFilter),
-                      isDefaultList ? 'Default collection' : name,
+                      isDefaultList
+                        ? 'Default collection'
+                        : possiblyEncryptedToString(name),
                     );
                   }}
                 >
@@ -272,7 +279,7 @@ export default function NoteViewer() {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
-                      {title}
+                      {possiblyEncryptedToString(title)}
                     </h2>
                     <div className="text-base-200-content/70 text-sm">
                       <InlineDivider>
@@ -284,18 +291,18 @@ export default function NoteViewer() {
                           <div>
                             {listName === defaultListName
                               ? defaultListLabel
-                              : listName}
+                              : possiblyEncryptedToString(listName)}
                           </div>
                         )}
                       </InlineDivider>
                     </div>
                   </div>
                   <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
-                    <CopyButton text={content} />
+                    <CopyButton text={possiblyEncryptedToString(content)} />
                   </div>
                 </div>
                 <Collapse open={isOpen}>
-                  <AutoLink text={content} />
+                  <AutoLink text={possiblyEncryptedToString(content)} />
                 </Collapse>
                 <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (

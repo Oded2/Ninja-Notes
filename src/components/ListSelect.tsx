@@ -3,7 +3,7 @@ import { defaultListLabel, defaultListName } from '@/lib/constants';
 import { List, SetValShortcut } from '@/lib/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useContentStore } from '@/lib/stores/contentStore';
-import { findDefaultListId } from '@/lib/helpers';
+import { findDefaultListId, possiblyEncryptedToString } from '@/lib/helpers';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -25,8 +25,8 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
     return lists
       .filter((list) => list.name !== defaultListName)
       .toSorted((a, b) => {
-        const al = a.name.toLowerCase();
-        const bl = b.name.toLowerCase();
+        const al = possiblyEncryptedToString(a.name).toLowerCase();
+        const bl = possiblyEncryptedToString(b.name).toLowerCase();
         if (al === bl) return a < b ? -1 : 1;
         return al < bl ? -1 : 1;
       });
@@ -34,7 +34,9 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
 
   const dropdownLabel = useMemo(() => {
     if (!val) return allowAll ? allListsLabel : defaultListLabel;
-    return val.name === defaultListName ? defaultListLabel : val.name;
+    return val.name === defaultListName
+      ? defaultListLabel
+      : possiblyEncryptedToString(val.name);
   }, [val, allowAll]);
 
   const setValWithId = useCallback(
@@ -101,7 +103,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
             {sortedLists.map((list) => (
               <MemoizedOptionButton
                 key={list.id}
-                title={list.name}
+                title={possiblyEncryptedToString(list.name)}
                 onClick={() => setValWithId(list.id)}
               />
             ))}

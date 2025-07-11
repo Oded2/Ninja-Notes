@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { List, Note } from '../types';
 import { decoyListId, defaultListName } from '../constants';
-import { findDefaultListId } from '../helpers';
+import { findDefaultListId, possiblyEncryptedToString } from '../helpers';
 
 type ContentStore = {
   notes: Note[];
@@ -40,7 +40,7 @@ export const useContentStore = create<ContentStore>((set) => ({
       const toSet: Partial<ContentStore> = {};
       toSet.notes = state.notes.map((note) => {
         if (note.id !== id) return note;
-        oldListId = note.listId;
+        oldListId = possiblyEncryptedToString(note.listId);
         return newNote;
       });
       toSet.lists = [...state.lists];
@@ -70,7 +70,7 @@ export const useContentStore = create<ContentStore>((set) => ({
       let removedNoteListId: string | undefined = undefined;
       const filteredNotes = notes.filter((note) => {
         if (note.id !== id) return true;
-        removedNoteListId = note.listId;
+        removedNoteListId = possiblyEncryptedToString(note.listId);
         return false;
       });
       const toSet: Partial<ContentStore> = {

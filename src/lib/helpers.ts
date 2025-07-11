@@ -1,7 +1,13 @@
-import { deleteDoc, getDocs, Query, Timestamp } from 'firebase/firestore';
+import {
+  Bytes,
+  deleteDoc,
+  getDocs,
+  Query,
+  Timestamp,
+} from 'firebase/firestore';
 import { useToastStore } from './stores/toastStore';
-import { firebaseErrorTypeGuard } from './typeguards';
-import { List } from './types';
+import { encryptedFieldTypeGuard, firebaseErrorTypeGuard } from './typeguards';
+import { EncryptedField, List } from './types';
 import { defaultListName } from './constants';
 import JSZip from 'jszip';
 
@@ -41,8 +47,9 @@ export const getTypedDecryptedDocs = async <
       const newObj = { ...obj };
       for (const param of decryptParams) {
         const val = obj[param];
-        if (typeof val === 'string') {
-          // Since val is of type T[K], it means that T[K] is a string, making it safe to cast
+        if (encryptedFieldTypeGuard(val)) {
+          // For every field that is type EncryptedField, it can also be type string
+          // This means that T[K] has to be type EncryptedField | string
           newObj[param] = (await decryptWithKey(val, key)) as T[K];
         }
       }
@@ -124,28 +131,31 @@ export async function derivePasswordKey(
 export async function encryptWithKey(
   plainText: string,
   key: CryptoKey,
-): Promise<string> {
+): Promise<EncryptedField> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const encoder = new TextEncoder();
+  const encoded = encoder.encode(plainText);
   const encrypted = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
     key,
-    encoder.encode(plainText),
+    encoded,
   );
-  return `${uint8ArrayToBase64(iv)}:${uint8ArrayToBase64(new Uint8Array(encrypted))}`;
+  const encryptedData = new Uint8Array(encrypted);
+  return {
+    iv: Bytes.fromUint8Array(iv),
+    data: Bytes.fromUint8Array(encryptedData),
+  };
 }
 
 export async function decryptWithKey(
-  encryptedText: string,
+  encryptedText: EncryptedField,
   key: CryptoKey,
 ): Promise<string> {
-  const [ivB64, dataB64] = encryptedText.split(':');
-  const iv = base64ToUint8Array(ivB64);
-  const data = base64ToUint8Array(dataB64);
+  const { iv, data } = encryptedText;
   const decrypted = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv },
+    { name: 'AES-GCM', iv: iv.toUint8Array() },
     key,
-    data,
+    data.toUint8Array(),
   );
   return new TextDecoder().decode(decrypted);
 }
@@ -187,20 +197,6 @@ export const handleError = (err: unknown) => {
   } else console.error(err);
 };
 
-function uint8ArrayToBase64(u8: Uint8Array): string {
-  return btoa(String.fromCharCode(...u8));
-}
-
-function base64ToUint8Array(b64: string): Uint8Array {
-  const binary = atob(b64);
-  const len = binary.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return bytes;
-}
-
 export async function zipAndDownloadJSON(
   files: { filename: string; data: unknown[] }[],
   zipFilename: string,
@@ -220,4 +216,9 @@ export async function zipAndDownloadJSON(
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+}
+
+export function possiblyEncryptedToString(val: EncryptedField | string) {
+  if (typeof val === 'string') return val;
+  return '__ENCRYPTED VALUE ERROR__';
 }
