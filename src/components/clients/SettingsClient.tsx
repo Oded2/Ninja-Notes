@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import {
   DocumentIcon,
+  EnvelopeIcon,
   KeyIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
@@ -47,7 +48,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
-import { useInputStore } from '@/lib/stores/inputStore';
+import Collapse from '@/components/Collapse';
 
 export default function SettingsClient() {
   const [tab, setTab] = useState(0);
@@ -256,22 +257,28 @@ function AccountSettings() {
   const [accountDeleteCompleted, setAccountDeleteCompleted] = useState(false);
   const addToast = useToastStore((state) => state.add);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
-  const showInput = useInputStore((state) => state.showInput);
   const lists = useContentStore((state) => state.lists);
   const purge = useContentStore((state) => state.purge);
-  const [inProgress, setInProgress] = useState(false);
+  const [emailInProgress, setEmailInProgress] = useState(false);
+  const [passwordInProgress, setPasswordInProgress] = useState(false);
+  const [showEmaiInput, setShowEmailInput] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
 
-  const handleEmailChange = (newEmail: string) => {
-    if (!user) return;
-    return updateEmail(user, newEmail)
-      .then(() =>
+  const handleEmailChange = async () => {
+    if (!user || !newEmail) return;
+    setEmailInProgress(true);
+    try {
+      await updateEmail(user, newEmail).then(() =>
         addToast(
           'success',
           'Email updated',
           'Your email has been successfully updated',
         ),
-      )
-      .catch(handleError);
+      );
+    } catch (err) {
+      handleError(err);
+    }
+    setEmailInProgress(false);
   };
 
   const handlePasswordChange = async () => {
@@ -279,8 +286,8 @@ function AccountSettings() {
       addToast('error', 'Error', 'Passwords must match');
       return;
     }
-    if (!user || !userKey || inProgress) return;
-    setInProgress(true);
+    if (!user || !userKey || passwordInProgress) return;
+    setPasswordInProgress(true);
     try {
       // Re‐encrypt the E2EE vault key under the new password
       // Generate a new 16-byte salt
@@ -316,7 +323,7 @@ function AccountSettings() {
     } catch (err) {
       handleError(err);
     }
-    setInProgress(false);
+    setPasswordInProgress(false);
   };
 
   const handleNotePurge = async (accountDelete = true) => {
@@ -378,14 +385,34 @@ function AccountSettings() {
             <span className="font-bold">{user?.email}</span>
           </div>
           <button
-            onClick={() =>
-              showInput('Enter your new email address', handleEmailChange)
-            }
-            className="text-secondary me-auto cursor-pointer hover:underline sm:ms-auto sm:me-auto"
+            onClick={() => setShowEmailInput((prev) => !prev)}
+            className="text-secondary-text me-auto cursor-pointer hover:underline sm:ms-auto sm:me-auto"
           >
-            Change
+            {showEmaiInput ? 'Cancel' : 'Change'}
           </button>
         </div>
+        <Collapse open={showEmaiInput}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleEmailChange();
+            }}
+            className="flex max-w-sm gap-2 px-1 pt-4 pb-1"
+          >
+            <FormInput
+              type="email"
+              label="New email address"
+              val={newEmail}
+              setVal={setNewEmail}
+              required
+            >
+              <EnvelopeIcon />
+            </FormInput>
+            <Button small style="secondary" disabled={emailInProgress}>
+              Change
+            </Button>
+          </form>
+        </Collapse>
       </FieldSector>
       <FieldSector header="Password">
         <form
@@ -411,7 +438,7 @@ function AccountSettings() {
             />
           </div>
           <div className="flex justify-end py-4">
-            <Button style="black" small disabled={inProgress}>
+            <Button style="black" small disabled={passwordInProgress}>
               Change Password
             </Button>
           </div>

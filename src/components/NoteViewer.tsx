@@ -40,6 +40,7 @@ import AutoLink from '@/components/AutoLink';
 import FormInput from '@/components/FormInput';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 import Pagination from '@/components/Pagination';
+import Collapse from '@/components/Collapse';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -426,24 +427,5 @@ function CopyButton({ text }: CopyButtonProps) {
         )}
       </AnimatePresence>
     </button>
-  );
-}
-
-type CollapseProps = {
-  open: boolean;
-  children: React.ReactNode;
-};
-
-function Collapse({ open, children }: CollapseProps) {
-  return (
-    <motion.div
-      animate={{
-        height: open ? 'auto' : 0,
-      }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="overflow-x-auto overflow-y-hidden"
-    >
-      {children}
-    </motion.div>
   );
 }

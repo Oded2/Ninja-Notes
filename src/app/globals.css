@@ -21,6 +21,7 @@
   --color-success:;
   --color-error: ;
   --color-neutral: ;
+  --color-secondary-text:;
 }
 
 @layer theme {
@@ -39,6 +40,7 @@
     --color-success: var(--color-emerald-500);
     --color-error: var(--color-red-500);
     --color-neutral: var(--color-gray-500);
+    --color-secondary-text: var(--color-indigo-500);
   }
   .theme-dark {
     --color-base: var(--color-gray-900);
@@ -55,5 +57,6 @@
     --color-success: var(--color-emerald-600);
     --color-error: var(--color-red-600);
     --color-neutral: var(--color-gray-600);
+    --color-secondary-text: var(--color-indigo-400);
   }
 }
