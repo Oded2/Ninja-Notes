@@ -25,7 +25,7 @@ import { useInputStore } from '@/lib/stores/inputStore';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { User } from 'firebase/auth';
 import { useContentStore } from '@/lib/stores/contentStore';
-import IconButton from './IconButton';
+import IconButton from '@/components//IconButton';
 
 export default function AddNote() {
   const labelId = useId();

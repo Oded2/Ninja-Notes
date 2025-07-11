@@ -1,9 +1,9 @@
 import { useConfirmStore } from '@/lib/stores/confirmStore';
 import { useEffect, useRef, useState } from 'react';
-import Button from './Button';
-import Modal from './Modal';
-import ModalActions from './ModalActions';
-import FormInput from './FormInput';
+import Button from '@/components/Button';
+import Modal from '@/components/Modal';
+import ModalActions from '@/components/ModalActions';
+import FormInput from '@/components/FormInput';
 
 export default function ConfirmModal() {
   const closeConfirm = useConfirmStore((state) => state.closeConfirm);

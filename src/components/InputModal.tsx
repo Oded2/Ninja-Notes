@@ -1,9 +1,9 @@
 import { useInputStore } from '@/lib/stores/inputStore';
-import Modal from './Modal';
+import Modal from '@/components/Modal';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import ModalActions from './ModalActions';
-import Button from './Button';
-import FormInput from './FormInput';
+import ModalActions from '@/components/ModalActions';
+import Button from '@/components/Button';
+import FormInput from '@/components/FormInput';
 
 export default function InputModal() {
   const closeInput = useInputStore((state) => state.closeInput);
