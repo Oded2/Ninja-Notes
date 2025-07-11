@@ -1,7 +1,6 @@
 import { useEditStore } from '@/lib/stores/editStore';
 import { List, Note } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import Collapse from './Collapse';
 import {
   cleanSearch,
   deleteByQuery,
@@ -16,7 +15,7 @@ import {
   maxLengths,
   notesPerPage,
 } from '@/lib/constants';
-import InlineDivider from './InlineDivider';
+import InlineDivider from '@/components/InlineDivider';
 import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
 import {
@@ -24,8 +23,8 @@ import {
   ChevronDoubleDownIcon,
 } from '@heroicons/react/24/solid';
 import { useId, useMemo, useState } from 'react';
-import ListSelect from './ListSelect';
-import IconButton from './IconButton';
+import ListSelect from '@/components/ListSelect';
+import IconButton from '@/components/IconButton';
 import {
   ClipboardDocumentCheckIcon,
   ClipboardDocumentIcon,
@@ -36,10 +35,10 @@ import { useToastStore } from '@/lib/stores/toastStore';
 import { useUserStore } from '@/lib/stores/userStore';
 import { useInputStore } from '@/lib/stores/inputStore';
 import { useContentStore } from '@/lib/stores/contentStore';
-import AutoLink from './AutoLink';
-import FormInput from './FormInput';
+import AutoLink from '@/components/AutoLink';
+import FormInput from '@/components/FormInput';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
-import Pagination from './Pagination';
+import Pagination from '@/components/Pagination';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -420,5 +419,24 @@ function CopyButton({ text }: CopyButtonProps) {
         )}
       </AnimatePresence>
     </button>
+  );
+}
+
+type CollapseProps = {
+  open: boolean;
+  children: React.ReactNode;
+};
+
+function Collapse({ open, children }: CollapseProps) {
+  return (
+    <motion.div
+      animate={{
+        height: open ? 'auto' : 0,
+      }}
+      transition={{ duration: 0.3, ease: 'easeInOut' }}
+      className="overflow-hidden"
+    >
+      {children}
+    </motion.div>
   );
 }
