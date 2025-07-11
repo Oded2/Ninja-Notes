@@ -40,7 +40,7 @@ function ToastComponent({ toast }: ToastProps) {
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ type: 'spring', duration: 0.3 }}
       className={clsx(
-        'relative flex flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm',
+        'relative flex max-w-md flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm md:max-w-lg',
         {
           'bg-success': toast.type === 'success',
           'bg-error': toast.type === 'error',
