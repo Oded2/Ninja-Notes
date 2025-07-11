@@ -209,7 +209,6 @@ export async function zipAndDownloadJSON(
   const zip = new JSZip();
   files.forEach(({ filename, data }) => {
     const json = JSON.stringify(data, null, 2);
-    console.log(data);
     zip.file(filename, json);
   });
   const content = await zip.generateAsync({ type: 'blob' });
