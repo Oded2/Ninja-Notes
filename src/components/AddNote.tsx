@@ -290,12 +290,9 @@ export default function AddNote() {
         </div>
       </InputContainer>
       <div className="ms-auto">
-        <Button
-          type="submit"
-          disabled={inProgress}
-          label={activeEditNote ? 'Edit' : 'Add'}
-          style="primary"
-        />
+        <Button type="submit" disabled={inProgress} style="primary">
+          {activeEditNote ? 'Edit' : 'Add'}
+        </Button>
       </div>
     </form>
   );

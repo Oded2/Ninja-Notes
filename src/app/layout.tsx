@@ -173,31 +173,30 @@ function Navbar({ onThemeToggle }: NavbarProps) {
             height={36}
           />
         </a>
-        <Button
-          label="Toggle Theme"
-          small
-          style="secondary"
-          onClick={onThemeToggle}
-        />
+        <Button small style="secondary" onClick={onThemeToggle}>
+          Toggle Theme
+        </Button>
         {user ? (
           <>
-            <Button label="Settings" small style="black" href="/settings" />
-            <Button
-              label="Sign out"
-              small
-              style="primary"
-              onClick={authHandlers.signout}
-            />
+            <Button small style="black" href="/settings">
+              Settings
+            </Button>
+            <Button small style="primary" onClick={authHandlers.signout}>
+              Sign Out
+            </Button>
           </>
         ) : (
           <>
-            <Button label="Login" small style="black" href="/auth" />
+            <Button small style="black" href="/auth">
+              Login
+            </Button>
             <Button
-              label="Sign Up"
               small
               style="primary"
               href={{ pathname: '/auth', query: { display: 'signup' } }}
-            />
+            >
+              Sign Up
+            </Button>
           </>
         )}
       </div>

@@ -63,14 +63,17 @@ export default function ConfirmModal() {
         </div>
       )}
       <ModalActions>
-        <Button type="button" label="Cancel" small onClick={handleClose} />
+        <Button type="button" small onClick={handleClose}>
+          Cancel
+        </Button>
         <Button
           type="submit"
-          label="Confirm"
           small
           style="primary"
           disabled={inProgress || (!!text && val !== text)}
-        />
+        >
+          Confirm
+        </Button>
       </ModalActions>
     </Modal>
   );

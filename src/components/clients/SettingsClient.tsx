@@ -361,7 +361,9 @@ function AccountSettings() {
             />
           </div>
           <div className="flex justify-end py-4">
-            <Button style="black" label="Change Password" small />
+            <Button style="black" small>
+              Change Password
+            </Button>
           </div>
         </form>
       </FieldSector>
@@ -375,7 +377,6 @@ function AccountSettings() {
           <div className="mx-auto mt-2 flex gap-1">
             <Button
               style="neutral"
-              label="Purge Account"
               small
               disabled={purgeCompleted}
               onClick={() =>
@@ -386,10 +387,11 @@ function AccountSettings() {
                   'account/purge',
                 )
               }
-            />
+            >
+              Purge Account
+            </Button>
             <Button
               style="primary"
-              label="Delete Account"
               small
               disabled={accountDeleteCompleted}
               onClick={() =>
@@ -400,7 +402,9 @@ function AccountSettings() {
                   'account/delete',
                 )
               }
-            />
+            >
+              Delete Account
+            </Button>
           </div>
         </div>
       </FieldSector>
@@ -446,7 +450,9 @@ function VerifyAccount({ onVerify }: VerifyAccountProps) {
       >
         <KeyIcon />
       </FormInput>
-      <Button style="primary" label="Verify Account" disabled={inProgress} />
+      <Button style="primary" disabled={inProgress}>
+        Verify Account
+      </Button>
     </form>
   );
 }

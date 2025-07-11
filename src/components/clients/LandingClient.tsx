@@ -45,14 +45,13 @@ export default function LandingClient({ commit }: Props) {
           <div className="flex justify-center gap-2">
             <Button
               externalLink={repoUrl + '/blob/main/README.md'}
-              label="Read the docs"
               style="black"
-            />
-            <Button
-              href={user ? '/notes' : '/auth'}
-              label={user ? 'View Notes' : 'Get Started'}
-              style="primary"
-            />
+            >
+              Read the docs
+            </Button>
+            <Button href={user ? '/notes' : '/auth'} style="primary">
+              {user ? 'View Notes' : 'Get Started'}
+            </Button>
           </div>
         </div>
         <motion.div

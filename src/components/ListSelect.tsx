@@ -1,9 +1,5 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import {
-  defaultListLabel,
-  defaultListName,
-  springTransition,
-} from '@/lib/constants';
+import { defaultListLabel, defaultListName } from '@/lib/constants';
 import { List, SetValShortcut } from '@/lib/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useContentStore } from '@/lib/stores/contentStore';

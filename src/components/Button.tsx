@@ -7,11 +7,11 @@ type Props = {
   onClick?: () => void;
   href?: Url;
   externalLink?: string;
-  label?: string;
   type?: 'button' | 'submit';
   disabled?: boolean;
   fullWidth?: boolean;
   small?: boolean;
+  children: React.ReactNode;
 };
 
 export default function Button({
@@ -19,11 +19,11 @@ export default function Button({
   onClick,
   href,
   externalLink,
-  label,
   type,
   disabled,
   fullWidth,
   small,
+  children,
 }: Props) {
   const className = clsx(
     'cursor-pointer relative flex items-center justify-center border-4 font-semibold text-primary-content shadow transition-colors disabled:pointer-events-none disabled:opacity-60',
@@ -45,13 +45,13 @@ export default function Button({
   if (href)
     return (
       <Link href={href} className={className}>
-        {label}
+        {children}
       </Link>
     );
   else if (externalLink)
     return (
       <a href={externalLink} target="_blank" className={className}>
-        {label}
+        {children}
       </a>
     );
   else
@@ -62,7 +62,7 @@ export default function Button({
         disabled={disabled}
         className={className}
       >
-        {label}
+        {children}
       </button>
     );
 }

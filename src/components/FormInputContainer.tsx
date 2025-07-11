@@ -29,12 +29,9 @@ export default function FormInputContainer({
     >
       <h2 className="text-center text-xl font-semibold">{title}</h2>
       {children}
-      <Button
-        type="submit"
-        label={submitText}
-        style="primary"
-        disabled={inProgress}
-      />
+      <Button type="submit" style="primary" disabled={inProgress}>
+        {submitText}
+      </Button>
     </form>
   );
 }

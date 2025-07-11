@@ -62,16 +62,12 @@ export default function HomeClient() {
           </div>
         </div>
         <div className="border-base-100 mt-5 flex justify-center gap-4 border-b-2 pb-10">
-          <Button
-            onClick={() => setViewNotes(false)}
-            label="Add Note"
-            style="primary"
-          />
-          <Button
-            onClick={() => setViewNotes(true)}
-            style="secondary"
-            label="View Notes"
-          />
+          <Button onClick={() => setViewNotes(false)} style="primary">
+            Add Note
+          </Button>
+          <Button onClick={() => setViewNotes(true)} style="secondary">
+            View Notes
+          </Button>
         </div>
         {listsLength ? (
           <AnimatePresence initial={false} mode="wait">

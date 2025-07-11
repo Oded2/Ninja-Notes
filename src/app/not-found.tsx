@@ -1,4 +1,4 @@
-import NotFoundClient from '@/components/NotFoundClient';
+import NotFoundClient from '@/components/clients/NotFoundClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {

@@ -48,8 +48,12 @@ export default function InputModal() {
         )}
       </div>
       <ModalActions>
-        <Button type="button" label="Cancel" small onClick={handleClose} />
-        <Button type="submit" label="Confirm" style="primary" small />
+        <Button type="button" small onClick={handleClose}>
+          Cancel
+        </Button>
+        <Button type="submit" style="primary" small>
+          Confirm
+        </Button>
       </ModalActions>
     </Modal>
   );
