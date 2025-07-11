@@ -21,7 +21,7 @@ export default function IconText({ responsive, text, children: icon }: Props) {
           responsive ? 'hidden sm:flex' : 'flex',
         )}
       >
-        <div className="*:size-6">{icon}</div>
+        <div className="*:size-5">{icon}</div>
         <span>{text}</span>
       </div>
       {responsive && <div className="*:size-6 sm:hidden">{icon}</div>}

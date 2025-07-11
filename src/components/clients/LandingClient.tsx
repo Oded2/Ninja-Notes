@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  ArrowTopRightOnSquareIcon,
   CloudIcon,
   FolderIcon,
   LockClosedIcon,
@@ -18,6 +19,7 @@ import {
   CommandLineIcon,
   CodeBracketSquareIcon,
 } from '@heroicons/react/24/solid';
+import IconText from '@/components/IconText';
 
 type Props = {
   commit: CommitInfo | undefined;
@@ -47,7 +49,9 @@ export default function LandingClient({ commit }: Props) {
               externalLink={repoUrl + '/blob/main/README.md'}
               style="black"
             >
-              Read the docs
+              <IconText text="Documentation">
+                <ArrowTopRightOnSquareIcon />
+              </IconText>
             </Button>
             <Button href={user ? '/notes' : '/auth'} style="primary">
               {user ? 'View Notes' : 'Get Started'}
