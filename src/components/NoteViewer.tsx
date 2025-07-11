@@ -281,7 +281,7 @@ export default function NoteViewer() {
                     <h2 dir="auto" className="text-xl font-semibold">
                       {possiblyEncryptedToString(title)}
                     </h2>
-                    <div className="text-base-200-content/70 text-sm">
+                    <div className="text-base-200-content text-sm">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
                         {editedAt && (
