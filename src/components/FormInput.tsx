@@ -41,7 +41,7 @@ export default function FormInput({
         onChange={(e) => setVal(e.target.value)}
         className="text-base-content/80 placeholder:text-base-content/50 grow text-sm font-medium outline-none"
         placeholder={label}
-        minLength={type === 'password' ? 8 : maxLength}
+        minLength={type === 'password' ? 8 : undefined}
         maxLength={type === 'password' ? 4096 : maxLength}
         required={required}
         pattern={pattern}
