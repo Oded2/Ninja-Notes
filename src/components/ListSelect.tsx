@@ -1,10 +1,15 @@
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { defaultListLabel, defaultListName } from '@/lib/constants';
+import {
+  defaultListLabel,
+  defaultListName,
+  springTransition,
+} from '@/lib/constants';
 import { List, SetValShortcut } from '@/lib/types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useContentStore } from '@/lib/stores/contentStore';
 import { findDefaultListId } from '@/lib/helpers';
 import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const allListsLabel = 'All Collections';
 
@@ -76,27 +81,37 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
         <span>{dropdownLabel}</span>
         <ChevronDownIcon className="pointer-events-none ml-auto size-4" />
       </button>
-
-      {showDropdown && (
-        <div className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl ring md:max-h-100">
-          {allowAll && (
-            <MemoizedOptionButton title={allListsLabel} onClick={onAllClick} />
-          )}
-          {defaultListId && (
-            <MemoizedOptionButton
-              title={defaultListLabel}
-              onClick={onDefaultClick}
-            />
-          )}
-          {sortedLists.map((list) => (
-            <MemoizedOptionButton
-              key={list.id}
-              title={list.name}
-              onClick={() => setValWithId(list.id)}
-            />
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {showDropdown && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.125 }}
+            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl ring md:max-h-100"
+          >
+            {allowAll && (
+              <MemoizedOptionButton
+                title={allListsLabel}
+                onClick={onAllClick}
+              />
+            )}
+            {defaultListId && (
+              <MemoizedOptionButton
+                title={defaultListLabel}
+                onClick={onDefaultClick}
+              />
+            )}
+            {sortedLists.map((list) => (
+              <MemoizedOptionButton
+                key={list.id}
+                title={list.name}
+                onClick={() => setValWithId(list.id)}
+              />
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
