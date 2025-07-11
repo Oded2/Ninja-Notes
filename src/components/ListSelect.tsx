@@ -75,7 +75,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
         className="bg-base-100 ring-neutral/50 flex h-full w-full cursor-pointer items-center rounded-2xl px-4 py-2 ring select-none"
       >
         <span>{dropdownLabel}</span>
-        <ChevronDownIcon className="pointer-events-none ml-auto size-4" />
+        <ChevronDownIcon className="pointer-events-none ms-auto size-4" />
       </button>
       <AnimatePresence>
         {showDropdown && (
@@ -84,7 +84,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.125 }}
-            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl ring md:max-h-100"
+            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl shadow-lg ring md:max-h-100"
           >
             {allowAll && (
               <MemoizedOptionButton
