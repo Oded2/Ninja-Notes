@@ -9,7 +9,6 @@ import {
   formatTimestamp,
   handleError,
 } from '@/lib/helpers';
-import CopyButton from './CopyButton';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
 import {
   defaultListLabel,
@@ -27,7 +26,12 @@ import {
 import { useId, useMemo, useState } from 'react';
 import ListSelect from './ListSelect';
 import IconButton from './IconButton';
-import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import {
+  ClipboardDocumentCheckIcon,
+  ClipboardDocumentIcon,
+  PencilIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
 import { useToastStore } from '@/lib/stores/toastStore';
 import { useUserStore } from '@/lib/stores/userStore';
 import { useInputStore } from '@/lib/stores/inputStore';
@@ -359,5 +363,62 @@ function Tooltip({ text, children }: TooltipProps) {
         {text}
       </div>
     </div>
+  );
+}
+
+type CopyButtonProps = {
+  text: string;
+};
+
+function CopyButton({ text }: CopyButtonProps) {
+  const [disabled, setDisabled] = useState(false);
+  const add = useToastStore((state) => state.add);
+
+  const handleCopy = () => {
+    setDisabled(true);
+    navigator.clipboard
+      .writeText(text)
+      .catch(() => add('error', 'Error', 'An unknown error has occurred'))
+      .then(() => {
+        setTimeout(() => setDisabled(false), 2000);
+      });
+  };
+
+  return (
+    <button
+      onClick={handleCopy}
+      disabled={disabled}
+      className="cursor-pointer rounded-2xl"
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {disabled ? (
+          <motion.div
+            key="check"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 400,
+              damping: 15,
+            }}
+          >
+            <ClipboardDocumentCheckIcon className="size-6" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="copy"
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{
+              type: 'spring',
+              stiffness: 400,
+              damping: 15,
+            }}
+          >
+            <ClipboardDocumentIcon className="size-6" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </button>
   );
 }
