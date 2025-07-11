@@ -49,6 +49,7 @@ export default function AuthClient() {
       addToast('error', 'Error', 'Passwords must match');
       return;
     }
+    if (inProgress) return;
     setInProgress(true);
     const func = isSignUp ? signup : signin;
     try {
@@ -117,6 +118,7 @@ export default function AuthClient() {
       router.push('/notes');
     } catch (err) {
       handleError(err);
+      setInProgress(false);
     }
   };
 
@@ -137,11 +139,16 @@ export default function AuthClient() {
         className="size-48 max-h-full rounded-2xl"
         priority
       />
-      <FormInputContainer
-        title={isSignUp ? 'Create an account' : 'Sign in to your account'}
-        submitText={isSignUp ? 'Create Account' : 'Sign In'}
-        handleSubmit={handleSubmit}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+        className="flex w-full flex-col gap-4"
       >
+        <h2 className="text-center text-xl font-semibold">
+          {isSignUp ? 'Create an account' : 'Sign in to your account'}
+        </h2>
         <FormInput
           type="email"
           label="Email"
@@ -189,7 +196,7 @@ export default function AuthClient() {
               : "Don't have an account yet?"}{' '}
             <button
               type="button"
-              onClick={() => setIsSignUp((state) => !state)}
+              onClick={() => setIsSignUp((prev) => !prev)}
               className="cursor-pointer underline"
             >
               {isSignUp ? 'Sign In' : 'Create an account'}
@@ -199,47 +206,16 @@ export default function AuthClient() {
             <button
               type="button"
               onClick={handlePasswordReset}
-              disabled={inProgress}
               className="ms-auto cursor-pointer hover:underline disabled:opacity-50"
             >
               Forgot password?
             </button>
           )}
         </div>
-      </FormInputContainer>
+        <Button type="submit" style="primary" disabled={inProgress}>
+          {isSignUp ? 'Create Account' : 'Sign In'}
+        </Button>
+      </form>
     </div>
-  );
-}
-
-type FormInputContainerProps = {
-  title: string;
-  submitText: string;
-  handleSubmit: () => Promise<void>;
-  children: React.ReactNode;
-};
-
-function FormInputContainer({
-  title,
-  submitText,
-  handleSubmit,
-  children,
-}: FormInputContainerProps) {
-  const [inProgress, setInProgress] = useState(false);
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        setInProgress(true);
-        handleSubmit().then(() => setInProgress(false));
-      }}
-      className="flex w-full flex-col gap-4"
-    >
-      <h2 className="text-center text-xl font-semibold">{title}</h2>
-      {children}
-      <Button type="submit" style="primary" disabled={inProgress}>
-        {submitText}
-      </Button>
-    </form>
   );
 }
