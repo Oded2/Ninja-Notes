@@ -68,7 +68,7 @@ export default function SettingsClient() {
         </div>
       </div>
       <div className="flex grow flex-col py-10">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={tab}
             initial={{ y: 20, opacity: 0 }}
