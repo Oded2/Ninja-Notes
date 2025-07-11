@@ -121,7 +121,7 @@ function TabSelector({
     <button
       onClick={() => setTab(activeTab)}
       className={clsx(
-        'flex grow cursor-pointer justify-center border-y p-2 first:rounded-s first:border-s last:rounded-e last:border-e sm:justify-start sm:border-x sm:text-start sm:not-first:not-last:border-y-0 sm:first:rounded-s-none sm:first:rounded-t sm:first:border-t sm:last:rounded-e-none sm:last:rounded-b sm:last:border-b',
+        'flex grow cursor-pointer justify-center border-y p-2 first:rounded-s first:border-s last:rounded-e last:border-e sm:justify-start sm:border-x sm:text-start sm:not-first:not-last:border-y-0 sm:first:rounded-s-none sm:first:rounded-t sm:first:border-b-0 sm:last:rounded-e-none sm:last:rounded-b sm:last:border-t-0',
         {
           'text-primary-content border-secondary bg-secondary': active,
           'hover:text-primary-content active:text-primary-content text-secondary-light hover:border-secondary-light hover:bg-secondary-light active:border-secondary active:bg-secondary border-gray-700 transition-colors':
