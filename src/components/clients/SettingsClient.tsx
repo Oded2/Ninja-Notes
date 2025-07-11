@@ -28,6 +28,7 @@ import {
   findDefaultListId,
   generateSalt,
   handleError,
+  zipAndDownloadJSON,
 } from '@/lib/helpers';
 import { useToastStore } from '@/lib/stores/toastStore';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
@@ -49,7 +50,7 @@ import {
 import { useInputStore } from '@/lib/stores/inputStore';
 
 export default function SettingsClient() {
-  const [tab, setTab] = useState(1);
+  const [tab, setTab] = useState(0);
 
   return (
     <div className="flex flex-col sm:flex-row">
@@ -165,7 +166,53 @@ function FieldSector({ header, children }: FieldSectorProps) {
 }
 
 function NotesManager() {
-  return <TabLayout header="My Notes">Coming soon...</TabLayout>;
+  const notes = useContentStore((state) => state.notes);
+  const lists = useContentStore((state) => state.lists);
+  const [inProgress, setInProgress] = useState(false);
+
+  const handleExport = async () => {
+    if (inProgress) return;
+    setInProgress(true);
+    try {
+      await zipAndDownloadJSON(
+        [
+          {
+            filename: 'notes.json',
+            data: notes,
+          },
+          {
+            filename: 'collections.json',
+            data: lists,
+          },
+        ],
+        'account-data.zip',
+      );
+    } catch (e) {
+      handleError(e);
+    } finally {
+      setInProgress(false);
+    }
+  };
+
+  return (
+    <TabLayout header="My Notes">
+      <div className="flex flex-col">
+        <FieldSector header="Export Notes">
+          <div className="flex max-w-lg flex-col gap-2">
+            <p className="text-sm">Save your notes locally</p>
+            <Button
+              small
+              style="black"
+              disabled={inProgress}
+              onClick={handleExport}
+            >
+              Export Notes
+            </Button>
+          </div>
+        </FieldSector>
+      </div>
+    </TabLayout>
+  );
 }
 
 function AccountManager() {
@@ -368,13 +415,13 @@ function AccountSettings() {
         </form>
       </FieldSector>
       <FieldSector header="Delete Account">
-        <div className="flex max-w-lg flex-col">
+        <div className="flex max-w-lg flex-col gap-2">
           <p className="text-sm">
             This account has {notesLength.toLocaleString()} notes associated
             with it. Deleting your account will permanently remove all notes and
             cannot be undone.
           </p>
-          <div className="mx-auto mt-2 flex gap-1">
+          <div className="mx-auto flex gap-1">
             <Button
               style="neutral"
               small

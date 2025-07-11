@@ -3,6 +3,7 @@ import { useToastStore } from './stores/toastStore';
 import { firebaseErrorTypeGuard } from './typeguards';
 import { List } from './types';
 import { defaultListName } from './constants';
+import JSZip from 'jszip';
 
 export const cleanSearch = (text: string) => {
   // The purpose of this function is to "forgive" the user for any punctuation while searching
@@ -198,4 +199,28 @@ function base64ToUint8Array(b64: string): Uint8Array {
     bytes[i] = binary.charCodeAt(i);
   }
   return bytes;
+}
+
+export async function zipAndDownloadJSON(
+  files: { filename: string; data: any[] }[],
+  zipFilename: string,
+) {
+  // Must be used in a client component
+  const zip = new JSZip();
+  files.forEach(({ filename, data }) => {
+    const json = JSON.stringify(data, null, 2);
+    console.log(data);
+    zip.file(filename, json);
+  });
+  const content = await zip.generateAsync({ type: 'blob' });
+
+  const url = URL.createObjectURL(content);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = zipFilename;
+
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
