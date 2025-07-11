@@ -51,72 +51,71 @@ export default function AuthClient() {
     }
     setInProgress(true);
     const func = isSignUp ? signup : signin;
-    const { user } = await func(email, password).catch((err) => {
-      setInProgress(false);
-      handleError(err);
-      return { user: null };
-    });
-    if (!user) return;
-    const { uid } = user;
-    const userDocRef = doc(usersCollection, uid);
-    if (isSignUp) {
-      const salt = generateSalt();
-      const userKey = await generateUserKey();
-      const [userKeyBase64, passwordKey] = await Promise.all([
-        exportKey(userKey),
-        derivePasswordKey(password, salt),
-      ]);
-      // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password
-      const [encryptedUserKey, encryptedDefaultListName] = await Promise.all([
-        encryptWithKey(userKeyBase64, passwordKey),
-        encryptWithKey(defaultListName, userKey),
-      ]);
-      // Create a default list for the user, save the user key to indexDB, create a document for the user
-      const [{ id }] = await Promise.all([
-        addDoc(listsCollection, {
-          name: encryptedDefaultListName,
-          userId: uid,
-        }),
-        saveUserKey(userKey),
-        setDoc(userDocRef, {
-          encryptedUserKey,
-          salt: Array.from(salt),
-        }),
-      ]);
-      // Since the default list was added to the user's lists, then it needs to be added locally as well
-      useContentStore.getState().addList(
-        {
-          name: defaultListName,
-          id,
-        },
-        [],
-      );
-    } else {
-      // User is logging in
-      const userDoc = await getDoc(userDocRef);
-      const data = userDoc.data();
-      // Ensure that the data is valid
-      if (userDataTypeGuard(data)) {
-        // Extract the encrypted key and the salt
-        const { encryptedUserKey, salt } = data;
-        // Get the password-derived key to decrypt the extracted encrypted key
-        const passwordKey = await derivePasswordKey(
-          password,
-          new Uint8Array(salt),
+    try {
+      const { user } = await func(email, password);
+      const { uid } = user;
+      const userDocRef = doc(usersCollection, uid);
+      if (isSignUp) {
+        const salt = generateSalt();
+        const userKey = await generateUserKey();
+        const [userKeyBase64, passwordKey] = await Promise.all([
+          exportKey(userKey),
+          derivePasswordKey(password, salt),
+        ]);
+        // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password
+        const [encryptedUserKey, encryptedDefaultListName] = await Promise.all([
+          encryptWithKey(userKeyBase64, passwordKey),
+          encryptWithKey(defaultListName, userKey),
+        ]);
+        // Create a default list for the user, save the user key to indexDB, create a document for the user
+        const [{ id }] = await Promise.all([
+          addDoc(listsCollection, {
+            name: encryptedDefaultListName,
+            userId: uid,
+          }),
+          saveUserKey(userKey),
+          setDoc(userDocRef, {
+            encryptedUserKey,
+            salt: Array.from(salt),
+          }),
+        ]);
+        // Since the default list was added to the user's lists, then it needs to be added locally as well
+        useContentStore.getState().addList(
+          {
+            name: defaultListName,
+            id,
+          },
+          [],
         );
-        // Decrypt the encrypted key
-        const decryptedUserKey = await decryptWithKey(
-          encryptedUserKey,
-          passwordKey,
-        ).then(importKey);
-        // Save to indexDB
-        await saveUserKey(decryptedUserKey);
       } else {
-        // Keep alert
-        alert('Invalid user data');
+        // User is logging in
+        const userDoc = await getDoc(userDocRef);
+        const data = userDoc.data();
+        // Ensure that the data is valid
+        if (userDataTypeGuard(data)) {
+          // Extract the encrypted key and the salt
+          const { encryptedUserKey, salt } = data;
+          // Get the password-derived key to decrypt the extracted encrypted key
+          const passwordKey = await derivePasswordKey(
+            password,
+            new Uint8Array(salt),
+          );
+          // Decrypt the encrypted key
+          const decryptedUserKey = await decryptWithKey(
+            encryptedUserKey,
+            passwordKey,
+          ).then(importKey);
+          // Save to indexDB
+          await saveUserKey(decryptedUserKey);
+        } else {
+          // Keep alert
+          alert('Invalid user data');
+        }
       }
+      router.push('/notes');
+    } catch (err) {
+      handleError(err);
     }
-    router.push('/notes');
   };
 
   const handlePasswordReset = () => {

@@ -259,6 +259,7 @@ function AccountSettings() {
   const showInput = useInputStore((state) => state.showInput);
   const lists = useContentStore((state) => state.lists);
   const purge = useContentStore((state) => state.purge);
+  const [inProgress, setInProgress] = useState(false);
 
   const handleEmailChange = (newEmail: string) => {
     if (!user) return;
@@ -278,7 +279,8 @@ function AccountSettings() {
       addToast('error', 'Error', 'Passwords must match');
       return;
     }
-    if (!user || !userKey) return;
+    if (!user || !userKey || inProgress) return;
+    setInProgress(true);
     try {
       // Re‐encrypt the E2EE vault key under the new password
       // Generate a new 16-byte salt
@@ -314,6 +316,7 @@ function AccountSettings() {
     } catch (err) {
       handleError(err);
     }
+    setInProgress(false);
   };
 
   const handleNotePurge = async (accountDelete = true) => {
@@ -408,7 +411,7 @@ function AccountSettings() {
             />
           </div>
           <div className="flex justify-end py-4">
-            <Button style="black" small>
+            <Button style="black" small disabled={inProgress}>
               Change Password
             </Button>
           </div>

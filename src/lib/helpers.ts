@@ -173,7 +173,7 @@ export const getError = (err: unknown) => {
 export const handleError = (err: unknown) => {
   if (firebaseErrorTypeGuard(err)) {
     const { code, message } = err;
-    console.error(`Firebase error\nCode: ${code}\nMessage: ${message}`);
+    console.warn(`Firebase error\nCode: ${code}\nMessage: ${message}`);
     const errorCodeMap: Record<string, string> = {
       'auth/invalid-credential': 'Invalid credentials',
       'auth/invalid-email': 'Invalid email address',
