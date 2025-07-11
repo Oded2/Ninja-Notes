@@ -32,7 +32,7 @@ const geistSans = Rubik({
   subsets: ['latin'],
 });
 
-const protectedRoutes = ['/notes', '/account'];
+const protectedRoutes = ['/notes', '/settings'];
 
 export default function RootLayout({
   children,
