@@ -134,13 +134,8 @@ export default function RootLayout({
   }, [isDark]);
 
   return (
-    <html lang="en">
-      <body
-        className={clsx(
-          geistSans.className,
-          isDark ? 'theme-dark' : 'theme-light',
-        )}
-      >
+    <html lang="en" className={clsx(isDark ? 'theme-dark' : 'theme-light')}>
+      <body className={geistSans.className}>
         <div className="bg-base text-base-content flex min-h-screen flex-col">
           <Navbar onThemeToggle={() => setIsDark((prev) => !prev)} />
           <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
