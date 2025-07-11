@@ -202,7 +202,7 @@ function base64ToUint8Array(b64: string): Uint8Array {
 }
 
 export async function zipAndDownloadJSON(
-  files: { filename: string; data: any[] }[],
+  files: { filename: string; data: unknown[] }[],
   zipFilename: string,
 ) {
   // Must be used in a client component
