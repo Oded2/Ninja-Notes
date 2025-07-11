@@ -94,7 +94,7 @@ function RenderTab({ tab }: RenderTabProps) {
     case 1:
       return <AccountManager />;
     default:
-      return <span className="text-rose-500">Unknown Tab</span>;
+      return <span className="text-error">Unknown Tab</span>;
   }
 }
 

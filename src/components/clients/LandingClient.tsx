@@ -33,7 +33,7 @@ export default function LandingClient({ commit }: Props) {
           <div className="flex flex-col sm:px-8">
             <h1 className="text-6xl font-medium">
               Welcome to{' '}
-              <span className="bg-gradient-to-r from-red-400 to-rose-500 bg-clip-text text-transparent">
+              <span className="from-primary-light to-primary bg-gradient-to-r bg-clip-text text-transparent">
                 Ninja Notes
               </span>
             </h1>

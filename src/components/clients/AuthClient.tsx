@@ -170,7 +170,7 @@ export default function AuthClient() {
             >
               <ShieldCheckIcon
                 className={clsx({
-                  'text-emerald-600':
+                  'text-success':
                     password.length >= 8 && password === confirmPassword,
                 })}
               />

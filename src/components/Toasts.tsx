@@ -27,7 +27,7 @@ function ToastComponent({ toast }: ToastProps) {
   useEffect(() => {
     console.log('Toast mount');
     if (!duration) return;
-    const timeout = setTimeout(() => remove(id), duration + 50);
+    const timeout = setTimeout(() => remove(id), duration + 10);
     return () => clearTimeout(timeout);
   }, [duration, id, remove]);
   return (
@@ -42,8 +42,8 @@ function ToastComponent({ toast }: ToastProps) {
       className={clsx(
         'relative flex flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm',
         {
-          'bg-emerald-500': toast.type === 'success',
-          'bg-rose-500': toast.type === 'error',
+          'bg-success': toast.type === 'success',
+          'bg-error': toast.type === 'error',
         },
       )}
     >
@@ -52,7 +52,7 @@ function ToastComponent({ toast }: ToastProps) {
       {duration && (
         <div className="mt-2 h-3 w-full overflow-hidden rounded-2xl border">
           <motion.div
-            className="bg-base-content h-full"
+            className="bg-primary-content h-full"
             initial={{ width: '100%' }}
             animate={{ width: '0%' }}
             transition={{ duration: duration / 1000, ease: 'linear' }}
