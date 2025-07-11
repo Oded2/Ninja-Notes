@@ -134,9 +134,9 @@ export default function AuthClient() {
       <Image
         src="/logo.png"
         alt="Logo"
-        width={1024}
-        height={1024}
-        className="size-48 max-h-full rounded-2xl"
+        width={192}
+        height={192}
+        className="rounded-2xl"
         priority
       />
       <form
