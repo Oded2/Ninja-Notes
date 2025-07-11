@@ -441,7 +441,7 @@ function Collapse({ open, children }: CollapseProps) {
         height: open ? 'auto' : 0,
       }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="overflow-hidden"
+      className="overflow-x-auto overflow-y-hidden"
     >
       {children}
     </motion.div>

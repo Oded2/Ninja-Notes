@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+.theme-dark,
+.theme-dark * {
+  color-scheme: dark;
+}
+
 /* Generate utilities—must include every variable */
 @theme {
   --color-base: ;
