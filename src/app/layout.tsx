@@ -25,6 +25,8 @@ import Button from '@/components/Button';
 import Image from 'next/image';
 import { repoUrl } from '@/lib/constants';
 import clsx from 'clsx';
+import { Cog6ToothIcon, LightBulbIcon } from '@heroicons/react/24/outline';
+import IconText from '@/components/IconText';
 
 const geistSans = Rubik({
   subsets: ['latin'],
@@ -94,6 +96,7 @@ export default function RootLayout({
 
   useEffect(() => {
     if (loading || user) return;
+    // User is signed out
     purge(true);
     clearUserKey();
   }, [user, loading, purge]);
@@ -174,12 +177,16 @@ function Navbar({ onThemeToggle }: NavbarProps) {
           />
         </a>
         <Button small style="secondary" onClick={onThemeToggle}>
-          Toggle Theme
+          <IconText responsive text="Toggle Theme">
+            <LightBulbIcon />
+          </IconText>
         </Button>
         {user ? (
           <>
             <Button small style="black" href="/settings">
-              Settings
+              <IconText responsive text="Settings">
+                <Cog6ToothIcon />
+              </IconText>
             </Button>
             <Button small style="primary" onClick={authHandlers.signout}>
               Sign Out
