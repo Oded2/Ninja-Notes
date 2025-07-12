@@ -5,6 +5,10 @@ import { AnimatePresence } from 'framer-motion';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { XCircleIcon } from '@heroicons/react/24/outline';
+import {
+  CheckCircleIcon,
+  XCircleIcon as XCircleIconSolid,
+} from '@heroicons/react/24/solid';
 
 export default function Toasts() {
   const toasts = useToastStore((state) => state.toasts);
@@ -22,12 +26,12 @@ export default function Toasts() {
 type ToastProps = { toast: Toast };
 
 function ToastComponent({ toast }: ToastProps) {
-  const { duration, id, description } = toast;
+  const { duration, id, description, type: toastType } = toast;
   const remove = useToastStore((state) => state.remove);
   useEffect(() => {
     console.log('Toast mount');
     if (!duration) return;
-    const timeout = setTimeout(() => remove(id), duration + 10);
+    const timeout = setTimeout(() => remove(id), duration + 25);
     return () => clearTimeout(timeout);
   }, [duration, id, remove]);
   return (
@@ -40,19 +44,40 @@ function ToastComponent({ toast }: ToastProps) {
       exit={{ opacity: 0, scale: 0.8 }}
       transition={{ type: 'spring', duration: 0.3 }}
       className={clsx(
-        'relative flex max-w-md flex-col rounded-xl px-5 py-3 text-white sm:min-w-sm md:max-w-lg',
+        'text-success-light-content relative flex max-w-md flex-col rounded-lg border-2 px-5 py-3 shadow sm:min-w-sm md:max-w-lg',
         {
-          'bg-success': toast.type === 'success',
-          'bg-error': toast.type === 'error',
+          'border-success bg-success-light': toast.type === 'success',
+          'border-error bg-error-light': toast.type === 'error',
         },
       )}
     >
-      <span className="text-lg font-semibold">{toast.title}</span>
-      {description && <span className="font-light">{description}</span>}
-      {duration && (
-        <div className="mt-2 h-3 w-full overflow-hidden rounded-2xl border">
+      <div className="flex items-center gap-2">
+        {toastType === 'success' && (
+          <CheckCircleIcon className="text-success size-12" />
+        )}
+        {toastType === 'error' && (
+          <XCircleIconSolid className="text-error size-12" />
+        )}
+        <div className="flex flex-col">
+          <span className="font-medium">{toast.title}</span>
+          {description && <span className="text-sm">{description}</span>}
+        </div>
+      </div>
+      {!!duration && (
+        <div
+          className={clsx(
+            'border-error mt-2 h-3 w-full overflow-hidden rounded border',
+            {
+              'border-success': toastType === 'success',
+              'border-error': toastType === 'error',
+            },
+          )}
+        >
           <motion.div
-            className="bg-primary-content h-full"
+            className={clsx('h-full', {
+              'bg-success': toastType === 'success',
+              'bg-error': toastType === 'error',
+            })}
             initial={{ width: '100%' }}
             animate={{ width: '0%' }}
             transition={{ duration: duration / 1000, ease: 'linear' }}

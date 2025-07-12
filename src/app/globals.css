@@ -10,6 +10,7 @@
   --color-base: ;
   --color-base-100: ;
   --color-base-200: ;
+  --color-base-300: ;
   --color-base-content: ;
   --color-base-100-content: ;
   --color-base-200-content: ;
@@ -19,7 +20,10 @@
   --color-secondary: ;
   --color-secondary-light: ;
   --color-success:;
+  --color-success-light: ;
+  --color-success-light-content: ;
   --color-error: ;
+  --color-error-light: ;
   --color-neutral: ;
   --color-secondary-text:;
 }
@@ -29,6 +33,7 @@
     --color-base: var(--color-gray-50);
     --color-base-100: var(--color-gray-100);
     --color-base-200: var(--color-slate-100);
+    --color-base-300: var(--color-gray-200);
     --color-base-content: var(--color-gray-900);
     --color-base-100-content: var(--color-gray-800);
     --color-base-200-content: var(--color-gray-700);
@@ -38,7 +43,10 @@
     --color-secondary: var(--color-indigo-500);
     --color-secondary-light: var(--color-indigo-400);
     --color-success: var(--color-emerald-500);
+    --color-success-light: var(--color-emerald-100);
+    --color-success-light-content: var(--color-gray-900);
     --color-error: var(--color-red-500);
+    --color-error-light: var(--color-red-100);
     --color-neutral: var(--color-gray-500);
     --color-secondary-text: var(--color-indigo-500);
   }
@@ -46,6 +54,7 @@
     --color-base: var(--color-gray-900);
     --color-base-100: var(--color-gray-800);
     --color-base-200: var(--color-slate-800);
+    --color-base-300: var(--color-gray-700);
     --color-base-content: var(--color-gray-50);
     --color-base-100-content: var(--color-gray-200);
     --color-base-200-content: var(--color-gray-300);
@@ -55,7 +64,10 @@
     --color-secondary: var(--color-indigo-600);
     --color-secondary-light: var(--color-indigo-500);
     --color-success: var(--color-emerald-600);
+    --color-success-light: var(--color-emerald-200);
+    --color-success-light-content: var(--color-gray-900);
     --color-error: var(--color-red-600);
+    --color-error-light: var(--color-red-200);
     --color-neutral: var(--color-gray-600);
     --color-secondary-text: var(--color-indigo-400);
   }
