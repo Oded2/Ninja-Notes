@@ -163,11 +163,10 @@ export default function AddNote() {
   };
 
   const handleSubmit = () => {
-    setInProgress(true);
     const titleTrim = title ? fullTrim(title) : 'Untitled';
     const contentTrim = fullTrim(content);
     if (!validate(user, titleTrim, contentTrim)) return;
-
+    setInProgress(true);
     addNoteDoc(titleTrim, contentTrim)
       .catch(handleError)
       .finally(() => {
