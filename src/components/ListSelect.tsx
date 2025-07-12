@@ -86,7 +86,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.125 }}
-            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-60 w-full flex-col overflow-auto rounded-2xl shadow-lg ring md:max-h-100"
+            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-[60svh] w-full flex-col overflow-auto rounded-2xl shadow-lg ring"
           >
             {allowAll && (
               <MemoizedOptionButton
