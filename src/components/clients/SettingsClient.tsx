@@ -25,7 +25,6 @@ import {
   deleteByQuery,
   derivePasswordKey,
   encryptWithKey,
-  exportKey,
   findDefaultListId,
   generateSalt,
   handleError,
@@ -292,16 +291,10 @@ function AccountSettings() {
       // Re‐encrypt the E2EE vault key under the new password
       // Generate a new 16-byte salt
       const newSalt = generateSalt();
-      // Derive a new password key from the new password + new salt
-      const [userKeyBase64, newPasswordKey] = await Promise.all([
-        exportKey(userKey),
-        derivePasswordKey(newPassword, newSalt),
-      ]);
-      // Encrypt the Base64 raw key under that new passwordKey
-      const newEncryptedUserKey = await encryptWithKey(
-        userKeyBase64,
-        newPasswordKey,
-      );
+      // Derive a new password key from the new password and new salt
+      const newPasswordKey = await derivePasswordKey(newPassword, newSalt);
+      // Encrypt the user key
+      const newEncryptedUserKey = await encryptWithKey(userKey, newPasswordKey);
       const userDocRef = doc(usersCollection, user.uid);
       // Write the updated encrypted user key + salt back to Firestore and change the password
       await Promise.all([

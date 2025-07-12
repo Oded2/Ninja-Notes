@@ -4,14 +4,12 @@ import FormInput from '@/components/FormInput';
 import { defaultListName } from '@/lib/constants';
 import { authHandlers, listsCollection, usersCollection } from '@/lib/firebase';
 import {
-  decryptWithKey,
+  decryptCryptoKey,
   derivePasswordKey,
   encryptWithKey,
-  exportKey,
   generateSalt,
   generateUserKey,
   handleError,
-  importKey,
 } from '@/lib/helpers';
 import { saveUserKey } from '@/lib/indexDB';
 import { useContentStore } from '@/lib/stores/contentStore';
@@ -58,14 +56,13 @@ export default function AuthClient() {
       const userDocRef = doc(usersCollection, uid);
       if (isSignUp) {
         const salt = generateSalt();
-        const userKey = await generateUserKey();
-        const [userKeyBase64, passwordKey] = await Promise.all([
-          exportKey(userKey),
+        const [userKey, passwordKey] = await Promise.all([
+          generateUserKey(),
           derivePasswordKey(password, salt),
         ]);
         // Encrypt the key to send it to firebase securely, only being able to decrypt it using the password
         const [encryptedUserKey, encryptedDefaultListName] = await Promise.all([
-          encryptWithKey(userKeyBase64, passwordKey),
+          encryptWithKey(userKey, passwordKey),
           encryptWithKey(defaultListName, userKey),
         ]);
         // Create a default list for the user, save the user key to indexDB, create a document for the user
@@ -104,10 +101,10 @@ export default function AuthClient() {
             new Uint8Array(salt),
           );
           // Decrypt the encrypted key
-          const decryptedUserKey = await decryptWithKey(
+          const decryptedUserKey = await decryptCryptoKey(
             encryptedUserKey,
             passwordKey,
-          ).then(importKey);
+          );
           // Save to indexDB
           await saveUserKey(decryptedUserKey);
         } else {

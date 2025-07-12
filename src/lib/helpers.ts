@@ -11,6 +11,17 @@ import { EncryptedField, List } from './types';
 import { defaultListName } from './constants';
 import JSZip from 'jszip';
 
+const decryptEncryptedField = (
+  { iv, data }: EncryptedField,
+  key: CryptoKey,
+) => {
+  return crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: iv.toUint8Array() },
+    key,
+    data.toUint8Array(),
+  );
+};
+
 export const cleanSearch = (text: string) => {
   // The purpose of this function is to "forgive" the user for any punctuation while searching
   // Removes: hyphen, period, single quote, double quote, space, and curly apostrophe
@@ -50,7 +61,7 @@ export const getTypedDecryptedDocs = async <
         if (encryptedFieldTypeGuard(val)) {
           // For every field that is type EncryptedField, it can also be type string
           // This means that T[K] has to be type EncryptedField | string
-          newObj[param] = (await decryptWithKey(val, key)) as T[K];
+          newObj[param] = (await decryptString(val, key)) as T[K];
         }
       }
       return newObj;
@@ -87,19 +98,6 @@ export async function deleteByQuery(q: Query) {
   await Promise.all(promises);
 }
 
-export function importKey(base64: string) {
-  const buffer = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  return crypto.subtle.importKey('raw', buffer, 'AES-GCM', true, [
-    'encrypt',
-    'decrypt',
-  ]);
-}
-
-export async function exportKey(key: CryptoKey) {
-  const rawKey = await crypto.subtle.exportKey('raw', key);
-  return btoa(String.fromCharCode(...new Uint8Array(rawKey)));
-}
-
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
     'encrypt',
@@ -129,16 +127,22 @@ export async function derivePasswordKey(
 }
 
 export async function encryptWithKey(
-  plainText: string,
+  plainTextOrCryptoKey: string | CryptoKey,
   key: CryptoKey,
 ): Promise<EncryptedField> {
   const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encoder = new TextEncoder();
-  const encoded = encoder.encode(plainText);
+  let toEncrypt: Uint8Array;
+  if (typeof plainTextOrCryptoKey === 'string') {
+    const encoder = new TextEncoder();
+    toEncrypt = encoder.encode(plainTextOrCryptoKey);
+  } else {
+    const raw = await crypto.subtle.exportKey('raw', plainTextOrCryptoKey);
+    toEncrypt = new Uint8Array(raw);
+  }
   const encrypted = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv },
     key,
-    encoded,
+    toEncrypt,
   );
   const encryptedData = new Uint8Array(encrypted);
   return {
@@ -147,17 +151,23 @@ export async function encryptWithKey(
   };
 }
 
-export async function decryptWithKey(
+export async function decryptString(
   encryptedText: EncryptedField,
   key: CryptoKey,
 ): Promise<string> {
-  const { iv, data } = encryptedText;
-  const decrypted = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: iv.toUint8Array() },
-    key,
-    data.toUint8Array(),
-  );
+  const decrypted = await decryptEncryptedField(encryptedText, key);
   return new TextDecoder().decode(decrypted);
+}
+
+export async function decryptCryptoKey(
+  encryptedKey: EncryptedField,
+  key: CryptoKey,
+) {
+  const decrypted = await decryptEncryptedField(encryptedKey, key);
+  return crypto.subtle.importKey('raw', decrypted, { name: 'AES-GCM' }, true, [
+    'encrypt',
+    'decrypt',
+  ]);
 }
 
 export function generateSalt() {
