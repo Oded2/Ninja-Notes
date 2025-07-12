@@ -332,7 +332,7 @@ export default function NoteViewer() {
                         async () => await deleteNote(note),
                       )
                     }
-                    className="text-rose-400"
+                    className="text-primary-light"
                   >
                     Delete
                   </button>
