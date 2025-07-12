@@ -13,7 +13,7 @@ export default function Collapse({ open, children }: Props) {
         height: open ? 'auto' : 0,
       }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className="overflow-x-auto overflow-y-hidden"
+      className="overflow-y-hidden"
     >
       {children}
     </motion.div>
