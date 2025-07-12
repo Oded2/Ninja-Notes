@@ -22,7 +22,7 @@ import {
 import IconText from '@/components/IconText';
 
 type Props = {
-  commit: CommitInfo | undefined;
+  commit?: CommitInfo;
 };
 
 export default function LandingClient({ commit }: Props) {
@@ -60,7 +60,7 @@ export default function LandingClient({ commit }: Props) {
         </div>
         <motion.div
           whileHover={{ rotate: 5, scale: 1.05 }}
-          transition={springTransition}
+          transition={{ ...springTransition, delay: 0.05 }}
         >
           <Image
             src="/banner.png"
