@@ -104,7 +104,7 @@ export default function HomeClient() {
           </div>
           <div className="fixed end-5 bottom-5 hidden items-center pointer-fine:flex">
             <ExclamationCircleIcon className="peer text-primary size-12" />
-            <div className="text-base-content bg-base-100 pointer-events-none absolute end-full rounded-lg p-3 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
+            <div className="bg-base-content pointer-events-none absolute end-full rounded-lg p-3 text-base opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
               <VerifyEmail />
             </div>
           </div>
