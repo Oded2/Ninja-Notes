@@ -166,7 +166,7 @@ export default function NoteViewer() {
   };
 
   return (
-    <div className="relative">
+    <>
       <div className="bg-base/50 sticky top-0 z-20 mb-4 flex flex-wrap gap-4 py-4 backdrop-blur *:flex *:gap-2">
         <div>
           <Tooltip text="Reverse">
@@ -342,7 +342,7 @@ export default function NoteViewer() {
           })}
         </AnimatePresence>
       </div>
-    </div>
+    </>
   );
 }
 
