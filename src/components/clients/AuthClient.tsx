@@ -12,7 +12,6 @@ import {
   handleError,
 } from '@/lib/helpers';
 import { saveUserKey } from '@/lib/indexDB';
-import { useContentStore } from '@/lib/stores/contentStore';
 import { useToastStore } from '@/lib/stores/toastStore';
 import { userDataTypeGuard } from '@/lib/typeguards';
 import {
@@ -66,7 +65,7 @@ export default function AuthClient() {
           encryptWithKey(defaultListName, userKey),
         ]);
         // Create a default list for the user, save the user key to indexDB, create a document for the user
-        const [{ id }] = await Promise.all([
+        await Promise.all([
           addDoc(listsCollection, {
             name: encryptedDefaultListName,
             userId: uid,
@@ -77,14 +76,6 @@ export default function AuthClient() {
             salt: Array.from(salt),
           }),
         ]);
-        // Since the default list was added to the user's lists, then it needs to be added locally as well
-        useContentStore.getState().addList(
-          {
-            name: defaultListName,
-            id,
-          },
-          [],
-        );
       } else {
         // User is logging in
         const userDoc = await getDoc(userDocRef);
