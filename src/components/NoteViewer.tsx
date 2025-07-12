@@ -365,7 +365,7 @@ function Tooltip({ text, children }: TooltipProps) {
       <div
         id={tooltipId}
         role="tooltip"
-        className="bg-base-content pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded p-2 text-base text-sm whitespace-nowrap opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:bottom-full xl:ms-0 xl:mb-2"
+        className="bg-base-content pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded p-2 text-base text-sm whitespace-nowrap opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:top-full xl:ms-0 xl:mt-2"
       >
         {text}
       </div>
