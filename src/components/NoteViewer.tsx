@@ -192,7 +192,12 @@ export default function NoteViewer() {
           </Tooltip>
         </div>
         <div className="grow sm:max-w-3xs">
-          <FormInput label="Search" val={searchFilter} setVal={setSearchFilter}>
+          <FormInput
+            label="Search"
+            val={searchFilter}
+            setVal={setSearchFilter}
+            showClearButton
+          >
             <MagnifyingGlassIcon />
           </FormInput>
         </div>
