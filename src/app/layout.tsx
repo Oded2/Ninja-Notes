@@ -153,6 +153,7 @@ type NavbarProps = {
 
 function Navbar({ onThemeToggle }: NavbarProps) {
   const user = useUserStore((state) => state.user);
+  const loading = useUserStore((state) => state.loading);
 
   return (
     <nav className="flex items-center justify-between px-8 py-3">
@@ -173,31 +174,32 @@ function Navbar({ onThemeToggle }: NavbarProps) {
             <LightBulbIcon />
           </IconText>
         </Button>
-        {user ? (
-          <>
-            <Button small style="black" href="/settings">
-              <IconText responsive text="Settings">
-                <Cog6ToothIcon />
-              </IconText>
-            </Button>
-            <Button small style="primary" onClick={authHandlers.signout}>
-              Sign Out
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button small style="black" href="/auth">
-              Login
-            </Button>
-            <Button
-              small
-              style="primary"
-              href={{ pathname: '/auth', query: { display: 'signup' } }}
-            >
-              Sign Up
-            </Button>
-          </>
-        )}
+        {!loading &&
+          (user ? (
+            <>
+              <Button small style="black" href="/settings">
+                <IconText responsive text="Settings">
+                  <Cog6ToothIcon />
+                </IconText>
+              </Button>
+              <Button small style="primary" onClick={authHandlers.signout}>
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button small style="black" href="/auth">
+                Login
+              </Button>
+              <Button
+                small
+                style="primary"
+                href={{ pathname: '/auth', query: { display: 'signup' } }}
+              >
+                Sign Up
+              </Button>
+            </>
+          ))}
       </div>
     </nav>
   );
