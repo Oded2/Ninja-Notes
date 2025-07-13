@@ -1,4 +1,5 @@
-import { RefObject, useId } from 'react';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { RefObject, useId, useState } from 'react';
 
 type Props = {
   type?: 'email' | 'password';
@@ -24,9 +25,10 @@ export default function FormInput({
   children: icon,
 }: Props) {
   const id = useId();
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
   return (
-    <div className="ring-base-content bg-base flex grow items-center gap-2 rounded px-4 py-3 ring transition-shadow focus-within:ring-2">
+    <div className="ring-base-content bg-base relative flex grow items-center gap-2 rounded px-4 py-3 ring transition-shadow [&:has(input:focus-visible)]:ring-2">
       {icon && (
         <label htmlFor={id} className="*:size-5">
           {icon}
@@ -34,7 +36,7 @@ export default function FormInput({
       )}
       <input
         ref={inputRef}
-        type={type}
+        type={passwordVisible ? 'text' : type}
         id={id}
         dir="auto"
         value={val}
@@ -46,6 +48,15 @@ export default function FormInput({
         required={required}
         pattern={pattern}
       />
+      {type === 'password' && (
+        <button
+          type="button"
+          className="cursor-pointer outline-none *:size-4"
+          onClick={() => setPasswordVisible((prev) => !prev)}
+        >
+          {passwordVisible ? <EyeSlashIcon /> : <EyeIcon />}
+        </button>
+      )}
     </div>
   );
 }
