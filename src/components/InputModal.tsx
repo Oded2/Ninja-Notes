@@ -18,8 +18,9 @@ export default function InputModal() {
   };
 
   const handleInput = () => {
-    if (!content || !val.length) return;
-    content.callback(val.trim());
+    const valTrim = val.trim();
+    if (!content || !valTrim) return;
+    content.callback(valTrim);
     handleClose();
   };
 
