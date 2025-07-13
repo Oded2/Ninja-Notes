@@ -95,13 +95,6 @@ export default function RootLayout({
   }, [user, userKey, addList, pathname, listsLength]);
 
   useEffect(() => {
-    if (loading || user) return;
-    // User is signed out
-    purge(true);
-    clearUserKey();
-  }, [user, loading, purge]);
-
-  useEffect(() => {
     if (loading) return;
     if (!user) {
       if (protectedRoutes.includes(pathname)) {
@@ -118,9 +111,13 @@ export default function RootLayout({
     const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log('Auth state change');
       setUser(user);
+      if (!user) {
+        purge(true);
+        clearUserKey();
+      }
     });
     return unsubscribe;
-  }, [setUser]);
+  }, [setUser, purge]);
 
   useEffect(() => {
     const isDarkTheme = localStorage.getItem('theme') === 'dark';
