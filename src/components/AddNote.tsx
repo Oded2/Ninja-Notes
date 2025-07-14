@@ -175,9 +175,10 @@ export default function AddNote() {
         setContent('');
         addToast(
           'success',
-          activeEditNote ? 'Note edited' : 'Note added',
-          undefined,
-          2000,
+          activeEditNote ? 'Note edit' : 'Note add',
+          activeEditNote
+            ? 'Your note has been edited successfully'
+            : 'Your note has been added successfully',
         );
       });
   };

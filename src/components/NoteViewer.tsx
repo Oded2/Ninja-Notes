@@ -103,7 +103,11 @@ export default function NoteViewer() {
     } catch (err) {
       handleError(err);
     }
-    addToast('success', 'Note removed', undefined, 2000);
+    addToast(
+      'success',
+      'Note delete',
+      'Your note has been successfully deleted',
+    );
   };
 
   const handleRenameList = async (list: List, newName: string) => {
@@ -244,7 +248,7 @@ export default function NoteViewer() {
                         : `All notes under the collection '${name}' will be deleted.`,
                       async () => await deleteList(listFilter),
                       isDefaultList
-                        ? 'Default collection'
+                        ? defaultListLabel
                         : possiblyEncryptedToString(name),
                     );
                   }}
