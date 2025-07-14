@@ -3,7 +3,6 @@ import { List, Note } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   cleanSearch,
-  deleteByQuery,
   encryptWithKey,
   formatTimestamp,
   handleError,
@@ -17,7 +16,7 @@ import {
   notesPerPage,
 } from '@/lib/constants';
 import InlineDivider from '@/components/InlineDivider';
-import { deleteDoc, doc, query, updateDoc, where } from 'firebase/firestore';
+import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
 import {
   ArrowsUpDownIcon,
@@ -136,13 +135,14 @@ export default function NoteViewer() {
   const deleteList = async (list: List) => {
     const { id: listId, name } = list;
     const promises: Promise<void>[] = [];
-    const q = query(
-      notesCollection,
-      where('userId', '==', user?.uid),
-      where('listId', '==', listId),
-    );
     // Delete every note in that list
-    promises.push(deleteByQuery(q));
+    const deleteNotesPromise = notes
+      .filter((note) => note.listId === listId)
+      .map((note) => {
+        const docRef = doc(notesCollection, note.id);
+        return deleteDoc(docRef);
+      });
+    promises.push(...deleteNotesPromise);
     const notDefault = removeList(listId);
     if (notDefault) {
       // User isn't deleting the default collection

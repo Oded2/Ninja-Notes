@@ -95,7 +95,7 @@ export async function deleteByQuery(q: Query) {
   const promises = await getDocs(q).then((snapshot) =>
     snapshot.docs.map((doc) => deleteDoc(doc.ref)),
   );
-  await Promise.all(promises);
+  return Promise.all(promises);
 }
 
 export function generateUserKey() {
