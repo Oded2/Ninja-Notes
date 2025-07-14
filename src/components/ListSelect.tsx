@@ -6,6 +6,7 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import { findDefaultListId, possiblyEncryptedToString } from '@/lib/helpers';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import clsx from 'clsx';
 
 const allListsLabel = 'All Collections';
 
@@ -70,13 +71,18 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
   const onAllClick = useCallback(() => setValWithId(), [setValWithId]);
 
   return (
-    <div ref={containerRef} className="relative grow">
+    <div
+      ref={containerRef}
+      className={clsx('relative grow', {
+        'max-w-3xs': allowAll,
+      })}
+    >
       <button
         type="button"
         onClick={() => setShowDropdown((prev) => !prev)}
         className="bg-base-100 ring-base-content/30 flex h-full w-full cursor-pointer items-center rounded-2xl px-4 py-2 ring select-none"
       >
-        <span>{dropdownLabel}</span>
+        <span className="truncate">{dropdownLabel}</span>
         <ChevronDownIcon className="pointer-events-none ms-auto size-4" />
       </button>
       <AnimatePresence>
@@ -86,7 +92,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.125 }}
-            className="ring-neutral/50 bg-base-200 absolute top-full z-50 mt-2 flex max-h-[60svh] w-full flex-col overflow-auto rounded-2xl shadow-lg ring"
+            className="ring-base-content/30 absolute top-full z-10 mt-2 flex max-h-[60svh] w-full flex-col overflow-auto rounded-xl shadow-lg ring"
           >
             {allowAll && (
               <MemoizedOptionButton
@@ -123,7 +129,7 @@ const OptionButton = ({ title, onClick }: OptionButtonProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="hover:bg-secondary hover:text-primary-content bg-base-200 cursor-pointer px-8 py-2 text-start brightness-95 transition-colors duration-75 hover:brightness-100"
+    className="hover:bg-secondary hover:text-primary-content bg-base-200 cursor-pointer overflow-auto px-8 py-2 text-start whitespace-nowrap brightness-95 transition-colors duration-75 hover:brightness-100"
   >
     {title}
   </button>

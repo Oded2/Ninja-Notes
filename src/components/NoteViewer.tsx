@@ -202,9 +202,7 @@ export default function NoteViewer() {
           </FormInput>
         </div>
         <div className="grow">
-          <div className="flex max-w-3xs grow">
-            <ListSelect allowAll val={listFilter} setVal={setListFilter} />
-          </div>
+          <ListSelect allowAll val={listFilter} setVal={setListFilter} />
           <AnimatePresence>
             {listFilter && (
               <motion.div
