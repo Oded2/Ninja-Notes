@@ -74,7 +74,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
       <button
         type="button"
         onClick={() => setShowDropdown((prev) => !prev)}
-        className="bg-base-100 ring-neutral/50 flex h-full w-full cursor-pointer items-center rounded-2xl px-4 py-2 ring select-none"
+        className="bg-base-100 ring-base-content/30 flex h-full w-full cursor-pointer items-center rounded-2xl px-4 py-2 ring select-none"
       >
         <span>{dropdownLabel}</span>
         <ChevronDownIcon className="pointer-events-none ms-auto size-4" />
