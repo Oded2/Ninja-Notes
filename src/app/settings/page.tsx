@@ -2,7 +2,7 @@ import SettingsClient from '@/components/clients/SettingsClient';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Account',
+  title: 'Settings',
 };
 
 export default function Settings() {
