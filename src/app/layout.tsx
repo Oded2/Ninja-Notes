@@ -28,7 +28,7 @@ import clsx from 'clsx';
 import { Cog6ToothIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import IconText from '@/components/IconText';
 
-const geistSans = Rubik({
+const rubik = Rubik({
   subsets: ['latin'],
 });
 
@@ -137,7 +137,7 @@ export default function RootLayout({
         'theme-dark': isDark,
       })}
     >
-      <body className={geistSans.className}>
+      <body className={rubik.className}>
         <div className="bg-base text-base-content flex min-h-screen flex-col">
           <Navbar onThemeToggle={() => setIsDark((prev) => !prev)} />
           <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
