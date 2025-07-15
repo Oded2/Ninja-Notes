@@ -15,8 +15,8 @@ import Toasts from '@/components/Toasts';
 import ConfirmModal from '@/components/ConfirmModal';
 import InputModal from '@/components/InputModal';
 import { clearUserKey, loadUserKey } from '@/lib/indexDB';
-import { orderBy, query, where } from 'firebase/firestore';
-import { getTypedDecryptedDocs } from '@/lib/helpers';
+import { getDocs, orderBy, Query, query, where } from 'firebase/firestore';
+import { addId, decryptParams, decryptString } from '@/lib/helpers';
 import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
 import { useContentStore } from '@/lib/stores/contentStore';
 import { HomeIcon } from '@heroicons/react/24/solid';
@@ -209,3 +209,17 @@ function Navbar({ onThemeToggle }: NavbarProps) {
     </nav>
   );
 }
+
+const getTypedDecryptedDocs = async <T extends Record<string, unknown>>(
+  q: Query,
+  typeguard: (obj: unknown) => obj is T,
+  key: CryptoKey,
+  ...encryptedParams: Extract<keyof T, string>[]
+) => {
+  const snapshot = await getDocs(q);
+  const decryptedDocs = snapshot.docs.map((d) => {
+    const encryptedData = addId(d);
+    return decryptParams(key, decryptString, encryptedData, ...encryptedParams);
+  });
+  return Promise.all(decryptedDocs).then((docs) => docs.filter(typeguard));
+};

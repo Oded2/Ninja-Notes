@@ -1,6 +1,7 @@
 import {
   Bytes,
   deleteDoc,
+  DocumentSnapshot,
   getDocs,
   Query,
   Timestamp,
@@ -10,6 +11,8 @@ import { encryptedFieldTypeGuard, firebaseErrorTypeGuard } from './typeguards';
 import { EncryptedField, List } from './types';
 import { defaultListName } from './constants';
 import JSZip from 'jszip';
+
+type DecryptFunc<T> = (val: EncryptedField, key: CryptoKey) => Promise<T>;
 
 const decryptEncryptedField = (
   { iv, data }: EncryptedField,
@@ -37,37 +40,25 @@ export const censorEmail = (email: string) => {
   return `${first}${stars}${last}@${domain}`;
 };
 
-export const getTypedDecryptedDocs = async <
-  T extends Record<string, unknown>,
-  K extends keyof T,
->(
-  q: Query,
-  typeguard: (obj: unknown) => obj is T,
+export async function decryptParams<T extends Record<string, unknown>>(
   key: CryptoKey,
-  ...decryptParams: K[]
-) => {
-  const snapshot = await getDocs(q);
-  const typedDocs = snapshot.docs
-    .map((doc) => {
-      const withId = { id: doc.id, ...doc.data() };
-      return withId as unknown;
-    })
-    .filter(typeguard);
-  return Promise.all(
-    typedDocs.map(async (obj) => {
-      const newObj = { ...obj };
-      for (const param of decryptParams) {
-        const val = obj[param];
-        if (encryptedFieldTypeGuard(val)) {
-          // For every field that is type EncryptedField, it can also be type string
-          // This means that T[K] has to be type EncryptedField | string
-          newObj[param] = (await decryptString(val, key)) as T[K];
-        }
-      }
-      return newObj;
-    }),
-  );
-};
+  decryptFunc: DecryptFunc<unknown>,
+  obj: Record<string, unknown>,
+  ...params: Extract<keyof T, string>[]
+) {
+  const newObj = { ...obj };
+  for (const param of params) {
+    const val = obj[param];
+    if (encryptedFieldTypeGuard(val))
+      newObj[param] = await decryptFunc(val, key);
+  }
+  return newObj;
+}
+
+export const addId = (d: DocumentSnapshot): Record<string, unknown> => ({
+  ...d.data(),
+  id: d.id,
+});
 
 export const findDefaultListId = (lists: List[]) => {
   return lists.find((list) => list.name === defaultListName)?.id;
@@ -151,24 +142,24 @@ export async function encryptWithKey(
   };
 }
 
-export async function decryptString(
-  encryptedText: EncryptedField,
-  key: CryptoKey,
-): Promise<string> {
+export const decryptString: DecryptFunc<string> = async (
+  encryptedText,
+  key,
+) => {
   const decrypted = await decryptEncryptedField(encryptedText, key);
   return new TextDecoder().decode(decrypted);
-}
+};
 
-export async function decryptCryptoKey(
-  encryptedKey: EncryptedField,
-  key: CryptoKey,
-) {
+export const decryptCryptoKey: DecryptFunc<CryptoKey> = async (
+  encryptedKey,
+  key,
+) => {
   const decrypted = await decryptEncryptedField(encryptedKey, key);
   return crypto.subtle.importKey('raw', decrypted, { name: 'AES-GCM' }, true, [
     'encrypt',
     'decrypt',
   ]);
-}
+};
 
 export function generateSalt() {
   return crypto.getRandomValues(new Uint8Array(16));
@@ -226,9 +217,4 @@ export async function zipAndDownloadJSON(
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
-
-export function possiblyEncryptedToString(val: EncryptedField | string) {
-  if (typeof val === 'string') return val;
-  return '__ENCRYPTED VALUE ERROR__';
 }

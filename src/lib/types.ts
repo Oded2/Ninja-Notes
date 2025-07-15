@@ -15,14 +15,14 @@ export type Note = {
   createdAt: Timestamp;
   editedAt?: Timestamp;
   userId?: string;
-  title: string | EncryptedField;
-  content: string | EncryptedField;
-  listId: string | EncryptedField;
+  title: string;
+  content: string;
+  listId: string;
 };
 
 export type List = {
   id: string;
-  name: string | EncryptedField;
+  name: string;
   userId?: string;
 };
 

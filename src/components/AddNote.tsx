@@ -16,7 +16,6 @@ import {
   findDefaultListId,
   fullTrim,
   handleError,
-  possiblyEncryptedToString,
 } from '@/lib/helpers';
 import { useToastStore } from '@/lib/stores/toastStore';
 import ListSelect from '@/components/ListSelect';
@@ -87,7 +86,7 @@ export default function AddNote() {
       // User has created a new list
       console.log('Adding list');
       const encryptedName = await encryptWithKey(
-        fullTrim(possiblyEncryptedToString(currentList.name)),
+        fullTrim(currentList.name),
         userKey,
       );
       const { id } = await addDoc(listsCollection, {
@@ -214,8 +213,8 @@ export default function AddNote() {
     if (activeEditNote) {
       // Lists need to be read from the state, otherwise this useEffect will have to run every time a list gets added
       const { lists: stateLists } = useContentStore.getState();
-      setTitle(possiblyEncryptedToString(activeEditNote.title));
-      setContent(possiblyEncryptedToString(activeEditNote.content));
+      setTitle(activeEditNote.title);
+      setContent(activeEditNote.content);
       const editListId = stateLists.find(
         (list) => list.id === activeEditNote.listId,
       );

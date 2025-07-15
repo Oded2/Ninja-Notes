@@ -6,7 +6,6 @@ import {
   encryptWithKey,
   formatTimestamp,
   handleError,
-  possiblyEncryptedToString,
 } from '@/lib/helpers';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
 import {
@@ -40,6 +39,7 @@ import FormInput from '@/components/FormInput';
 import { MagnifyingGlassIcon } from '@heroicons/react/16/solid';
 import Pagination from '@/components/Pagination';
 import Collapse from '@/components/Collapse';
+import Link from 'next/link';
 
 export default function NoteViewer() {
   const user = useUserStore((state) => state.user);
@@ -69,12 +69,8 @@ export default function NoteViewer() {
       // Title and content don't need to be trimmed as they are trimmed when inserted into the database
       result = result.filter(
         (note) =>
-          cleanSearch(possiblyEncryptedToString(note.title)).includes(
-            lowerCaseFilter,
-          ) ||
-          cleanSearch(possiblyEncryptedToString(note.content)).includes(
-            lowerCaseFilter,
-          ),
+          cleanSearch(note.title).includes(lowerCaseFilter) ||
+          cleanSearch(note.content).includes(lowerCaseFilter),
       );
     }
     if (listFilter)
@@ -247,9 +243,7 @@ export default function NoteViewer() {
                         ? 'All notes under the default collection will be deleted.'
                         : `All notes under the collection '${name}' will be deleted.`,
                       async () => await deleteList(listFilter),
-                      isDefaultList
-                        ? defaultListLabel
-                        : possiblyEncryptedToString(name),
+                      isDefaultList ? defaultListLabel : name,
                     );
                   }}
                 >
@@ -270,9 +264,8 @@ export default function NoteViewer() {
       <div className="flex flex-col">
         <AnimatePresence initial={false}>
           {paginatedNotes.map((note) => {
-            const { id, listId, title, content } = note;
+            const { id, listId, title, content, editedAt } = note;
             const isOpen = !closedNotes.includes(id);
-            const { editedAt } = note;
             const listName = lists.find((list) => list.id === listId)?.name;
             return (
               <motion.div
@@ -287,7 +280,7 @@ export default function NoteViewer() {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
-                      {possiblyEncryptedToString(title)}
+                      {title}
                     </h2>
                     <div className="text-base-200-content text-sm">
                       <InlineDivider>
@@ -299,18 +292,18 @@ export default function NoteViewer() {
                           <div>
                             {listName === defaultListName
                               ? defaultListLabel
-                              : possiblyEncryptedToString(listName)}
+                              : listName}
                           </div>
                         )}
                       </InlineDivider>
                     </div>
                   </div>
                   <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
-                    <CopyButton text={possiblyEncryptedToString(content)} />
+                    <CopyButton text={content} />
                   </div>
                 </div>
                 <Collapse open={isOpen}>
-                  <AutoLink text={possiblyEncryptedToString(content)} />
+                  <AutoLink text={content} />
                 </Collapse>
                 <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
                   {isOpen ? (
@@ -330,6 +323,9 @@ export default function NoteViewer() {
                       Open
                     </button>
                   )}
+                  <Link href={`/note/${id}`} target="_blank">
+                    View
+                  </Link>
                   <button onClick={() => setEditNote(note)}>Edit</button>
                   <button
                     onClick={() =>
