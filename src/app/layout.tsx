@@ -24,7 +24,6 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import Image from 'next/image';
 import { repoUrl } from '@/lib/constants';
-import clsx from 'clsx';
 import { Cog6ToothIcon, LightBulbIcon } from '@heroicons/react/24/outline';
 import IconText from '@/components/IconText';
 
@@ -133,9 +132,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={clsx({
-        'theme-dark': isDark,
-      })}
+      data-theme={isDark ? 'dark' : undefined}
+      className="not-print:dark:scheme-dark"
     >
       <body className={rubik.className}>
         <div className="bg-base text-base-content flex min-h-screen flex-col">
