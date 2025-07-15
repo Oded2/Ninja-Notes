@@ -4,7 +4,6 @@ import {
   DocumentSnapshot,
   getDocs,
   Query,
-  Timestamp,
 } from 'firebase/firestore';
 import { useToastStore } from './stores/toastStore';
 import { encryptedFieldTypeGuard, firebaseErrorTypeGuard } from './typeguards';
@@ -70,16 +69,6 @@ export const fullTrim = (s: string) => {
     .split('\n')
     .map((p) => p.trimEnd())
     .join('\n');
-};
-
-export const formatTimestamp = (timestamp: Timestamp) => {
-  return timestamp.toDate().toLocaleString(undefined, {
-    minute: 'numeric',
-    hour: 'numeric',
-    day: 'numeric',
-    month: 'numeric',
-    year: '2-digit',
-  });
 };
 
 export async function deleteByQuery(q: Query) {

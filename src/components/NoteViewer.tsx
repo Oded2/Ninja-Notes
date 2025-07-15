@@ -1,12 +1,7 @@
 import { useEditStore } from '@/lib/stores/editStore';
 import { List, Note } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
-import {
-  cleanSearch,
-  encryptWithKey,
-  formatTimestamp,
-  handleError,
-} from '@/lib/helpers';
+import { cleanSearch, encryptWithKey, handleError } from '@/lib/helpers';
 import { useConfirmStore } from '@/lib/stores/confirmStore';
 import {
   defaultListLabel,
@@ -15,7 +10,7 @@ import {
   notesPerPage,
 } from '@/lib/constants';
 import InlineDivider from '@/components/InlineDivider';
-import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, Timestamp, updateDoc } from 'firebase/firestore';
 import { listsCollection, notesCollection } from '@/lib/firebase';
 import {
   ArrowsUpDownIcon,
@@ -286,7 +281,7 @@ export default function NoteViewer() {
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
                         {editedAt && (
-                          <div>{`Edited: ${formatTimestamp(editedAt)}`}</div>
+                          <div>{`Modified: ${formatTimestamp(editedAt)}`}</div>
                         )}
                         {listName && (
                           <div>
@@ -432,3 +427,12 @@ function CopyButton({ text }: CopyButtonProps) {
     </button>
   );
 }
+
+const formatTimestamp = (timestamp: Timestamp) =>
+  timestamp.toDate().toLocaleString(undefined, {
+    minute: 'numeric',
+    hour: 'numeric',
+    day: 'numeric',
+    month: 'numeric',
+    year: '2-digit',
+  });

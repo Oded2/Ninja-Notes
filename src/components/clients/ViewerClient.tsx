@@ -6,7 +6,7 @@ import { addId, decryptParams, decryptString } from '@/lib/helpers';
 import { useUserStore } from '@/lib/stores/userStore';
 import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
 import { List, Note } from '@/lib/types';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import InlineDivider from '../InlineDivider';
@@ -17,6 +17,7 @@ export default function ViewerClient() {
   const [note, setNote] = useState<Note | null>(null);
   const [list, setList] = useState<List | null>(null);
   const listName = useMemo(() => list?.name, [list]);
+  const editedAt = useMemo(() => note?.editedAt, [note]);
 
   useEffect(() => {
     if (typeof noteId !== 'string' || !userKey) return;
@@ -36,16 +37,10 @@ export default function ViewerClient() {
       <h1 className="text-center text-2xl font-bold">{note?.title}</h1>
       <div className="mx-auto">
         <InlineDivider>
-          <SmallHeader>
-            {note?.createdAt.toDate().toLocaleDateString(undefined, {
-              minute: 'numeric',
-              hour: 'numeric',
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-              year: 'numeric',
-            })}
-          </SmallHeader>
+          <SmallHeader>{formatTimestamp(note?.createdAt)}</SmallHeader>
+          {editedAt && (
+            <SmallHeader>{`Modified: ${formatTimestamp(editedAt)}`}</SmallHeader>
+          )}
           {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
         </InlineDivider>
       </div>
@@ -63,6 +58,16 @@ function SmallHeader({ children }: SmallHeaderProps) {
     <span className="text-base-content/80 text-center text-sm">{children}</span>
   );
 }
+
+const formatTimestamp = (timestamp?: Timestamp) =>
+  timestamp?.toDate().toLocaleString(undefined, {
+    minute: 'numeric',
+    hour: 'numeric',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
 async function fetchNoteAndList(
   noteId: string,
