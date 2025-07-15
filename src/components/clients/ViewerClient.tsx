@@ -9,6 +9,7 @@ import { List, Note } from '@/lib/types';
 import { doc, getDoc } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
+import InlineDivider from '../InlineDivider';
 
 export default function ViewerClient() {
   const { noteId } = useParams();
@@ -33,17 +34,21 @@ export default function ViewerClient() {
   return (
     <div className="mx-auto flex max-w-4xl flex-col">
       <h1 className="text-center text-2xl font-bold">{note?.title}</h1>
-      <SmallHeader>
-        {note?.createdAt.toDate().toLocaleDateString(undefined, {
-          minute: 'numeric',
-          hour: 'numeric',
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        })}
-      </SmallHeader>
-      {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
+      <div className="mx-auto">
+        <InlineDivider>
+          <SmallHeader>
+            {note?.createdAt.toDate().toLocaleDateString(undefined, {
+              minute: 'numeric',
+              hour: 'numeric',
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </SmallHeader>
+          {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
+        </InlineDivider>
+      </div>
       <p className="mt-4 whitespace-pre-wrap">{note?.content}</p>
     </div>
   );
