@@ -161,7 +161,7 @@ function Navbar({ onThemeToggle }: NavbarProps) {
   const loading = useUserStore((state) => state.loading);
 
   return (
-    <nav className="flex items-center justify-between px-8 py-3">
+    <nav className="flex items-center justify-between px-8 py-3 print:hidden">
       <Link href="/">
         <HomeIcon className="size-6" />
       </Link>
