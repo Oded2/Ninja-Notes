@@ -50,7 +50,12 @@ export default function Button({
     );
   else if (externalLink)
     return (
-      <a href={externalLink} target="_blank" className={className}>
+      <a
+        href={externalLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={className}
+      >
         {children}
       </a>
     );
