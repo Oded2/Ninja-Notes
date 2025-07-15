@@ -1,0 +1,6 @@
+[[plugins]]
+package = "netlify-plugin-playwright-cache"
+
+[build]
+command = "npx playwright install-deps && npm install && npm run build"
+publish = "build"
