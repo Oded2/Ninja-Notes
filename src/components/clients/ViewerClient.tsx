@@ -9,7 +9,7 @@ import { List, Note } from '@/lib/types';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import InlineDivider from '../InlineDivider';
+import InlineDivider from '@/components/InlineDivider';
 
 export default function ViewerClient() {
   const { noteId } = useParams();
