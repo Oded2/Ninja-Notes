@@ -8,42 +8,16 @@ import { listTypeGuard, noteTypeGuard } from '@/lib/typeguards';
 import { List, Note } from '@/lib/types';
 import { doc, getDoc, Timestamp } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import InlineDivider from '../InlineDivider';
-import Button from '../Button';
-import IconText from '../IconText';
-import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 
 export default function ViewerClient() {
   const { noteId } = useParams();
   const userKey = useUserStore((state) => state.key);
   const [note, setNote] = useState<Note | null>(null);
   const [list, setList] = useState<List | null>(null);
-  const [inProgress, setInProgress] = useState(false);
-  const pdfRef = useRef<HTMLDivElement>(null);
   const listName = useMemo(() => list?.name, [list]);
   const editedAt = useMemo(() => note?.editedAt, [note]);
-
-  const handlePDF = async () => {
-    // PDF will always be in light mode
-    const html = pdfRef.current?.outerHTML;
-    if (!html) return;
-    setInProgress(true);
-    const res = await fetch('/api/generate-pdf', {
-      method: 'POST',
-      body: html,
-      headers: { 'Content-Type': 'text/html' },
-    });
-    console.log(res.status);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${note?.title || 'Untitled'}.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
-    setInProgress(false);
-  };
 
   useEffect(() => {
     if (typeof noteId !== 'string' || !userKey) return;
@@ -59,32 +33,19 @@ export default function ViewerClient() {
   }, [noteId, userKey]);
 
   return (
-    <>
-      {/* Important to include text-base-content so it will print correctly */}
-      <div
-        ref={pdfRef}
-        className="text-base-content font-default mx-auto flex max-w-4xl flex-col"
-      >
-        <h1 className="text-center text-2xl font-bold">{note?.title}</h1>
-        <div className="mx-auto">
-          <InlineDivider>
-            <SmallHeader>{formatTimestamp(note?.createdAt)}</SmallHeader>
-            {editedAt && (
-              <SmallHeader>{`Modified: ${formatTimestamp(editedAt)}`}</SmallHeader>
-            )}
-            {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
-          </InlineDivider>
-        </div>
-        <p className="mt-4 whitespace-pre-wrap">{note?.content}</p>
+    <div className="mx-auto flex max-w-4xl flex-col">
+      <h1 className="text-center text-2xl font-bold">{note?.title}</h1>
+      <div className="mx-auto">
+        <InlineDivider>
+          <SmallHeader>{formatTimestamp(note?.createdAt)}</SmallHeader>
+          {editedAt && (
+            <SmallHeader>{`Modified: ${formatTimestamp(editedAt)}`}</SmallHeader>
+          )}
+          {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
+        </InlineDivider>
       </div>
-      <div className="fixed right-5 bottom-5">
-        <Button style="secondary" onClick={handlePDF} disabled={inProgress}>
-          <IconText text="Save as PDF">
-            <ArrowDownTrayIcon />
-          </IconText>
-        </Button>
-      </div>
-    </>
+      <p className="mt-4 whitespace-pre-wrap">{note?.content}</p>
+    </div>
   );
 }
 
