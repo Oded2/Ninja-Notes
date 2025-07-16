@@ -29,7 +29,7 @@ export default function LandingClient({ commit }: Props) {
   const user = useUserStore((state) => state.user);
 
   return (
-    <div className="flex flex-col px-2">
+    <div className="flex flex-col sm:px-2">
       <div className="flex gap-4">
         <div className="my-auto flex flex-col gap-2">
           <div className="flex flex-col sm:px-8">
@@ -44,7 +44,7 @@ export default function LandingClient({ commit }: Props) {
               effortless organization.
             </p>
           </div>
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center gap-2 overflow-hidden">
             <Button
               externalLink={repoUrl + '/blob/main/README.md'}
               style="black"
@@ -54,7 +54,9 @@ export default function LandingClient({ commit }: Props) {
               </IconText>
             </Button>
             <Button href={user ? '/notes' : '/auth'} style="primary">
-              {user ? 'View Notes' : 'Get Started'}
+              <span className="whitespace-nowrap">
+                {user ? 'View Notes' : 'Get Started'}
+              </span>
             </Button>
           </div>
         </div>
