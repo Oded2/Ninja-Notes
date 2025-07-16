@@ -94,7 +94,14 @@ export default function HomeClient() {
             )}
           </AnimatePresence>
         ) : (
-          <Spinner />
+          <div className="flex flex-col gap-2">
+            <Spinner />
+            <span className="text-center">
+              Loading notes... If this takes a while, your connection might be
+              slow. If it never finishes, your encryption key may be missing —
+              try signing in again.
+            </span>
+          </div>
         )}
       </div>
       {!loading && !user?.emailVerified && (
