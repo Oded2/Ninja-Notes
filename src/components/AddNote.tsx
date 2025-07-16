@@ -270,6 +270,21 @@ export default function AddNote() {
         <textarea
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              const textarea = e.currentTarget;
+              const start = textarea.selectionStart;
+              const end = textarea.selectionEnd;
+              const newValue =
+                content.slice(0, start) + '\t' + content.slice(end);
+              setContent(newValue);
+              // restore cursor position after insert
+              requestAnimationFrame(() => {
+                textarea.selectionStart = textarea.selectionEnd = start + 1;
+              });
+            }
+          }}
           id={labelId}
           dir="auto"
           placeholder="What's on your mind?"
