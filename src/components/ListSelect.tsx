@@ -6,7 +6,6 @@ import { useContentStore } from '@/lib/stores/contentStore';
 import { findDefaultListId } from '@/lib/helpers';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import clsx from 'clsx';
 
 const allListsLabel = 'All Collections';
 
@@ -69,12 +68,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
   const onAllClick = useCallback(() => setValWithId(), [setValWithId]);
 
   return (
-    <div
-      ref={containerRef}
-      className={clsx('relative grow', {
-        'max-w-3xs': allowAll,
-      })}
-    >
+    <div ref={containerRef} className="relative grow md:w-3xs md:grow-0">
       <button
         type="button"
         onClick={() => setShowDropdown((prev) => !prev)}

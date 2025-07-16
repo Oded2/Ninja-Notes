@@ -229,37 +229,39 @@ export default function AddNote() {
         e.preventDefault();
         handleSubmit();
       }}
-      className="mx-auto flex w-full max-w-xl flex-col gap-4"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-4"
     >
-      <div className="flex gap-2">
-        <ListSelect val={currentList} setVal={setCurrentList} />
-        <IconButton
-          onClick={() =>
-            showInput('Enter collection name', handleListAdd, maxLengths.list)
-          }
-          style="neutral"
-          circle
-        >
-          <PlusIcon className="size-5.5" />
-        </IconButton>
+      <div className="flex flex-col-reverse gap-4 md:flex-row">
+        <InputContainer>
+          <label className="font-medium" htmlFor={`title-${labelId}`}>
+            Title
+          </label>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            dir="auto"
+            type="text"
+            id={`title-${labelId}`}
+            placeholder="Could Bruce Wayne be the Batman?"
+            className="grow outline-none"
+            maxLength={maxLengths.title}
+            disabled={inProgress}
+          />
+          <span className="text-xs">{`${title.length.toLocaleString()}/${maxLengths.title.toLocaleString()}`}</span>
+        </InputContainer>
+        <div className="flex gap-2">
+          <ListSelect val={currentList} setVal={setCurrentList} />
+          <IconButton
+            onClick={() =>
+              showInput('Enter collection name', handleListAdd, maxLengths.list)
+            }
+            style="neutral"
+            circle
+          >
+            <PlusIcon className="size-5.5" />
+          </IconButton>
+        </div>
       </div>
-      <InputContainer>
-        <label className="font-medium" htmlFor={`title-${labelId}`}>
-          Title
-        </label>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          dir="auto"
-          type="text"
-          id={`title-${labelId}`}
-          placeholder="Could Bruce Wayne be the Batman?"
-          className="grow outline-none"
-          maxLength={maxLengths.title}
-          disabled={inProgress}
-        />
-        <span className="text-xs">{`${title.length.toLocaleString()}/${maxLengths.title.toLocaleString()}`}</span>
-      </InputContainer>
       <InputContainer>
         <label className="font-medium" htmlFor={labelId}>
           Create new note
@@ -304,7 +306,7 @@ type InputContainerProps = {
 
 function InputContainer({ children }: InputContainerProps) {
   return (
-    <div className="bg-base-200 ring-base-100-content/30 focus-within:ring-base-100-content flex flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
+    <div className="bg-base-200 ring-base-100-content/30 focus-within:ring-base-100-content flex grow flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
       {children}
     </div>
   );
