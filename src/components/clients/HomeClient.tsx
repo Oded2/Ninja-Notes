@@ -12,7 +12,6 @@ import { ExclamationCircleIcon } from '@heroicons/react/24/solid';
 import VerifyEmail from '@/components/VerifyEmail';
 import InlineDivider from '@/components/InlineDivider';
 import { useContentStore } from '@/lib/stores/contentStore';
-import Spinner from '@/components/Spinner';
 import { censorEmail } from '@/lib/helpers';
 
 export default function HomeClient() {
@@ -112,5 +111,11 @@ export default function HomeClient() {
         </>
       )}
     </>
+  );
+}
+
+function Spinner() {
+  return (
+    <div className="mx-auto size-8 animate-spin rounded-full border-3 border-t-transparent" />
   );
 }
