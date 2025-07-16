@@ -37,7 +37,7 @@ export default function HomeClient() {
 
   return (
     <>
-      <div className="flex flex-col gap-5">
+      <div className="flex grow flex-col gap-5">
         <div className="mx-auto flex gap-5">
           <Image
             src="/apple-icon.png"
@@ -84,6 +84,7 @@ export default function HomeClient() {
             ) : (
               <motion.div
                 key="addNote"
+                className="flex grow"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}

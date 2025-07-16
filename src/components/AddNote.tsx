@@ -26,6 +26,7 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 import { User } from 'firebase/auth';
 import { useContentStore } from '@/lib/stores/contentStore';
 import IconButton from '@/components//IconButton';
+import clsx from 'clsx';
 
 export default function AddNote() {
   const labelId = useId();
@@ -229,7 +230,7 @@ export default function AddNote() {
         e.preventDefault();
         handleSubmit();
       }}
-      className="mx-auto flex w-full max-w-3xl flex-col gap-4"
+      className="mx-auto flex w-full max-w-3xl grow flex-col gap-4"
     >
       <div className="flex flex-col-reverse gap-4 md:flex-row">
         <InputContainer>
@@ -262,8 +263,8 @@ export default function AddNote() {
           </IconButton>
         </div>
       </div>
-      <InputContainer>
-        <label className="font-medium" htmlFor={labelId}>
+      <InputContainer col>
+        <label className="me-auto font-medium" htmlFor={labelId}>
           Create new note
         </label>
         <textarea
@@ -272,13 +273,12 @@ export default function AddNote() {
           id={labelId}
           dir="auto"
           placeholder="What's on your mind?"
-          className="w-full resize-none outline-none"
-          rows={8}
+          className="min-h-52 w-full grow resize-none outline-none"
           required
           maxLength={maxLengths.content}
           disabled={inProgress}
-        ></textarea>
-        <div className="my-1 flex grow justify-end gap-2 text-xs">
+        />
+        <div className="my-1 ms-auto gap-2 text-xs">
           {activeEditNote && (
             <button
               type="button"
@@ -301,12 +301,20 @@ export default function AddNote() {
 }
 
 type InputContainerProps = {
+  col?: boolean;
   children: React.ReactNode;
 };
 
-function InputContainer({ children }: InputContainerProps) {
+function InputContainer({ col, children }: InputContainerProps) {
   return (
-    <div className="bg-base-200 ring-base-100-content/30 focus-within:ring-base-100-content flex grow flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
+    <div
+      className={clsx(
+        'bg-base-200 ring-base-100-content/30 focus-within:ring-base-100-content flex grow flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2',
+        {
+          'flex-col': col,
+        },
+      )}
+    >
       {children}
     </div>
   );
