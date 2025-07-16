@@ -107,7 +107,7 @@ function PageButton({
         'cursor-pointer border-y py-2 first:rounded-s first:border-s last:rounded-e last:border-e',
         {
           'border-secondary bg-secondary text-primary-content': isPrimary,
-          'border-neutral bg-base hover:text-primary-content active:border-secondary active:bg-secondary active:text-primary-content hover:border-secondary-light hover:bg-secondary-light':
+          'border-neutral bg-base-100 hover:text-primary-content active:border-secondary active:bg-secondary active:text-primary-content hover:border-secondary-light hover:bg-secondary-light':
             !isPrimary,
           'px-2 *:size-5': isIcon,
           'px-3': !isIcon,

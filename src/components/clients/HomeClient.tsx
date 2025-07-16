@@ -44,7 +44,7 @@ export default function HomeClient() {
             alt="Logo"
             width={96}
             height={96}
-            className="ring-base-content mx-auto my-auto hidden max-h-full rounded-2xl sm:inline-block dark:ring-2"
+            className="ring-base-100-content mx-auto my-auto hidden max-h-full rounded-2xl sm:inline-block dark:ring-2"
           />
           <div className="my-auto flex flex-col items-center gap-2 text-center">
             <h1 className="text-6xl font-bold">
@@ -61,7 +61,7 @@ export default function HomeClient() {
             </InlineDivider>
           </div>
         </div>
-        <div className="border-base-100 mt-5 flex justify-center gap-4 border-b-2 pb-10">
+        <div className="border-base-200 mt-5 flex justify-center gap-4 border-b-2 pb-10">
           <Button onClick={() => setViewNotes(false)} style="primary">
             Add Note
           </Button>
@@ -99,12 +99,12 @@ export default function HomeClient() {
       </div>
       {!loading && !user?.emailVerified && (
         <>
-          <div className="text-base-content bg-base-100 fixed bottom-2 left-1/2 -translate-x-1/2 rounded-lg p-3 pointer-fine:hidden">
+          <div className="text-base-100-content bg-base-200 fixed bottom-2 left-1/2 -translate-x-1/2 rounded-lg p-3 pointer-fine:hidden">
             <VerifyEmail />
           </div>
           <div className="fixed end-5 bottom-5 hidden items-center pointer-fine:flex">
             <ExclamationCircleIcon className="peer text-primary size-12" />
-            <div className="bg-base-content pointer-events-none absolute end-full rounded-lg p-3 text-base opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
+            <div className="bg-base-100-content text-base-100 pointer-events-none absolute end-full rounded-lg p-3 opacity-0 transition-opacity peer-hover:pointer-events-auto peer-hover:opacity-100 hover:pointer-events-auto hover:opacity-100">
               <VerifyEmail />
             </div>
           </div>

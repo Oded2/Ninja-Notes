@@ -21,13 +21,13 @@ export default function IconButton({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'flex aspect-square h-full items-center justify-center self-center border-2 p-2 transition-all enabled:cursor-pointer enabled:hover:text-base disabled:opacity-50',
+        'enabled:hover:text-base-100 flex aspect-square h-full items-center justify-center self-center border-2 p-2 transition-all enabled:cursor-pointer disabled:opacity-50',
         {
           'border-primary text-primary enabled:hover:bg-primary':
             style === 'primary',
           'border-secondary text-secondary enabled:hover:bg-secondary':
             style === 'secondary',
-          'border-base-200-content enabled:hover:bg-base-200-content text-base-200-content':
+          'border-base-300-content enabled:hover:bg-base-300-content text-base-300-content':
             style === 'neutral',
         },
         circle ? 'rounded-full' : 'rounded-lg',

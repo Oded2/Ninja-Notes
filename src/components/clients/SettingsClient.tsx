@@ -54,8 +54,8 @@ export default function SettingsClient() {
 
   return (
     <div className="flex flex-col sm:flex-row">
-      <div className="border-base-200-content flex w-full flex-col border-b pb-10 sm:me-10 sm:max-w-50 sm:border-e sm:border-b-0 sm:pe-10">
-        <h1 className="text-base-200-content mb-4 text-4xl font-medium">
+      <div className="border-base-300-content flex w-full flex-col border-b pb-10 sm:me-10 sm:max-w-50 sm:border-e sm:border-b-0 sm:pe-10">
+        <h1 className="text-base-300-content mb-4 text-4xl font-medium">
           Settings
         </h1>
         <div className="flex sm:flex-col">
@@ -142,7 +142,7 @@ function TabLayout({ header, children }: TabLayoutProps) {
   return (
     <div className="flex flex-col">
       <div className="mb-10">
-        <h2 className="text-base-100-content text-3xl font-medium">{header}</h2>
+        <h2 className="text-base-200-content text-3xl font-medium">{header}</h2>
       </div>
       {children}
     </div>
@@ -158,7 +158,7 @@ function FieldSector({ header, children }: FieldSectorProps) {
   return (
     <div className="border-neutral flex flex-col not-last:mb-4 not-last:border-b not-last:pb-2 sm:me-auto">
       <div className="mb-4 text-xl">
-        <h3 className="text-base-100-content font-medium">{header}</h3>
+        <h3 className="text-base-200-content font-medium">{header}</h3>
       </div>
       {children}
     </div>

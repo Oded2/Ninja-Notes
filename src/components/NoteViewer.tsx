@@ -162,7 +162,7 @@ export default function NoteViewer() {
 
   return (
     <>
-      <div className="bg-base/50 sticky top-0 z-20 mb-4 flex flex-wrap gap-4 py-4 backdrop-blur *:flex *:gap-2">
+      <div className="bg-base-100/50 sticky top-0 z-20 mb-4 flex flex-wrap gap-4 py-4 backdrop-blur *:flex *:gap-2">
         <div>
           <Tooltip text="Reverse">
             <button onClick={() => reverseNotes()}>
@@ -270,14 +270,14 @@ export default function NoteViewer() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ duration: 0.3 }}
-                className="group border-neutral/40 bg-base-100/60 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
+                className="group border-neutral/40 bg-base-200/60 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex flex-col">
                     <h2 dir="auto" className="text-xl font-semibold">
                       {title}
                     </h2>
-                    <div className="text-base-200-content text-sm">
+                    <div className="text-base-300-content text-sm">
                       <InlineDivider>
                         <div>{formatTimestamp(note.createdAt)}</div>
                         {editedAt && (
@@ -363,7 +363,7 @@ function Tooltip({ text, children }: TooltipProps) {
       <div
         id={tooltipId}
         role="tooltip"
-        className="bg-base-content pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded p-2 text-base text-sm whitespace-nowrap opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:top-full xl:ms-0 xl:mt-2"
+        className="bg-base-100-content text-base-100 pointer-events-none absolute start-full z-10 ms-2 scale-70 rounded p-2 text-sm whitespace-nowrap opacity-0 transition-all delay-25 duration-200 peer-hover:scale-100 peer-hover:opacity-100 xl:start-auto xl:top-full xl:ms-0 xl:mt-2"
       >
         {text}
       </div>

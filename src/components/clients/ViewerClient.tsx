@@ -55,7 +55,9 @@ type SmallHeaderProps = {
 
 function SmallHeader({ children }: SmallHeaderProps) {
   return (
-    <span className="text-base-content/80 text-center text-sm">{children}</span>
+    <span className="text-base-100-content/80 text-center text-sm">
+      {children}
+    </span>
   );
 }
 

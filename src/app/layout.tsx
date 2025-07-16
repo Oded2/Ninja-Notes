@@ -136,7 +136,7 @@ export default function RootLayout({
       className="not-print:dark:scheme-dark"
     >
       <body className={rubik.className}>
-        <div className="bg-base text-base-content flex min-h-screen flex-col">
+        <div className="bg-base-100 text-base-100-content flex min-h-screen flex-col">
           <Navbar onThemeToggle={() => setIsDark((prev) => !prev)} />
           <div className="container mx-auto flex grow flex-col px-5 py-10 sm:px-0">
             {children}

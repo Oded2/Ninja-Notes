@@ -177,7 +177,7 @@ export default function AuthClient() {
             </span>
           </>
         )}
-        <div className="text-base-content/80 flex justify-between gap-2 text-sm">
+        <div className="text-base-100-content/80 flex justify-between gap-2 text-sm">
           <span>
             {isSignUp
               ? 'Already have an account?'

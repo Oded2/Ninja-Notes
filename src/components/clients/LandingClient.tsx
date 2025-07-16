@@ -76,7 +76,7 @@ export default function LandingClient({ commit }: Props) {
         <BoltIcon />
       </Header>
       <div className="relative">
-        <div className="from-base to-base-100 pointer-events-none absolute inset-0 bg-gradient-to-br"></div>
+        <div className="from-base-100 to-base-200 pointer-events-none absolute inset-0 bg-gradient-to-br"></div>
         <div className="grid grid-cols-1 lg:grid-cols-3">
           <Card
             title="End-to-End Encryption"
@@ -150,8 +150,8 @@ function Card({ title, description, children: icon }: CardProps) {
         </div>
         <p>{description}</p>
       </div>
-      <div className="bg-base hidden min-w-4 group-last:hidden lg:inline-block" />
-      <div className="bg-base min-h-4 group-last:hidden lg:hidden" />
+      <div className="bg-base-100 hidden min-w-4 group-last:hidden lg:inline-block" />
+      <div className="bg-base-100 min-h-4 group-last:hidden lg:hidden" />
     </div>
   );
 }

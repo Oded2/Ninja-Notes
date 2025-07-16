@@ -304,7 +304,7 @@ type InputContainerProps = {
 
 function InputContainer({ children }: InputContainerProps) {
   return (
-    <div className="bg-base-100 ring-base-content/30 focus-within:ring-base-content flex flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
+    <div className="bg-base-200 ring-base-100-content/30 focus-within:ring-base-100-content flex flex-wrap items-center gap-2 rounded-2xl px-4 py-3 ring transition-all focus-within:ring-2">
       {children}
     </div>
   );
