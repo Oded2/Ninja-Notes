@@ -293,7 +293,7 @@ export default function AddNote() {
           maxLength={maxLengths.content}
           disabled={inProgress}
         />
-        <div className="my-1 ms-auto gap-2 text-xs">
+        <div className="my-1 ms-auto flex gap-2 text-xs">
           {activeEditNote && (
             <button
               type="button"
