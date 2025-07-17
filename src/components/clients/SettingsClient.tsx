@@ -319,16 +319,16 @@ function AccountSettings() {
     setPasswordInProgress(false);
   };
 
-  const handleNotePurge = async (accountDelete = true) => {
+  const handleNotePurge = async (accountDelete?: boolean) => {
     if (!userKey) return;
-    setPurgeCompleted(accountDelete);
+    setPurgeCompleted(!accountDelete);
     const userId = user?.uid;
     const defaultListId = findDefaultListId(lists);
     const documentIdFieldPath = documentId();
     const listsQueryConditions: QueryConstraint[] = [
       where('userId', '==', userId),
     ];
-    if (accountDelete) {
+    if (!accountDelete) {
       // The user is not deleting the account, therefore the default list must not be deleted
       listsQueryConditions.push(
         where(documentIdFieldPath, '!=', defaultListId),
@@ -344,7 +344,7 @@ function AccountSettings() {
       handleError(e);
       setPurgeCompleted(false);
     });
-    if (accountDelete)
+    if (!accountDelete)
       addToast(
         'success',
         'Notes purged successfully',
@@ -357,12 +357,10 @@ function AccountSettings() {
     if (!user) return;
     setAccountDeleteCompleted(true);
     const docRef = doc(usersCollection, user.uid);
-    await Promise.all([handleNotePurge(false), deleteDoc(docRef)]).catch(
-      (e) => {
-        handleError(e);
-        setAccountDeleteCompleted(false);
-      },
-    );
+    await Promise.all([handleNotePurge(true), deleteDoc(docRef)]).catch((e) => {
+      handleError(e);
+      setAccountDeleteCompleted(false);
+    });
     await user.delete().catch((e) => {
       handleError(e);
       setAccountDeleteCompleted(false);
