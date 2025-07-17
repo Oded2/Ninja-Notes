@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline';
 import IconText from '@/components/IconText';
 import clsx from 'clsx';
-import { SetValShortcut } from '@/lib/types';
+import { List, SetValShortcut } from '@/lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useUserStore } from '@/lib/stores/userStore';
 import FormInput from '@/components/FormInput';
@@ -22,10 +22,8 @@ import {
   updatePassword,
 } from 'firebase/auth';
 import {
-  deleteByQuery,
   derivePasswordKey,
   encryptWithKey,
-  findDefaultListId,
   generateSalt,
   handleError,
   zipAndDownloadJSON,
@@ -37,17 +35,9 @@ import {
   notesCollection,
   usersCollection,
 } from '@/lib/firebase';
-import {
-  deleteDoc,
-  doc,
-  documentId,
-  orderBy,
-  query,
-  QueryConstraint,
-  setDoc,
-  where,
-} from 'firebase/firestore';
+import { deleteDoc, doc, setDoc } from 'firebase/firestore';
 import Collapse from '@/components/Collapse';
+import { defaultListName } from '@/lib/constants';
 
 export default function SettingsClient() {
   const [tab, setTab] = useState(0);
@@ -257,6 +247,7 @@ function AccountSettings() {
   const addToast = useToastStore((state) => state.add);
   const showConfirm = useConfirmStore((state) => state.showConfirm);
   const lists = useContentStore((state) => state.lists);
+  const notes = useContentStore((state) => state.notes);
   const purge = useContentStore((state) => state.purge);
   const [emailInProgress, setEmailInProgress] = useState(false);
   const [passwordInProgress, setPasswordInProgress] = useState(false);
@@ -320,51 +311,46 @@ function AccountSettings() {
   };
 
   const handleNotePurge = async (accountDelete?: boolean) => {
-    if (!userKey) return;
     setPurgeCompleted(!accountDelete);
-    const userId = user?.uid;
-    const defaultListId = findDefaultListId(lists);
-    const documentIdFieldPath = documentId();
-    const listsQueryConditions: QueryConstraint[] = [
-      where('userId', '==', userId),
-    ];
-    if (!accountDelete) {
-      // The user is not deleting the account, therefore the default list must not be deleted
-      listsQueryConditions.push(
-        where(documentIdFieldPath, '!=', defaultListId),
+    try {
+      // Ensure that if the user is not deleting their account then the default list stays
+      const listsDeletePromiseArray = createListsDeletePromiseArray(
+        accountDelete
+          ? lists
+          : lists.filter((list) => list.name !== defaultListName),
       );
-      listsQueryConditions.push(orderBy(documentIdFieldPath)); // Required by firebase;
-    }
-    const listsQuery = query(listsCollection, ...listsQueryConditions);
-    const notesQuery = query(notesCollection, where('userId', '==', userId));
-    await Promise.all([
-      deleteByQuery(listsQuery),
-      deleteByQuery(notesQuery),
-    ]).catch((e) => {
-      handleError(e);
+      const notesDeletePromiseArray = notes.map((note) => {
+        const docRef = doc(notesCollection, note.id);
+        return deleteDoc(docRef);
+      });
+      await Promise.all([
+        ...listsDeletePromiseArray,
+        ...notesDeletePromiseArray,
+      ]);
+      if (!accountDelete)
+        addToast(
+          'success',
+          'Notes purged successfully',
+          'Your notes have been successfully deleted',
+        );
+      purge();
+    } catch (err) {
+      handleError(err);
       setPurgeCompleted(false);
-    });
-    if (!accountDelete)
-      addToast(
-        'success',
-        'Notes purged successfully',
-        'Your notes have been successfully deleted',
-      );
-    purge();
+    }
   };
 
   const handleAccountDelete = async () => {
     if (!user) return;
     setAccountDeleteCompleted(true);
-    const docRef = doc(usersCollection, user.uid);
-    await Promise.all([handleNotePurge(true), deleteDoc(docRef)]).catch((e) => {
-      handleError(e);
+    try {
+      const docRef = doc(usersCollection, user.uid);
+      await Promise.all([handleNotePurge(true), deleteDoc(docRef)]);
+      await user.delete();
+    } catch (err) {
+      handleError(err);
       setAccountDeleteCompleted(false);
-    });
-    await user.delete().catch((e) => {
-      handleError(e);
-      setAccountDeleteCompleted(false);
-    });
+    }
   };
 
   return (
@@ -524,3 +510,9 @@ function VerifyAccount({ onVerify }: VerifyAccountProps) {
     </form>
   );
 }
+
+const createListsDeletePromiseArray = (lists: List[]) =>
+  lists.map((list) => {
+    const docRef = doc(listsCollection, list.id);
+    return deleteDoc(docRef);
+  });

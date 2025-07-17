@@ -1,10 +1,4 @@
-import {
-  Bytes,
-  deleteDoc,
-  DocumentSnapshot,
-  getDocs,
-  Query,
-} from 'firebase/firestore';
+import { Bytes, DocumentSnapshot } from 'firebase/firestore';
 import { useToastStore } from './stores/toastStore';
 import { encryptedFieldTypeGuard, firebaseErrorTypeGuard } from './typeguards';
 import { EncryptedField, List } from './types';
@@ -70,13 +64,6 @@ export const fullTrim = (s: string) => {
     .map((p) => p.trimEnd())
     .join('\n');
 };
-
-export async function deleteByQuery(q: Query) {
-  const promises = await getDocs(q).then((snapshot) =>
-    snapshot.docs.map((doc) => deleteDoc(doc.ref)),
-  );
-  return Promise.all(promises);
-}
 
 export function generateUserKey() {
   return crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, true, [
