@@ -68,7 +68,7 @@ export default function ListSelect({ val, setVal, allowAll }: Props) {
   const onAllClick = useCallback(() => setValWithId(), [setValWithId]);
 
   return (
-    <div ref={containerRef} className="relative grow md:w-3xs md:grow-0">
+    <div ref={containerRef} className="relative min-w-3xs grow md:grow-0">
       <button
         type="button"
         onClick={() => setShowDropdown((prev) => !prev)}
