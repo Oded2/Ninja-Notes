@@ -162,7 +162,7 @@ export default function NoteViewer() {
 
   return (
     <>
-      <div className="bg-base-100/50 sticky top-0 z-20 mb-4 flex flex-wrap gap-4 py-4 backdrop-blur *:flex *:gap-2">
+      <div className="bg-base-100/50 sticky top-0 z-20 -mt-5 flex flex-wrap gap-4 py-5 backdrop-blur *:flex *:gap-2">
         <div>
           <Tooltip text="Reverse">
             <button onClick={() => reverseNotes()}>
