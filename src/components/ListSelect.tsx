@@ -121,7 +121,7 @@ const OptionButton = ({ title, onClick }: OptionButtonProps) => (
   <button
     type="button"
     onClick={onClick}
-    className="hover:bg-secondary active:bg-secondary-light hover:text-primary-content bg-base-300 cursor-pointer overflow-auto px-8 py-2 text-start whitespace-nowrap brightness-95 transition-colors duration-75 hover:brightness-100"
+    className="hover:bg-secondary active:bg-secondary-light hover:text-primary-content active:text-primary-content bg-base-300 cursor-pointer overflow-auto px-8 py-2 text-start whitespace-nowrap brightness-95 transition-colors duration-75 hover:brightness-100 active:brightness-100"
   >
     {title}
   </button>
