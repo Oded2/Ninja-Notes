@@ -83,17 +83,17 @@ export default function NoteViewer() {
 
   const deleteNote = async (note: Note) => {
     const { id } = note;
-    const promises: Promise<void>[] = [];
-    const docRef = doc(notesCollection, id);
-    promises.push(deleteDoc(docRef));
-    const removedListId = removeNote(id);
-    if (removedListId) {
-      console.log('Deleting list');
-      const listRef = doc(listsCollection, removedListId);
-      promises.push(deleteDoc(listRef));
-      setListFilter(undefined);
-    }
     try {
+      const promises: Promise<void>[] = [];
+      const docRef = doc(notesCollection, id);
+      promises.push(deleteDoc(docRef));
+      const removedListId = removeNote(id);
+      if (removedListId) {
+        console.log('Deleting list');
+        const listRef = doc(listsCollection, removedListId);
+        promises.push(deleteDoc(listRef));
+        setListFilter(undefined);
+      }
       await Promise.all(promises);
     } catch (err) {
       handleError(err);
@@ -259,88 +259,81 @@ export default function NoteViewer() {
         )}
       </div>
       <div className="flex flex-col">
-        <AnimatePresence initial={false}>
-          {paginatedNotes.map((note) => {
-            const { id, listId, title, content, editedAt } = note;
-            const isOpen = !closedNotes.includes(id);
-            const listName = lists.find((list) => list.id === listId)?.name;
-            return (
-              <motion.div
-                key={id}
-                layout
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ duration: 0.3 }}
-                className="group border-neutral/40 bg-base-200/60 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col">
-                    <h2 dir="auto" className="text-xl font-semibold">
-                      {title}
-                    </h2>
-                    <div className="text-base-300-content text-sm">
-                      <InlineDivider>
-                        <div>{formatTimestamp(note.createdAt)}</div>
-                        {editedAt && (
-                          <div>{`Modified: ${formatTimestamp(editedAt)}`}</div>
-                        )}
-                        {listName && (
-                          <div>
-                            {listName === defaultListName
-                              ? defaultListLabel
-                              : listName}
-                          </div>
-                        )}
-                      </InlineDivider>
-                    </div>
-                  </div>
-                  <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
-                    <CopyButton text={content} />
+        {paginatedNotes.map((note) => {
+          const { id, listId, title, content, editedAt } = note;
+          const isOpen = !closedNotes.includes(id);
+          const listName = lists.find((list) => list.id === listId)?.name;
+          return (
+            <div
+              key={id}
+              className="group border-neutral/40 bg-base-200/60 flex flex-col gap-2 border-x border-b px-5 py-4 first:rounded-t-lg first:border-t last:rounded-b-lg"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <h2 dir="auto" className="text-xl font-semibold">
+                    {title}
+                  </h2>
+                  <div className="text-base-300-content text-sm">
+                    <InlineDivider>
+                      <div>{formatTimestamp(note.createdAt)}</div>
+                      {editedAt && (
+                        <div>{`Modified: ${formatTimestamp(editedAt)}`}</div>
+                      )}
+                      {listName && (
+                        <div>
+                          {listName === defaultListName
+                            ? defaultListLabel
+                            : listName}
+                        </div>
+                      )}
+                    </InlineDivider>
                   </div>
                 </div>
-                <Collapse open={isOpen}>
-                  <AutoLink text={content} />
-                </Collapse>
-                <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
-                  {isOpen ? (
-                    <button
-                      onClick={() => setClosedNotes((state) => [...state, id])}
-                    >
-                      Close
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        setClosedNotes((state) =>
-                          state.filter((noteId) => noteId !== id),
-                        )
-                      }
-                    >
-                      Open
-                    </button>
-                  )}
-                  <Link href={`/note/${id}`} target="_blank">
-                    View
-                  </Link>
-                  <button onClick={() => setEditNote(note)}>Edit</button>
+                <div className="flex transition-all not-pointer-coarse:scale-80 not-pointer-coarse:opacity-0 group-hover:scale-100 group-hover:opacity-100">
+                  <CopyButton text={content} />
+                </div>
+              </div>
+              <Collapse open={isOpen}>
+                <AutoLink text={content} />
+              </Collapse>
+              <div className="me-auto mt-auto flex items-baseline gap-2 *:cursor-pointer *:hover:underline">
+                {isOpen ? (
+                  <button
+                    onClick={() => setClosedNotes((state) => [...state, id])}
+                  >
+                    Close
+                  </button>
+                ) : (
                   <button
                     onClick={() =>
-                      showConfirm(
-                        'Delete note?',
-                        `This will delete "${note.title}". Are you sure you want to continue?`,
-                        () => deleteNote(note),
+                      setClosedNotes((state) =>
+                        state.filter((noteId) => noteId !== id),
                       )
                     }
-                    className="text-primary-light"
                   >
-                    Delete
+                    Open
                   </button>
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
+                )}
+                <Link href={`/note/${id}`} target="_blank">
+                  View
+                </Link>
+                <button onClick={() => setEditNote(note)}>Edit</button>
+                <button
+                  onClick={() =>
+                    showConfirm(
+                      'Delete note?',
+                      `This will delete "${note.title}". Are you sure you want to continue?`,
+                      () => deleteNote(note),
+                    )
+                  }
+                  className="text-primary-light"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );
