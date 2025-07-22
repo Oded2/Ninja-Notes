@@ -17,7 +17,6 @@ export default function ViewerClient() {
   const [note, setNote] = useState<Note | null>(null);
   const [list, setList] = useState<List | null>(null);
   const listName = useMemo(() => list?.name, [list]);
-  const editedAt = useMemo(() => note?.editedAt, [note]);
 
   useEffect(() => {
     if (typeof noteId !== 'string' || !userKey) return;
@@ -38,9 +37,6 @@ export default function ViewerClient() {
       <div className="mx-auto">
         <InlineDivider>
           <SmallHeader>{formatTimestamp(note?.createdAt)}</SmallHeader>
-          {editedAt && (
-            <SmallHeader>{`Modified: ${formatTimestamp(editedAt)}`}</SmallHeader>
-          )}
           {listName && <SmallHeader>{handleListName(listName)}</SmallHeader>}
         </InlineDivider>
       </div>
