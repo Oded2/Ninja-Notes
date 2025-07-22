@@ -51,7 +51,7 @@ export default function Modal({
                 e.preventDefault();
                 handleSubmit();
               }}
-              className="bg-base-100 mx-5 flex min-h-40 max-w-lg flex-col rounded-lg p-5 shadow-lg sm:mx-0 sm:min-w-sm"
+              className="bg-base-100 flex min-h-40 w-[90vw] flex-col rounded-lg p-5 shadow-lg sm:w-auto sm:max-w-lg sm:min-w-sm"
             >
               <h2 className="text-base-100-content mb-2 text-xl font-semibold">
                 {title}
