@@ -76,6 +76,10 @@ export default function NoteViewer() {
     () => filteredNotes.slice(page * notesPerPage, (page + 1) * notesPerPage),
     [filteredNotes, page],
   );
+  const maxPageIndex = useMemo(
+    () => Math.ceil(filteredNotes.length / notesPerPage - 1),
+    [filteredNotes],
+  );
 
   const deleteNote = async (note: Note) => {
     const { id } = note;
@@ -196,7 +200,7 @@ export default function NoteViewer() {
             <MagnifyingGlassIcon />
           </FormInput>
         </div>
-        <div className="grow">
+        <div>
           <ListSelect allowAll val={listFilter} setVal={setListFilter} />
           <AnimatePresence>
             {listFilter && (
@@ -248,13 +252,11 @@ export default function NoteViewer() {
             )}
           </AnimatePresence>
         </div>
-        <div>
-          <Pagination
-            val={page}
-            setVal={setPage}
-            maxIndex={Math.ceil(filteredNotes.length / notesPerPage) - 1}
-          />
-        </div>
+        {maxPageIndex > 0 && (
+          <div>
+            <Pagination val={page} setVal={setPage} maxIndex={maxPageIndex} />
+          </div>
+        )}
       </div>
       <div className="flex flex-col">
         <AnimatePresence initial={false}>

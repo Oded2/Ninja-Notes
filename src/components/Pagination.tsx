@@ -21,6 +21,7 @@ const neighborNumbers = (num: number, max: number) => {
 };
 
 export default function Pagination({ val, setVal, maxIndex }: Props) {
+  // Will not work properly if maxIndex is less than or equal to 0
   // val is the index of the page (meaning that the first page is when val is 0)
   // maxIndex is the max amount of pages - 1
   const long = maxIndex > 2;
@@ -28,58 +29,56 @@ export default function Pagination({ val, setVal, maxIndex }: Props) {
 
   useEffect(() => {
     if (val > maxIndex) {
-      // The user has filteindigo the notes and now the amount of pages have changed
+      // The user has filtered the notes and now the amount of pages have changed
       setVal(0);
     }
   }, [val, setVal, maxIndex]);
 
   return (
     <AnimatePresence initial={false}>
-      {maxIndex > 0 && (
-        <motion.div
-          key="pagination"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 100, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}
-          transition={{ type: 'spring', duration: 0.5 }}
-          className="flex"
+      <motion.div
+        key="pagination"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 100, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        transition={{ type: 'spring', duration: 0.5 }}
+        className="flex"
+      >
+        {long && (
+          <PageButton onClick={() => setVal(0)}>
+            <ChevronDoubleLeftIcon />
+          </PageButton>
+        )}
+        <PageButton
+          onClick={() => {
+            if (val > 0) setVal((state) => state - 1);
+          }}
         >
-          {long && (
-            <PageButton onClick={() => setVal(0)}>
-              <ChevronDoubleLeftIcon />
-            </PageButton>
-          )}
+          <ChevronLeftIcon />
+        </PageButton>
+        {numArray.map((p) => (
           <PageButton
-            onClick={() => {
-              if (val > 0) setVal((state) => state - 1);
-            }}
+            key={p}
+            isPrimary={val == p}
+            onClick={() => setVal(p)}
+            isIcon={false}
           >
-            <ChevronLeftIcon />
+            {(p + 1).toLocaleString()}
           </PageButton>
-          {numArray.map((p) => (
-            <PageButton
-              key={p}
-              isPrimary={val == p}
-              onClick={() => setVal(p)}
-              isIcon={false}
-            >
-              {(p + 1).toLocaleString()}
-            </PageButton>
-          ))}
-          <PageButton
-            onClick={() => {
-              if (val < maxIndex) setVal((state) => state + 1);
-            }}
-          >
-            <ChevronRightIcon />
+        ))}
+        <PageButton
+          onClick={() => {
+            if (val < maxIndex) setVal((state) => state + 1);
+          }}
+        >
+          <ChevronRightIcon />
+        </PageButton>
+        {long && (
+          <PageButton onClick={() => setVal(maxIndex)}>
+            <ChevronDoubleRightIcon />
           </PageButton>
-          {long && (
-            <PageButton onClick={() => setVal(maxIndex)}>
-              <ChevronDoubleRightIcon />
-            </PageButton>
-          )}
-        </motion.div>
-      )}
+        )}
+      </motion.div>
     </AnimatePresence>
   );
 }
