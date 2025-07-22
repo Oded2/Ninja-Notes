@@ -329,7 +329,7 @@ export default function NoteViewer() {
                       showConfirm(
                         'Delete note?',
                         `This will delete "${note.title}". Are you sure you want to continue?`,
-                        async () => await deleteNote(note),
+                        () => deleteNote(note),
                       )
                     }
                     className="text-primary-light"
