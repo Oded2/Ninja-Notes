@@ -166,31 +166,31 @@ export default function NoteViewer() {
 
   return (
     <>
-      <div className="bg-base-100/50 sticky top-0 z-20 -mt-5 flex flex-wrap gap-4 py-5 backdrop-blur *:flex *:gap-2">
-        <div>
-          <Tooltip text="Reverse">
-            <button onClick={() => reverseNotes()}>
-              <ArrowsUpDownIcon className="size-6" />
-            </button>
-          </Tooltip>
-          <Tooltip text={notesClosed ? 'Open notes' : 'Close notes'}>
-            <motion.button
-              initial={false}
-              animate={{ rotate: notesClosed ? 180 : 0 }}
-              transition={{
-                type: 'spring',
-                duration: 0.5,
-              }}
-              onClick={() => {
-                if (notesClosed) setClosedNotes([]);
-                else setClosedNotes(notes.map((note) => note.id));
-              }}
-            >
-              <ChevronDoubleDownIcon className="size-6" />
-            </motion.button>
-          </Tooltip>
-        </div>
-        <div className="grow sm:max-w-3xs">
+      <div className="bg-base-100/50 sticky top-0 z-20 -mt-5 flex flex-col gap-4 py-5 backdrop-blur lg:flex-row">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex gap-2">
+            <Tooltip text="Reverse">
+              <button onClick={() => reverseNotes()}>
+                <ArrowsUpDownIcon className="size-6" />
+              </button>
+            </Tooltip>
+            <Tooltip text={notesClosed ? 'Open notes' : 'Close notes'}>
+              <motion.button
+                initial={false}
+                animate={{ rotate: notesClosed ? 180 : 0 }}
+                transition={{
+                  type: 'spring',
+                  duration: 0.5,
+                }}
+                onClick={() => {
+                  if (notesClosed) setClosedNotes([]);
+                  else setClosedNotes(notes.map((note) => note.id));
+                }}
+              >
+                <ChevronDoubleDownIcon className="size-6" />
+              </motion.button>
+            </Tooltip>
+          </div>
           <FormInput
             label="Search"
             val={searchFilter}
@@ -199,61 +199,61 @@ export default function NoteViewer() {
           >
             <MagnifyingGlassIcon />
           </FormInput>
-        </div>
-        <div>
-          <ListSelect allowAll val={listFilter} setVal={setListFilter} />
-          <AnimatePresence>
-            {listFilter && (
-              <motion.div
-                className="flex gap-2"
-                key="collectionActions"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 100, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: 'spring', duration: 0.5 }}
-              >
-                <IconButton
-                  style="secondary"
-                  disabled={listFilter.name === defaultListName}
-                  onClick={() => {
-                    const { name } = listFilter;
-                    if (name === defaultListName) {
-                      // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would compromise end-to-end encryption
-                      // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
-                      return;
-                    }
-                    showInput(
-                      `Rename collection: ${name}`,
-                      (newName) => handleRenameList(listFilter, newName),
-                      maxLengths.list,
-                    );
-                  }}
+          <div className="flex grow gap-2">
+            <ListSelect allowAll val={listFilter} setVal={setListFilter} />
+            <AnimatePresence>
+              {listFilter && (
+                <motion.div
+                  className="flex gap-2"
+                  key="collectionActions"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 100, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: 'spring', duration: 0.5 }}
                 >
-                  <PencilIcon className="size-4" />
-                </IconButton>
-                <IconButton
-                  style="primary"
-                  onClick={() => {
-                    const { name } = listFilter;
-                    const isDefaultList = name === defaultListName;
-                    showConfirm(
-                      'Delete collection?',
-                      isDefaultList
-                        ? 'All notes under the default collection will be deleted.'
-                        : `All notes under the collection '${name}' will be deleted.`,
-                      async () => await deleteList(listFilter),
-                      isDefaultList ? defaultListLabel : name,
-                    );
-                  }}
-                >
-                  <TrashIcon className="size-4" />
-                </IconButton>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <IconButton
+                    style="secondary"
+                    disabled={listFilter.name === defaultListName}
+                    onClick={() => {
+                      const { name } = listFilter;
+                      if (name === defaultListName) {
+                        // There's no way for the server to stop the user from renaming the default list unless it knows what the default list is, which would compromise end-to-end encryption
+                        // Therefore, beyond just disabling the rename button, this if statement adds extra client-side validation to ensure that the user doesn't rename the default list
+                        return;
+                      }
+                      showInput(
+                        `Rename collection: ${name}`,
+                        (newName) => handleRenameList(listFilter, newName),
+                        maxLengths.list,
+                      );
+                    }}
+                  >
+                    <PencilIcon className="size-4" />
+                  </IconButton>
+                  <IconButton
+                    style="primary"
+                    onClick={() => {
+                      const { name } = listFilter;
+                      const isDefaultList = name === defaultListName;
+                      showConfirm(
+                        'Delete collection?',
+                        isDefaultList
+                          ? 'All notes under the default collection will be deleted.'
+                          : `All notes under the collection '${name}' will be deleted.`,
+                        async () => await deleteList(listFilter),
+                        isDefaultList ? defaultListLabel : name,
+                      );
+                    }}
+                  >
+                    <TrashIcon className="size-4" />
+                  </IconButton>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
         {maxPageIndex > 0 && (
-          <div>
+          <div className="flex grow justify-center lg:justify-end">
             <Pagination val={page} setVal={setPage} maxIndex={maxPageIndex} />
           </div>
         )}
