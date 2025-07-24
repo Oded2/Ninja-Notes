@@ -191,14 +191,16 @@ export default function NoteViewer() {
               </motion.button>
             </Tooltip>
           </div>
-          <FormInput
-            label="Search"
-            val={searchFilter}
-            setVal={setSearchFilter}
-            showClearButton
-          >
-            <MagnifyingGlassIcon />
-          </FormInput>
+          <div className="flex w-2xs">
+            <FormInput
+              label="Search"
+              val={searchFilter}
+              setVal={setSearchFilter}
+              showClearButton
+            >
+              <MagnifyingGlassIcon />
+            </FormInput>
+          </div>
           <div className="flex grow gap-2">
             <ListSelect allowAll val={listFilter} setVal={setListFilter} />
             <AnimatePresence>
