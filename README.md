@@ -52,7 +52,7 @@ A note-taking app with end-to-end encryption that allows for storing notes onlin
 - Each note has the ability to be edited via the 'Edit' button
 - Each note can be deleted via the 'Delete' button, and will require a second confirmation
 - Each note displays the following metadata: Date created, date edited (if edited), and the collection that it belongs to
-- Upon hovering a note, a copy-to-clipbaord button will appear on the other end of the note (on mobile devices it always appears)
+- Upon hovering a note, a copy-to-clipboard button will appear on the other end of the note (on mobile devices it always appears)
 
 ### Editing a note
 
@@ -131,7 +131,7 @@ Will delete the entire collection and _all_ notes under that collection
   - The title of a note
   - The content of a note
   - The ID of the collection that belongs to a note
-- The following data _is not_ encrypted
+- The following data is _not_ encrypted
 
   - The date a note was created
   - The date a note was edited, if at all
