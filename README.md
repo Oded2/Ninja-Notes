@@ -79,7 +79,7 @@ _Note: in the project's code, collections are referred to as lists. This is done
 
 - Is generated upon creating an account
 - _Can_ be empty
-- Deleting the last note inside the default collection _will not_ delete the collection
+- Deleting the last note inside the default collection will _not_ delete the collection
 - Cannot be renamed
 
 ### Renaming a collection
